@@ -25,6 +25,7 @@
     <script type="text/javascript" src="js/globals.js"></script>
     <script type="text/javascript" src="js/threeView.js"></script>
     <script type="text/javascript" src="js/controls.js"></script>
+    <script type="text/javascript" src="js/view.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
 </head>
 <body>
@@ -36,6 +37,23 @@
         <img id="inactiveLogo" src="assets/logo.png"/>
         <img id="activeLogo" src="assets/logo-active.png"/>
     </a>
+    <div id="viewModeSelection">
+        Mode:
+        <div class="indent">
+            <label class="radio">
+                <input name="mode" value="meshEditing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                Mesh Editing
+            </label>
+            <label class="radio">
+                <input name="mode" value="beamEditing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                Beam Editing
+            </label>
+            <label class="radio">
+                <input name="mode" value="membraneEditing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                Membrane Editing
+            </label>
+        </div>
+    </div>
 </div>
 
 <div id="scaleBars"></div>

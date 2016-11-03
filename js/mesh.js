@@ -29,7 +29,7 @@ function initMesh(globals){
                 self.wireframe = new THREE.LineSegments(wireframeGeo, wireframeMaterial);
                 globals.threeView.sceneAdd(self.mesh);
                 globals.threeView.sceneAdd(self.wireframe);
-
+                globals.threeView.render();
             });
 
         }
