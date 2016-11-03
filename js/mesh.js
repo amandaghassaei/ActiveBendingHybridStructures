@@ -6,10 +6,12 @@
 function initMesh(globals){
 
     var loader = new THREE.STLLoader();
-    var material = new THREE.MeshLambertMaterial({color:0xb67df0, side:THREE.DoubleSide, morphNormals: true, morphTargets:true, vertexColors: THREE.FaceColors, shading: THREE.SmoothShading});
+    var material = new THREE.MeshLambertMaterial({color:0xb67df0, side:THREE.DoubleSide});
     var transparentMaterial = new THREE.MeshLambertMaterial({color:0xaaaaaa, side:THREE.DoubleSide, transparent:true, opacity:0.3});
     var wireframeMaterial = new THREE.LineBasicMaterial({color:0x000000, linewidth:2});
     var transparentWireframeMaterial = new THREE.LineBasicMaterial({color:0x000000, linewidth:2, transparent:true, opacity:0.3});
+
+    var origGeometry = null;
 
     return new (Backbone.Model.extend({
 
@@ -43,9 +45,13 @@ function initMesh(globals){
         },
 
         scaleChanged: function(){
+            if (!this.mesh) return;
             var scale = this.get("scale");
-            if (this.mesh) this.mesh.scale.set(scale.x, scale.y, scale.z);
-            if (this.wireframe) this.wireframe.scale.set(scale.x, scale.y, scale.z);
+            var geometry = origGeometry.clone();
+            geometry.scale(scale.x, scale.y, scale.z);
+            geometry.computeVertexNormals();
+            this.mesh.geometry = geometry;
+            this.wireframe.geometry = geometry;
             globals.threeView.render();
         },
 
@@ -63,22 +69,19 @@ function initMesh(globals){
             var self = this;
             loader.load(url, function (geometry){
                 //todo center geometry
-                var geometry = new THREE.Geometry().fromBufferGeometry(geometry);
-                geometry.computeVertexNormals();
-                geometry.computeFaceNormals();
-                geometry.computeMorphNormals();
+                geometry = new THREE.Geometry().fromBufferGeometry(geometry);
+                geometry.center();
+                origGeometry = geometry.clone();
                 if (self.mesh){
                     globals.threeView.sceneRemove(self.mesh);
                     globals.threeView.sceneRemove(self.wireframe);
                 }
                 self.mesh = new THREE.Mesh(geometry, material);
-                var scale = self.get("scale");
-                self.mesh.scale.set(scale.x, scale.y, scale.z);
                 var wireframeGeo = new THREE.WireframeGeometry(geometry);
                 self.wireframe = new THREE.LineSegments(wireframeGeo, wireframeMaterial);
-                self.wireframe.scale.set(scale.x, scale.y, scale.z);
                 globals.threeView.sceneAdd(self.mesh);
                 globals.threeView.sceneAdd(self.wireframe);
+                self.scaleChanged();
                 self.trigger("change:stl");
                 self.updateForMode();
             });
