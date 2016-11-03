@@ -55,6 +55,10 @@ function initMesh(globals){
             return bbox.max.sub(bbox.min);
         },
 
+        getObject3D: function(){
+            return this.mesh;
+        },
+
         loadSTL: function(url){
             var self = this;
             loader.load(url, function (geometry){
@@ -78,7 +82,6 @@ function initMesh(globals){
                 self.trigger("change:stl");
                 self.updateForMode();
             });
-
         }
 
     }))();

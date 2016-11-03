@@ -2,7 +2,11 @@
  * Created by ghassaei on 11/3/16.
  */
 
-function setRadio(key, val){
+function setRadio(key, val, callback){
+    $("input[name=" + key + "]").on('change', function() {
+        var state = $("input[name="+key+"]:checked").val();
+        callback(state);
+    });
     $(".radio>input[name=" + key + "][value=" + val + "]").prop("checked", true);
 }
 
@@ -41,4 +45,14 @@ function setSliderInput(id, val, min, max, incr, callback){
         $input.val(val);
         callback(val, id);
     });
+}
+
+
+function setCheckbox(id, state, callback){
+    var $input  = $(id);
+    $input.on('change', function () {
+        if ($input.is(":checked")) callback(true);
+        else callback(false);
+    });
+    $input.prop('checked', state);
 }

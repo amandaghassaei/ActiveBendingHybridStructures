@@ -12,11 +12,10 @@ function initView(globals){
         events: {
             "mouseenter #logo" : "showLogo",
             "mouseleave #logo" : "hideLogo",
-            "change input[name=mode]": "modeChanged"
         },
 
         initialize: function(){
-            setRadio("mode", globals.get("mode"));
+            setRadio("mode", globals.get("mode"), this.modeChanged);
             var mesh = globals.mesh;
             setSliderInput("#meshScaleX", mesh.get("scale").x, 0.0001, 20, 0.001, this.meshScaleChanged);
             setSliderInput("#meshScaleY", mesh.get("scale").y, 0.0001, 20, 0.001, this.meshScaleChanged);
@@ -35,7 +34,7 @@ function initView(globals){
             $("#inactiveLogo").show();
         },
 
-        modeChanged: function(e){
+        modeChanged: function(){
             var state = $("input[name=mode]:checked").val();
             globals.set("mode", state);
         },
