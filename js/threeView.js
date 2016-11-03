@@ -44,6 +44,8 @@ function initThreeView(globals) {
         controls = new THREE.OrbitControls(camera, container.get(0));
         controls.addEventListener('change', render);
 
+        window.addEventListener('resize', onWindowResize, false);
+
         render();
     }
 
@@ -54,7 +56,6 @@ function initThreeView(globals) {
     function startAnimation(callback){
         console.log("starting animation");
         _loop(function(){
-            if (!globals.stlEditing) callback();//only run dynamic sim if not editing stl
             _render();
         });
 
@@ -111,7 +112,6 @@ function initThreeView(globals) {
         sceneAdd: sceneAdd,
         sceneClear: sceneClear,
         render: render,
-        onWindowResize: onWindowResize,
         //startAnimation: startAnimation,
         enableControls: enableControls,
         scene: scene,
