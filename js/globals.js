@@ -15,6 +15,7 @@ function initGlobals(){
             this.mesh = initMesh(this);
             initView(this);
             initMeshEditingView(this);
+            initBeamEditingView(this);
         }
 
     }))();

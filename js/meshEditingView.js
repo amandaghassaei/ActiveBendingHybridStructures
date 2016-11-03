@@ -52,5 +52,4 @@ function initMeshEditingView(globals){
         }
 
     }))({model:globals.mesh});
-
 }
