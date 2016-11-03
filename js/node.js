@@ -116,6 +116,9 @@ Node.prototype.hide = function(){
 Node.prototype.show = function(){
     this.object3D.visible = true;
 };
+Node.prototype.isVisible = function(){
+    return this.object3D.visible;
+};
 
 Node.prototype.move = function(position){
     this.object3D.position.set(position.x, position.y, position.z);

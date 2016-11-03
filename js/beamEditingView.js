@@ -19,10 +19,15 @@ function initBeamEditingView(globals){
 
             this.listenTo(this.model, "change:beams", this.updateNumBeams);
             this.updateNumBeams();
+            this.listenTo(this.model, "change:nodes", this.updateNumNodes);
+            this.updateNumNodes();
         },
 
         updateNumBeams: function(){
             $("#numBeams").html(this.model.getNumBeams());
+        },
+        updateNumNodes: function(){
+            $("#numNodes").html(this.model.getNumNodes());
         },
 
         snapToVertexChanged: function(state){

@@ -36,17 +36,30 @@ function initIntersector3D(globals){
 
     document.addEventListener('mousedown', function(e){
         switch (e.which) {
-        case 1://left button
-            mouseDown = true;
-            break;
-        case 2://middle button
-            break;
-        case 3://right button
-            break;
+            case 1://left button
+                mouseDown = true;
+                break;
+            case 2://middle button
+                break;
+            case 3://right button
+                break;
         }
     }, false);
 
     document.addEventListener('mouseup', function(e){
+        if (!isDragging){
+            switch (e.which) {
+                case 1://left button
+                    if (node.isVisible()){
+                        globals.structure.newNode(node.getPosition());
+                    }
+                    break;
+                case 2://middle button
+                    break;
+                case 3://right button
+                    break;
+            }
+        }
         isDragging = false;
         mouseDown = false;
     }, false);

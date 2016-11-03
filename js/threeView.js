@@ -5,7 +5,6 @@
 function initThreeView(globals) {
 
     var scene = new THREE.Scene();
-    var wrapper = new THREE.Object3D();
     var camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, -1000, 1000);//-40, 40);
     var renderer = new THREE.WebGLRenderer({antialias: true});
     var controls;
@@ -19,7 +18,6 @@ function initThreeView(globals) {
         container.append(renderer.domElement);
 
         scene.background = new THREE.Color(0xf4f4f4);
-        scene.add(wrapper);
         var ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
         scene.add(ambientLight);
         //var directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.3);
@@ -75,16 +73,16 @@ function initThreeView(globals) {
     }
 
     function sceneAdd(object) {
-        wrapper.add(object);
+        scene.add(object);
     }
 
     function sceneRemove(object) {
-        wrapper.remove(object);
+        scene.remove(object);
     }
 
-    function sceneClear() {
-        wrapper.children = [];
-    }
+    //function sceneClear() {
+    //    wrapper.children = [];
+    //}
 
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -104,15 +102,10 @@ function initThreeView(globals) {
         controls.enableRotate = state;
     }
 
-    function getObjToIntersect(){
-        return wrapper.children;
-    }
-
     return {
-        getObjToIntersect: getObjToIntersect,
         sceneRemove: sceneRemove,
         sceneAdd: sceneAdd,
-        sceneClear: sceneClear,
+        //sceneClear: sceneClear,
         render: render,
         //startAnimation: startAnimation,
         enableControls: enableControls,
