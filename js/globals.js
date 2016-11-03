@@ -8,7 +8,9 @@ function initGlobals(){
 
         defaults: {
             mode: "meshEditing",
-            snapToVertex: true
+
+            snapToVertex: true,
+            newBeamMode: false
         },
 
         initialize: function(){

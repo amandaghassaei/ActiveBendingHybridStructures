@@ -3,7 +3,7 @@
  */
 
 
-function initIntersector3D(globals){
+function initIntersector3D(globals, structure){
 
     var raycaster = new THREE.Raycaster();
     var mouse = new THREE.Vector2();
@@ -19,7 +19,6 @@ function initIntersector3D(globals){
     node.getObject3D().material.side = THREE.DoubleSide;
     node.getObject3D().material.opacity = 0.5;
     node.hide();
-
 
     function setHighlightedObj(object){
         if (highlightedObj && (object != highlightedObj)) {
@@ -50,8 +49,11 @@ function initIntersector3D(globals){
         if (!isDragging){
             switch (e.which) {
                 case 1://left button
+                    if (globals.get("newBeamMode") && highlightedObj && highlightedObj.type == "node"){
+                        console.log("start beam");
+                    }
                     if (node.isVisible()){
-                        globals.structure.newNode(node.getPosition());
+                        structure.newNode(node.getPosition());
                     }
                     break;
                 case 2://middle button
@@ -74,15 +76,26 @@ function initIntersector3D(globals){
         mouse.y = - (e.clientY/window.innerHeight)*2+1;
         raycaster.setFromCamera(mouse, globals.threeView.camera);
 
+        var _highlightedObj = null;
         var mode = globals.get("mode");
         switch(mode){
             case "meshEditing":
                 return;
                 break;
             case "beamEditing":
+                if (isDragging) return;
+                if (globals.get("newBeamMode")){
+                    _highlightedObj = checkForIntersections(e, structure.getNodesToIntersect());
+                    setHighlightedObj(_highlightedObj);
+                    if (node.hide()) globals.threeView.render();
+                    return;
+                }
+
                 var intersection = getIntersectionWithObject(globals.mesh.getObject3D());
                 if (intersection === null){
                     node.hide();
+                    globals.threeView.render();
+                    return;
                 } else {
                     var position = intersection.point;
                     if (globals.get("snapToVertex")){
@@ -105,6 +118,8 @@ function initIntersector3D(globals){
                     }
                     node.move(position);
                     node.show();
+                    globals.threeView.render();
+                    return;
                 }
                 break;
             case "membraneEditing":
@@ -113,8 +128,7 @@ function initIntersector3D(globals){
                 break;
         }
 
-        var _highlightedObj = null;
-        setHighlightedObj(_highlightedObj);
+        //setHighlightedObj(_highlightedObj);
 
     }, false);
 
@@ -153,8 +167,8 @@ function initIntersector3D(globals){
                 if (thing.object && thing.object._myNode && thing.object._myNode.type == "node"){
                     _highlightedObj = thing.object._myNode;
                     objectFound = true;
-                } else if (thing.object && thing.object._myBeam && thing.object._myBeam.type == "beam") {
-                    _highlightedObj = thing.object._myBeam;
+                } else if (thing.object && thing.object._myEdge && thing.object._myEdge.type == "edge") {
+                    _highlightedObj = thing.object._myEdge;
                     objectFound = true;
                 } else if (thing.object && thing.object._myForce && thing.object._myForce.type == "force") {
                     _highlightedObj = thing.object._myForce;

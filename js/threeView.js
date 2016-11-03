@@ -35,10 +35,10 @@ function initThreeView(globals) {
         //scene.fog = new THREE.FogExp2(0xf4f4f4, 1.7);
         //renderer.setClearColor(scene.fog.color);
 
-        camera.zoom = 15;
+        camera.zoom = 28;
         camera.updateProjectionMatrix();
-        camera.position.x = 40;
-        camera.position.y = 40;
+        camera.position.x = 20;
+        camera.position.y = 20;
         camera.position.z = 40;
 
         controls = new THREE.OrbitControls(camera, container.get(0));
