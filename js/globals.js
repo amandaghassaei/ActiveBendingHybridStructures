@@ -14,6 +14,7 @@ function initGlobals(){
             this.threeView = initThreeView(this);
             this.mesh = initMesh(this);
             initView(this);
+            initMeshEditingView(this);
         }
 
     }))();

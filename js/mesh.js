@@ -17,13 +17,13 @@ function initMesh(globals){
         initialize: function(){
             //initialize with an stl
             this.loadSTL("assets/sinewave.stl");
+            this.listenTo(this, "change:scale", this.scaleChanged);
         },
 
-        setScale: function(key, val){
+        scaleChanged: function(){
             var scale = this.get("scale");
-            scale[key] = val;
-            if (this.mesh) this.mesh.scale[key] = val;
-            if (this.wireframe) this.wireframe.scale[key] = val;
+            if (this.mesh) this.mesh.scale.set(scale.x, scale.y, scale.z);
+            if (this.wireframe) this.wireframe.scale.set(scale.x, scale.y, scale.z);
             globals.threeView.render();
         },
 
