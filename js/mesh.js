@@ -7,6 +7,9 @@ function initMesh(globals){
 
     var loader = new THREE.STLLoader();
     var material = new THREE.MeshBasicMaterial({color:0xb67df0, side:THREE.DoubleSide});
+    var transparentMaterial = new THREE.MeshBasicMaterial({color:0xb67df0, side:THREE.DoubleSide, transparent:true, opacity:0.3});
+    var wireframeMaterial = new THREE.LineBasicMaterial({color:0x000000, linewidth:2});
+    var transparentWireframeMaterial = new THREE.LineBasicMaterial({color:0x000000, linewidth:2, transparent:true, opacity:0.3});
 
     return new (Backbone.Model.extend({
 
@@ -18,6 +21,25 @@ function initMesh(globals){
             //initialize with an stl
             this.loadSTL("assets/sinewave.stl");
             this.listenTo(this, "change:scale", this.scaleChanged);
+            this.listenTo(globals, "change:mode", this.updateForMode);
+        },
+
+        updateForMode: function(){
+            if (!this.mesh) return;
+            var mode = globals.get("mode");
+            this.setTransparent(mode != "meshEditing");
+            globals.threeView.render();
+        },
+
+        setTransparent: function(transparent){
+            if (!this.mesh) return;
+            if (transparent){
+                this.mesh.material = transparentMaterial;
+                this.wireframe.material = transparentWireframeMaterial;
+            } else {
+                this.mesh.material = material;
+                this.wireframe.material = wireframeMaterial;
+            }
         },
 
         scaleChanged: function(){
@@ -45,13 +67,12 @@ function initMesh(globals){
                 var scale = self.get("scale");
                 self.mesh.scale.set(scale.x, scale.y, scale.z);
                 var wireframeGeo = new THREE.WireframeGeometry(geometry);
-                var wireframeMaterial = new THREE.LineBasicMaterial({color:0x000000, linewidth:2});
                 self.wireframe = new THREE.LineSegments(wireframeGeo, wireframeMaterial);
                 self.wireframe.scale.set(scale.x, scale.y, scale.z);
                 globals.threeView.sceneAdd(self.mesh);
                 globals.threeView.sceneAdd(self.wireframe);
                 self.trigger("change:stl");
-                globals.threeView.render();
+                self.updateForMode();
             });
 
         }
