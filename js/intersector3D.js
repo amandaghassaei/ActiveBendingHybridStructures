@@ -49,8 +49,12 @@ function initIntersector3D(globals, structure){
         if (!isDragging){
             switch (e.which) {
                 case 1://left button
-                    if (globals.get("newBeamMode") && highlightedObj && highlightedObj.type == "node"){
-                        console.log("start beam");
+                    if (globals.get("newBeamMode")){
+                        if (highlightedObj && highlightedObj.type == "node"){
+                            structure.addNodeToBeam(highlightedObj);
+                        } else {
+                            structure.stopEditingBeam();
+                        }
                     }
                     if (node.isVisible()){
                         structure.newNode(node.getPosition());
