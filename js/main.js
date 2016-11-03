@@ -4,9 +4,7 @@
 
 
 $(function() {
-
-    console.log("ready");
-
+    
     var globals = initGlobals();
 
 });

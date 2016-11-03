@@ -40,17 +40,17 @@ body{
     display: none;
 }
 
-#controls{
+.controls{
     position: absolute;
     top:0;
-    right:0;
+    right:-420px;
     width:420px;
     padding:20px 20px;
     overflow: auto;
     max-height: 100%;
     /*background: rgba(255,255,255,0.5);*/
 }
-#controls>a{
+.controls>a{
     float:right;
 }
 

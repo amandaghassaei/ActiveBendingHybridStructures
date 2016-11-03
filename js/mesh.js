@@ -10,9 +10,21 @@ function initMesh(globals){
 
     return new (Backbone.Model.extend({
 
+        defaults: {
+            scale: new THREE.Vector3(1, 1, 1)
+        },
+
         initialize: function(){
             //initialize with an stl
             this.loadSTL("assets/sinewave.stl");
+        },
+
+        setScale: function(key, val){
+            var scale = this.get("scale");
+            scale[key] = val;
+            if (this.mesh) this.mesh.scale[key] = val;
+            if (this.wireframe) this.wireframe.scale[key] = val;
+            globals.threeView.render();
         },
 
         loadSTL: function(url){
@@ -24,9 +36,12 @@ function initMesh(globals){
                     globals.threeView.sceneRemove(self.wireframe);
                 }
                 self.mesh = new THREE.Mesh(geometry, material);
+                var scale = self.get("scale");
+                self.mesh.scale.set(scale.x, scale.y, scale.z);
                 var wireframeGeo = new THREE.WireframeGeometry(geometry);
                 var wireframeMaterial = new THREE.LineBasicMaterial({color:0x000000, linewidth:2});
                 self.wireframe = new THREE.LineSegments(wireframeGeo, wireframeMaterial);
+                self.wireframe.scale.set(scale.x, scale.y, scale.z);
                 globals.threeView.sceneAdd(self.mesh);
                 globals.threeView.sceneAdd(self.wireframe);
                 globals.threeView.render();
