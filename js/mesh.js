@@ -27,6 +27,12 @@ function initMesh(globals){
             globals.threeView.render();
         },
 
+        getSize: function(){
+            if (!this.mesh) return new THREE.Vector3();
+            var bbox = new THREE.Box3().setFromObject(this.mesh);
+            return bbox.max.sub(bbox.min);
+        },
+
         loadSTL: function(url){
             var self = this;
             loader.load(url, function (geometry){
@@ -44,6 +50,7 @@ function initMesh(globals){
                 self.wireframe.scale.set(scale.x, scale.y, scale.z);
                 globals.threeView.sceneAdd(self.mesh);
                 globals.threeView.sceneAdd(self.wireframe);
+                self.trigger("change:stl");
                 globals.threeView.render();
             });
 
