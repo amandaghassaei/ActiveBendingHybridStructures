@@ -7,7 +7,7 @@ function initMesh(globals){
 
     var loader = new THREE.STLLoader();
     var material = new THREE.MeshLambertMaterial({color:0xb67df0, side:THREE.DoubleSide, morphNormals: true, morphTargets:true, vertexColors: THREE.FaceColors, shading: THREE.SmoothShading});
-    var transparentMaterial = new THREE.MeshLambertMaterial({color:0xb67df0, side:THREE.DoubleSide, transparent:true, opacity:0.3});
+    var transparentMaterial = new THREE.MeshLambertMaterial({color:0xaaaaaa, side:THREE.DoubleSide, transparent:true, opacity:0.3});
     var wireframeMaterial = new THREE.LineBasicMaterial({color:0x000000, linewidth:2});
     var transparentWireframeMaterial = new THREE.LineBasicMaterial({color:0x000000, linewidth:2, transparent:true, opacity:0.3});
 

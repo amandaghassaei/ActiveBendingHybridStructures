@@ -12,6 +12,15 @@ function initIntersector3D(globals){
     var isDragging = false;
     var mouseDown = false;
 
+    var node = new Node(new THREE.Vector3(), globals.threeView.scene);
+    node.type = "dummy";
+    node.getObject3D().material = node.getObject3D().material.clone();
+    node.getObject3D().material.transparent = true;
+    node.getObject3D().material.side = THREE.DoubleSide;
+    node.getObject3D().material.opacity = 0.5;
+    node.hide();
+
+
     function setHighlightedObj(object){
         if (highlightedObj && (object != highlightedObj)) {
             highlightedObj.unhighlight();
@@ -58,14 +67,36 @@ function initIntersector3D(globals){
                 return;
                 break;
             case "beamEditing":
-                var position = getPointOfIntersectionWithObject(globals.mesh.getObject3D());
-                if (position === null){
-
+                var intersection = getIntersectionWithObject(globals.mesh.getObject3D());
+                if (intersection === null){
+                    node.hide();
                 } else {
-
+                    var position = intersection.point;
+                    if (globals.get("snapToVertex")){
+                        var geometry = intersection.object.geometry;
+                        var face = geometry.faces[intersection.faceIndex];
+                        var vertices = [];
+                        vertices.push(geometry.vertices[face.a]);
+                        vertices.push(geometry.vertices[face.b]);
+                        vertices.push(geometry.vertices[face.c]);
+                        var dist = vertices[0].clone().sub(position).length();
+                        var _position = vertices[0];
+                        for (var i=1;i<3;i++){
+                            var _dist = vertices[i].clone().sub(position).length();
+                            if (_dist<dist){
+                                dist = _dist;
+                                _position = vertices[i];
+                            }
+                        }
+                        position = _position;
+                    }
+                    node.move(position);
+                    node.show();
                 }
                 break;
             case "membraneEditing":
+                break;
+            case "forceEditing":
                 break;
         }
 
@@ -81,6 +112,14 @@ function initIntersector3D(globals){
         var intersection = new THREE.Vector3();
         raycaster.ray.intersectPlane(raycasterPlane, intersection);
         return intersection;
+    }
+
+    function getIntersectionWithObject(object){
+        var intersections = raycaster.intersectObjects([object], false);
+        if (intersections.length > 0) {
+            return intersections[0];
+        }
+        return null;
     }
 
     function getPointOfIntersectionWithObject(object){

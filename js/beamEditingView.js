@@ -15,7 +15,7 @@ function initBeamEditingView(globals){
         initialize: function(){
 
             _.bindAll(this, "snapToVertexChanged");
-            setCheckbox("#snapToVertex", this.model.get("snapToVertex"), this.snapToVertexChanged);
+            setCheckbox("#snapToVertex", globals.get("snapToVertex"), this.snapToVertexChanged);
 
             this.listenTo(this.model, "change:beams", this.updateNumBeams);
             this.updateNumBeams();
@@ -26,7 +26,7 @@ function initBeamEditingView(globals){
         },
 
         snapToVertexChanged: function(state){
-            this.model.set("snapToVertex", state);
+            globals.set("snapToVertex", state);
         }
 
     }))({model:globals.structure});

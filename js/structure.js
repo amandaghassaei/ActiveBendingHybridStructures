@@ -10,7 +10,6 @@ function initStructure(globals){
     return new (Backbone.Model.extend({
 
         defaults: {
-            snapToVertex: true
         },
 
         initialize: function(){

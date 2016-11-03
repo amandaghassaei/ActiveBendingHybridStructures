@@ -7,7 +7,8 @@ function initGlobals(){
     return new (Backbone.Model.extend({
 
         defaults: {
-            mode: "meshEditing"
+            mode: "meshEditing",
+            snapToVertex: true
         },
 
         initialize: function(){

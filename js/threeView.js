@@ -20,7 +20,7 @@ function initThreeView(globals) {
 
         scene.background = new THREE.Color(0xf4f4f4);
         scene.add(wrapper);
-        var ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        var ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
         scene.add(ambientLight);
         //var directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.3);
         //directionalLight1.position.set(0, 100, 0);
