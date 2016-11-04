@@ -10,7 +10,6 @@ function initBeamEditingView(globals){
         el: "#beamEditingControls",
 
         events: {
-            "click #newBeamMode": "setNewBeamMode"
         },
 
         initialize: function(){
@@ -33,11 +32,6 @@ function initBeamEditingView(globals){
 
         snapToVertexChanged: function(state){
             globals.set("snapToVertex", state);
-        },
-
-        setNewBeamMode: function(e){
-            e.preventDefault();
-            globals.set("newBeamMode", true);
         }
 
     }))({model:globals.structure});

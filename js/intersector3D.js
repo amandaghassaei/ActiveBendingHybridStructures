@@ -21,13 +21,17 @@ function initIntersector3D(globals, structure){
     node.hide();
 
     function setHighlightedObj(object){
+        var shouldRender = false;
         if (highlightedObj && (object != highlightedObj)) {
             highlightedObj.unhighlight();
-            //globals.controls.hideMoreInfo();
+            shouldRender = true;
         }
         highlightedObj = object;
-        if (highlightedObj) highlightedObj.highlight();
-        globals.threeView.render();
+        if (highlightedObj) {
+            object.highlight();
+            shouldRender = true;
+        }
+        if (shouldRender) globals.threeView.render();
     }
 
     $(document).dblclick(function() {
@@ -49,12 +53,10 @@ function initIntersector3D(globals, structure){
         if (!isDragging){
             switch (e.which) {
                 case 1://left button
-                    if (globals.get("newBeamMode")){
-                        if (highlightedObj && highlightedObj.type == "node"){
-                            structure.addNodeToBeam(highlightedObj);
-                        } else {
-                            structure.stopEditingBeam();
-                        }
+                    if (highlightedObj && highlightedObj.type == "node"){
+                        structure.addNodeToBeam(highlightedObj);
+                    } else {
+                        structure.stopEditingBeam();
                     }
                     if (node.isVisible()){
                         structure.newNode(node.getPosition());
@@ -87,11 +89,22 @@ function initIntersector3D(globals, structure){
                 return;
                 break;
             case "beamEditing":
-                if (isDragging) return;
-                if (globals.get("newBeamMode")){
-                    _highlightedObj = checkForIntersections(e, structure.getNodesToIntersect());
-                    setHighlightedObj(_highlightedObj);
+                if (isDragging) {
                     if (node.hide()) globals.threeView.render();
+                    setHighlightedObj(null);
+                    return;
+                }
+
+                _highlightedObj = checkForIntersections(e, structure.getNodesToIntersect());
+                if (_highlightedObj){
+                    node.hide();
+                    setHighlightedObj(_highlightedObj);
+                    return;
+                }
+                setHighlightedObj(_highlightedObj);
+
+                if (structure.currentEditingBeam){
+                    //todo calc position of edge
                     return;
                 }
 
