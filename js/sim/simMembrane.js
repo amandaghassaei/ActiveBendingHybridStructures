@@ -17,7 +17,7 @@ function SimMembrane(simEdges, simNodes, parent){
 SimMembrane.prototype.setBorderNodes = function(){
     var simNodes = this.simNodes;
     var borderNodes = [simNodes[0]];
-    for (var i=0;i<this.simEdges;i++){
+    for (var i=0;i<this.simEdges.length;i++){
         var lastNode = borderNodes[borderNodes.length-1];
         var edge = this.simEdges[i];
         var edgeNodes = edge.getInnerNodes(lastNode);
@@ -36,7 +36,7 @@ SimMembrane.prototype.mesh = function(numLayers){
     var lastLayer = this.borderNodes;
     for (var j=0;j<numLayers;j++){
         var nextLayer = [];
-        for (var i=0;i<borderNodes.length;i++){
+        for (var i=0;i<this.borderNodes.length;i++){
             node = new SimNode(new THREE.Vector3(), this.object3D);
             nextLayer.push(node);
             this.innerNodes.push(node);
@@ -54,15 +54,16 @@ SimMembrane.prototype.mesh = function(numLayers){
 };
 
 SimMembrane.prototype.destroyInnerNodes = function(){
+    this.object3D.children = [];
     for (var i=0;i<this.innerNodes.length;i++){
         this.innerNodes[i].destroy();
     }
-    this.innerNodes = null;
+    this.innerNodes = [];
     this.innerEdges = [];
 };
 
 SimMembrane.prototype.setNumLayers = function(numLayers){
-    this.recalcNodeAndEdges(numLayers);
+    this.mesh(numLayers);
 };
 
 SimMembrane.prototype.destroy = function(){

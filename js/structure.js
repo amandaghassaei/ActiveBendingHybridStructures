@@ -56,7 +56,11 @@ function initStructure(globals){
             _.each(this.beams, function(beam){
                 beam.setMaterial(beamMaterial);
             });
-            this.membraneContainer.visible = mode === "membraneEditing" || mode === "forceEditing";
+            this.simContainer.visible = mode === "meshing";
+            this.nodesContainer.visible = mode !== "meshing";
+            this.beamsContainer.visible =  mode !== "meshing";
+            this.edgesContainer.visible =  mode !== "meshing";
+            this.membraneContainer.visible = mode !== "meshing" && (mode === "membraneEditing" || mode === "forceEditing");
             globals.threeView.render();
         },
 
@@ -198,11 +202,11 @@ function initStructure(globals){
             }
 
             var elementLength = globals.get("segmentLength");
-            for (var i=0;i<this.simBeams;i++){
+            for (var i=0;i<this.simBeams.length;i++){
                 this.simBeams[i].mesh(elementLength);
             }
             var numLayers = globals.get("radialMembraneElements");
-            for (var i=0;i<this.simMembranes;i++){
+            for (var i=0;i<this.simMembranes.length;i++){
                 this.simMembranes[i].mesh(numLayers);
             }
         },
