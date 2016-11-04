@@ -3,7 +3,7 @@
  */
 
 var edgeMaterialHighlight = new THREE.MeshBasicMaterial({color: 0xffffff});
-var edgeMaterialSelected = new THREE.MeshBasicMaterial({color: 0xb67df0});
+var edgeMaterialSelected = new THREE.MeshBasicMaterial({color: 0xe1cbf9});
 var edgeMaterialDelete = new THREE.MeshBasicMaterial({color:0xff0000});
 var edgeMaterialBeamEditing = new THREE.MeshBasicMaterial({color:0xb67df0});
 var edgeMaterial = new THREE.MeshBasicMaterial({color:0x555555});
