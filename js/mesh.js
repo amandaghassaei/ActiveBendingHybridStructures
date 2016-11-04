@@ -67,6 +67,11 @@ function initMesh(globals){
             return this.object3D;
         },
 
+        meshLoaded: function(){
+            if (this.object3D) return true;
+            return false;
+        },
+
         loadSTL: function(url){
             var self = this;
             loader.load(url, function (geometry){

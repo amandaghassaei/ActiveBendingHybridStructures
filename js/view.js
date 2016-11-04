@@ -16,6 +16,9 @@ function initView(globals){
         },
 
         initialize: function(){
+
+            _.bindAll(this, "modeChanged");
+
             setRadio("mode", globals.get("mode"), this.modeChanged);
             var mesh = globals.mesh;
             setSliderInput("#meshScaleX", mesh.get("scale").x, 0.0001, 20, 0.001, this.meshScaleChanged);
@@ -24,6 +27,11 @@ function initView(globals){
 
             this.listenTo(this.model, "change:mode", this.updateUIForMode);
             this.updateUIForMode();
+        },
+
+        showWarningModel: function(text){
+            $("#warningModalP").html(text);
+            $("#warningModal").modal('show');
         },
 
         showAbout: function(e){
@@ -42,7 +50,23 @@ function initView(globals){
 
         modeChanged: function(){
             var state = $("input[name=mode]:checked").val();
+            var warning = this.shouldChangeToMode(state);
+            if (warning) {
+                this.showWarningModel(warning);
+                $(".radio>input[name=mode][value=" + globals.get("mode") + "]").prop("checked", true);
+                return;
+            }
             globals.set("mode", state);
+        },
+        shouldChangeToMode: function(mode){
+            if (mode === "meshEditing") return null;
+            if (!globals.mesh.meshLoaded()) return 'You need to import a target mesh first, do this in the "Mesh Editing Mode".';
+            if (mode === "beamEditing") return null;
+            if (globals.structure.getNumBeams()==0) return 'You need to add more beams before moving on to the next step of the design process, do this in "Beam Editing Mode".';
+            if (mode === "membraneEditing") return null;
+            if (globals.structure.getNumMembranes()==0) return 'You need to add membranes before moving on to the next step of the design process, do this in "Membrane Editing Mode".';
+            if (mode === "meshing") return null;
+            if (mode === "forceEditing") return null;
         },
         updateUIForMode: function(){
             var mode = globals.get("mode");
