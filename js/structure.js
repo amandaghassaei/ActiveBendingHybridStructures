@@ -76,6 +76,7 @@ function initStructure(globals){
             }
         },
         stopEditingBeam: function(){
+            if (this.currentEditingBeam) this.currentEditingBeam.stopEditing();
             this.currentEditingBeam = null;
         }
 

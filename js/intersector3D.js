@@ -61,6 +61,7 @@ function initIntersector3D(globals, structure){
                     if (node.isVisible()){
                         structure.newNode(node.getPosition());
                     }
+                    globals.threeView.render();
                     break;
                 case 2://middle button
                     break;
@@ -104,7 +105,9 @@ function initIntersector3D(globals, structure){
                 setHighlightedObj(_highlightedObj);
 
                 if (structure.currentEditingBeam){
-                    //todo calc position of edge
+                    var intersection = getIntersectionWithObjectPlane(new THREE.Vector3());
+                    structure.currentEditingBeam.setEnd(intersection);
+                    globals.threeView.render();
                     return;
                 }
 
