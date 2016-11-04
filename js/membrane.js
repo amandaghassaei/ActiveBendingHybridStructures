@@ -2,7 +2,7 @@
  * Created by ghassaei on 11/3/16.
  */
 
-var membraneMaterial = new THREE.MeshBasicMaterial({color: 0xb67df0, side: THREE.DoubleSide});
+var membraneMaterial = new THREE.MeshLambertMaterial({color: 0xb67df0, side: THREE.DoubleSide});
 
 function Membrane(edges, parent){
 
