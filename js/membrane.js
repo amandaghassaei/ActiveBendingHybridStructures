@@ -18,6 +18,7 @@ function Membrane(edges, parent){
         geometry.faces.push(new THREE.Face3(0, geometry.vertices.length-2, geometry.vertices.length-1));
     }
     averageVertex.multiplyScalar(1/(geometry.vertices.length-1));
+    geometry.computeVertexNormals();
     this.object3D = new THREE.Mesh(geometry, membraneMaterial);
 
     parent.add(this.object3D);
