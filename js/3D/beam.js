@@ -34,6 +34,14 @@ Beam.prototype.addNode = function(node){
 
 };
 
+Beam.prototype.getNodes = function(){
+    return this.nodes;
+};
+
+Beam.prototype.getEdges = function(){
+    return this.edges;
+};
+
 Beam.prototype.stopEditing = function(){
     this.edgeInProgress.hide();
 };

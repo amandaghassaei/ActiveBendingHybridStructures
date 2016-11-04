@@ -5,5 +5,13 @@
 
 function SimNode(position, parent){
     Node.call(this, position, parent);
+    this.object3D._myNode = null;
 }
 SimNode.prototype = Object.create(Node.prototype);
+
+SimNode.prototype.destroy = function(){
+    this.parent = null;
+    this.object3D = null;
+    this.edges = null;
+    this.externalForce = null;
+};
