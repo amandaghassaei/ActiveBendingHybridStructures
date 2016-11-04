@@ -19,6 +19,7 @@ function initBeamEditingView(globals){
 
             this.listenTo(this.model, "change:beams", this.updateNumBeams);
             this.updateNumBeams();
+            this.listenTo(this.model, "change:beamsMeta", this.updateBeamsMeta);
             this.listenTo(this.model, "change:nodes", this.updateNumNodes);
             this.updateNumNodes();
         },
@@ -32,6 +33,11 @@ function initBeamEditingView(globals){
 
         snapToVertexChanged: function(state){
             globals.set("snapToVertex", state);
+        },
+
+        updateBeamsMeta: function(){
+            var $div = $("#beamMeta");
+
         }
 
     }))({model:globals.structure});
