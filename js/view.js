@@ -62,7 +62,7 @@ function initView(globals){
             if (mode === "meshEditing") return null;
             if (!globals.mesh.meshLoaded()) return 'You need to import a target mesh first, do this in the "Mesh Editing Mode".';
             if (mode === "beamEditing") return null;
-            if (globals.structure.getNumBeams()==0) return 'You need to add more beams before moving on to the next step of the design process, do this in "Beam Editing Mode".';
+            if (globals.structure.getNumBeams()==0) return 'You need to add beams before moving on to the next step of the design process, do this in "Beam Editing Mode".';
             if (mode === "membraneEditing") return null;
             if (globals.structure.getNumMembranes()==0) return 'You need to add membranes before moving on to the next step of the design process, do this in "Membrane Editing Mode".';
             if (mode === "meshing") return null;

@@ -306,3 +306,7 @@ span.modal-close{
 #about{
     margin-left: 20px;
 }
+
+#warningModalP{
+    text-align: center;
+}
