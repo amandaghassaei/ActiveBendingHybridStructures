@@ -12,6 +12,7 @@ function initView(globals){
         events: {
             "mouseenter #logo" : "showLogo",
             "mouseleave #logo" : "hideLogo",
+            "click #about" : "showAbout"
         },
 
         initialize: function(){
@@ -23,6 +24,11 @@ function initView(globals){
 
             this.listenTo(this.model, "change:mode", this.updateUIForMode);
             this.updateUIForMode();
+        },
+
+        showAbout: function(e){
+            e.preventDefault();
+            $('#aboutModal').modal('show');
         },
 
         showLogo: function(){
