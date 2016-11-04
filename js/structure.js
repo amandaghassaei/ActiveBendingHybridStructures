@@ -32,11 +32,11 @@ function initStructure(globals){
 
             this.intersector = initIntersector3D(globals, this);
 
-            this.listenTo(globals, "change:mode", this.modeChanged);
-            this.modeChanged();
+            this.listenTo(globals, "change:mode", this.updateForMode);
+            this.updateForMode();
         },
 
-        modeChanged: function(){
+        updateForMode: function(){
             this.currentEditingBeam = null;
             this.selectedEdges = [];
             var mode = globals.get("mode");
@@ -48,6 +48,7 @@ function initStructure(globals){
             _.each(this.beams, function(beam){
                 beam.setMaterial(beamMaterial);
             });
+            this.membraneContainer.visible = mode === "membraneEditing" || mode === "forceEditing";
             globals.threeView.render();
         },
 

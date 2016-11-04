@@ -27,42 +27,44 @@ function initMesh(globals){
         },
 
         updateForMode: function(){
-            if (!this.mesh) return;
+            if (!this.object3D) return;
             var mode = globals.get("mode");
             this.setTransparent(mode != "meshEditing");
+            this.object3D.visible = mode !== "forceEditing";
+            this.wireframe.visible = mode !== "forceEditing";
             globals.threeView.render();
         },
 
         setTransparent: function(transparent){
-            if (!this.mesh) return;
+            if (!this.object3D) return;
             if (transparent){
-                this.mesh.material = transparentMaterial;
+                this.object3D.material = transparentMaterial;
                 this.wireframe.material = transparentWireframeMaterial;
             } else {
-                this.mesh.material = material;
+                this.object3D.material = material;
                 this.wireframe.material = wireframeMaterial;
             }
         },
 
         scaleChanged: function(){
-            if (!this.mesh) return;
+            if (!this.object3D) return;
             var scale = this.get("scale");
             var geometry = origGeometry.clone();
             geometry.scale(scale.x, scale.y, scale.z);
             geometry.computeVertexNormals();
-            this.mesh.geometry = geometry;
+            this.object3D.geometry = geometry;
             this.wireframe.geometry = geometry;
             globals.threeView.render();
         },
 
         getSize: function(){
-            if (!this.mesh) return new THREE.Vector3();
-            var bbox = new THREE.Box3().setFromObject(this.mesh);
+            if (!this.object3D) return new THREE.Vector3();
+            var bbox = new THREE.Box3().setFromObject(this.object3D);
             return bbox.max.sub(bbox.min);
         },
 
         getObject3D: function(){
-            return this.mesh;
+            return this.object3D;
         },
 
         loadSTL: function(url){
@@ -72,14 +74,14 @@ function initMesh(globals){
                 geometry = new THREE.Geometry().fromBufferGeometry(geometry);
                 geometry.center();
                 origGeometry = geometry.clone();
-                if (self.mesh){
-                    globals.threeView.sceneRemove(self.mesh);
+                if (self.object3D){
+                    globals.threeView.sceneRemove(self.object3D);
                     globals.threeView.sceneRemove(self.wireframe);
                 }
-                self.mesh = new THREE.Mesh(geometry, material);
+                self.object3D = new THREE.Mesh(geometry, material);
                 var wireframeGeo = new THREE.WireframeGeometry(geometry);
                 self.wireframe = new THREE.LineSegments(wireframeGeo, wireframeMaterial);
-                globals.threeView.sceneAdd(self.mesh);
+                globals.threeView.sceneAdd(self.object3D);
                 globals.threeView.sceneAdd(self.wireframe);
                 self.scaleChanged();
                 self.trigger("change:stl");
