@@ -53,15 +53,23 @@ function initIntersector3D(globals, structure){
         if (!isDragging){
             switch (e.which) {
                 case 1://left button
-                    if (highlightedObj && highlightedObj.type == "node"){
-                        structure.addNodeToBeam(highlightedObj);
-                    } else {
-                        structure.stopEditingBeam();
+                    var mode = globals.get("mode");
+                    if (mode === "beamEditing") {
+                        if (highlightedObj && highlightedObj.type == "node") {
+                            structure.addNodeToBeam(highlightedObj);
+                        } else {
+                            structure.stopEditingBeam();
+                        }
+                        if (node.isVisible()) {
+                            structure.newNode(node.getPosition());
+                        }
+                        globals.threeView.render();
+                    } else if (mode === "membraneEditing"){
+                        if (highlightedObj && highlightedObj.type == "edge") {
+                            structure.selectEdge(highlightedObj);
+                        }
+                        globals.threeView.render();
                     }
-                    if (node.isVisible()){
-                        structure.newNode(node.getPosition());
-                    }
-                    globals.threeView.render();
                     break;
                 case 2://middle button
                     break;
@@ -143,6 +151,9 @@ function initIntersector3D(globals, structure){
                 }
                 break;
             case "membraneEditing":
+                _highlightedObj = checkForIntersections(e, structure.getEdgesToIntersect());
+                setHighlightedObj(_highlightedObj);
+                return;
                 break;
             case "forceEditing":
                 break;

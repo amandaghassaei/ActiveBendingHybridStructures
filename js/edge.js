@@ -2,9 +2,11 @@
  * Created by ghassaei on 9/16/16.
  */
 
-var edgeMaterialHighlight = new THREE.MeshLambertMaterial({color: 0xffffff});
+var edgeMaterialHighlight = new THREE.MeshBasicMaterial({color: 0xffffff});
+var edgeMaterialSelected = new THREE.MeshBasicMaterial({color: 0xb67df0});
 var edgeMaterialDelete = new THREE.MeshBasicMaterial({color:0xff0000});
-var edgeMaterial = new THREE.MeshBasicMaterial({color:0xb67df0});
+var edgeMaterialBeamEditing = new THREE.MeshBasicMaterial({color:0xb67df0});
+var edgeMaterial = new THREE.MeshBasicMaterial({color:0x555555});
 var edgeGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1);
 
 function Edge(nodes, parent){
@@ -14,7 +16,7 @@ function Edge(nodes, parent){
     nodes[1].addEdge(this);
     this.nodes = nodes;
 
-    this.object3D = new THREE.Mesh(edgeGeometry, edgeMaterial);
+    this.object3D = new THREE.Mesh(edgeGeometry, edgeMaterialBeamEditing);
     this.object3D._myEdge = this;
     parent.add(this.object3D);
     this.parent = parent;
@@ -22,11 +24,17 @@ function Edge(nodes, parent){
 }
 
 Edge.prototype.highlight = function(){
+    if (this.object3D.material == edgeMaterialSelected) return;
     this.object3D.material = edgeMaterialHighlight;
 };
 
 Edge.prototype.unhighlight = function(){
+    if (this.object3D.material == edgeMaterialSelected) return;
     this.object3D.material = edgeMaterial;
+};
+
+Edge.prototype.setMaterial = function(material){
+    this.object3D.material = material;
 };
 
 Edge.prototype.getLength = function(){

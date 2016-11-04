@@ -14,14 +14,20 @@ function initStructure(globals){
 
             this.nodes = [];
             this.beams = [];
+            this.membranes = [];
 
             this.currentEditingBeam = null;
+            this.selectedEdges = [];
 
             this.object3D = new THREE.Object3D();
             this.nodesContainer = new THREE.Object3D();
             this.object3D.add(this.nodesContainer);
             this.beamsContainer = new THREE.Object3D();
             this.object3D.add(this.beamsContainer);
+            this.edgesContainer = new THREE.Object3D();
+            this.object3D.add(this.edgesContainer);
+            this.membraneContainer = new THREE.Object3D();
+            this.object3D.add(this.membraneContainer);
             globals.threeView.sceneAdd(this.object3D);
 
             this.intersector = initIntersector3D(globals, this);
@@ -32,13 +38,21 @@ function initStructure(globals){
 
         modeChanged: function(){
             this.currentEditingBeam = null;
+            this.selectedEdges = [];
             var mode = globals.get("mode");
             this.object3D.visible = mode !== "meshEditing";
+            var beamMaterial = edgeMaterial;
+            if (mode == "beamEditing"){
+                beamMaterial = edgeMaterialBeamEditing;
+            }
+            _.each(this.beams, function(beam){
+                beam.setMaterial(beamMaterial);
+            });
             globals.threeView.render();
         },
 
         newBeam: function(node){
-            var beam = new Beam(node, this.beamsContainer);
+            var beam = new Beam(node, this.beamsContainer, this.edgesContainer);
             this.beams.push(beam);
             this.trigger("change:beams");
             return beam;
@@ -64,8 +78,23 @@ function initStructure(globals){
             return false;
         },
 
+        newMembrane: function(){
+            if (this.selectedEdges.length < 2) return;
+            var membrane = new Membrane(this.selectedEdges, this.membraneContainer);
+            this.membranes.push(membrane);
+            this.trigger("change:membrane");
+            _.each(this.selectedEdges, function(edge){
+                edge.setMaterial(edgeMaterial);
+            });
+            this.selectedEdges = [];
+            globals.threeView.render();
+        },
+
         getNodesToIntersect: function(){
             return this.nodesContainer.children;
+        },
+        getEdgesToIntersect: function(){
+            return this.edgesContainer.children;
         },
 
         addNodeToBeam: function(node){
@@ -78,6 +107,17 @@ function initStructure(globals){
         stopEditingBeam: function(){
             if (this.currentEditingBeam) this.currentEditingBeam.stopEditing();
             this.currentEditingBeam = null;
+        },
+
+        selectEdge: function(edge){
+            var index = this.selectedEdges.indexOf(edge);
+            if (index<0){
+                edge.setMaterial(edgeMaterialSelected);
+                this.selectedEdges.push(edge);
+            } else {
+                edge.setMaterial(edgeMaterial);
+                this.selectedEdges.splice(index, 1);
+            }
         }
 
     }))();
