@@ -9,7 +9,11 @@ function initGlobals(){
         defaults: {
             mode: "meshEditing",
 
-            snapToVertex: true
+            snapToVertex: true,
+
+            //simulation params
+            segmentLength: 1,
+            radialMembraneElements: 3
         },
 
         initialize: function(){
@@ -20,6 +24,7 @@ function initGlobals(){
             initMeshEditingView(this);
             initBeamEditingView(this);
             initMembraneEditingView(this);
+            initMeshingView(this);
         }
 
     }))();

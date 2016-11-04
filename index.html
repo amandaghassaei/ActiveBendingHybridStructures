@@ -34,6 +34,7 @@
     <script type="text/javascript" src="js/meshEditingView.js"></script>
     <script type="text/javascript" src="js/beamEditingView.js"></script>
     <script type="text/javascript" src="js/membraneEditingView.js"></script>
+    <script type="text/javascript" src="js/meshingView.js"></script>
     <script type="text/javascript" src="js/view.js"></script>
     <script type="text/javascript" src="js/structure.js"></script>
     <script type="text/javascript" src="js/intersector3D.js"></script>
@@ -46,15 +47,15 @@
     Bounding Box: &nbsp;&nbsp;<span id="meshSize"></span>
     <div class="sliderInput" id="meshScaleX">
         <span class="label-slider">Scale X : </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
-        <input value="" placeholder="" class="form-control int" type="text">
+        <input value="" placeholder="" class="form-control" type="text">
     </div>
     <div class="sliderInput" id="meshScaleY">
         <span class="label-slider">Scale Y : </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
-        <input value="" placeholder="" class="form-control int" type="text">
+        <input value="" placeholder="" class="form-control" type="text">
     </div>
     <div class="sliderInput" id="meshScaleZ">
         <span class="label-slider">Scale Z : </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
-        <input value="" placeholder="" class="form-control int" type="text">
+        <input value="" placeholder="" class="form-control" type="text">
     </div>
 </div>
 <div class="controls" id="beamEditingControls">
@@ -71,6 +72,16 @@
 </div>
 <div class="controls" id="forceEditingControls">
     force editing
+</div>
+<div class="controls" id="meshingControls">
+    <div class="sliderInput" id="segmentLength">
+        <span class="label-slider">Beam Segment Length (m): <br/></span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
+        <input value="" placeholder="" class="form-control" type="text">
+    </div>
+    <div class="sliderInput" id="radialMembraneElements">
+        <span class="label-slider">Num Radial Membrane Layers: <br/></span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
+        <input value="" placeholder="" class="form-control int" type="text">
+    </div>
 </div>
 <div id="controlsLeft">
     <a id="logo" target="_blank" href="http://cba.mit.edu/">
@@ -94,8 +105,12 @@
                 Membrane Editing
             </label>
             <label class="radio">
+                <input name="mode" value="meshing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                FEA meshing
+            </label>
+            <label class="radio">
                 <input name="mode" value="forceEditing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
-                External Forces Editing
+                Boundaries Editing
             </label>
         </div>
     </div>
