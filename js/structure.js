@@ -83,12 +83,15 @@ function initStructure(globals){
             if (this.selectedEdges.length < 2) return;
             var membrane = new Membrane(this.selectedEdges, this.membraneContainer);
             this.membranes.push(membrane);
-            this.trigger("change:membrane");
+            this.trigger("change:membranes");
             _.each(this.selectedEdges, function(edge){
                 edge.setMaterial(edgeMaterial);
             });
             this.selectedEdges = [];
             globals.threeView.render();
+        },
+        getNumMembranes: function(){
+            return this.membranes.length;
         },
 
         getNodesToIntersect: function(){
