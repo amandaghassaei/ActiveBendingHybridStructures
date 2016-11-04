@@ -19,14 +19,29 @@ function Membrane(edges, parent){
     }
     averageVertex.multiplyScalar(1/(geometry.vertices.length-1));
     geometry.computeVertexNormals();
-    this.object3D = new THREE.Mesh(geometry, membraneMaterial);
 
+    this.object3D = new THREE.Object3D();
+    this.object3D.add(new THREE.Mesh(geometry, membraneMaterial));
     parent.add(this.object3D);
     this.parent = parent;
+
+    this.edges = edges;
+
+    this.simMembrane = new SimMembrane(this.object3D);
 }
+
+Membrane.prototype.getOuterNodes = function(edges){
+    var vertices = [];
+};
+
+Membrane.prototype.mesh = function(numLayers){
+    var outerNodes = [];
+};
 
 Membrane.prototype.destroy = function(){
     parent.remove(this.object3D);
     parent = null;
     this.object3D = null;
+    this.edges = null;
+    this.simMembrane.destroy();
 };

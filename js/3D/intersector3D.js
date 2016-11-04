@@ -91,6 +91,12 @@ function initIntersector3D(globals, structure){
         mouse.y = - (e.clientY/window.innerHeight)*2+1;
         raycaster.setFromCamera(mouse, globals.threeView.camera);
 
+        if (isDragging) {
+            if (node.hide()) globals.threeView.render();
+            setHighlightedObj(null);
+            return;
+        }
+
         var _highlightedObj = null;
         var mode = globals.get("mode");
         switch(mode){
@@ -98,12 +104,6 @@ function initIntersector3D(globals, structure){
                 return;
                 break;
             case "beamEditing":
-                if (isDragging) {
-                    if (node.hide()) globals.threeView.render();
-                    setHighlightedObj(null);
-                    return;
-                }
-
                 _highlightedObj = checkForIntersections(e, structure.getNodesToIntersect());
                 if (_highlightedObj){
                     node.hide();

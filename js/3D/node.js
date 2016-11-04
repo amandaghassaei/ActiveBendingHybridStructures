@@ -132,7 +132,8 @@ Node.prototype.move = function(position){
     if (this.externalForce) this.externalForce.setOrigin(position.clone());
 };
 
-Node.prototype.getPosition = function(){
+Node.prototype.getPosition = function(withRef){
+    if (withRef) return this.object3D.position;
     return this.object3D.position.clone();
 };
 

@@ -2,12 +2,11 @@
  * Created by ghassaei on 9/16/16.
  */
 
-var edgeMaterialHighlight = new THREE.MeshBasicMaterial({color: 0xffffff});
-var edgeMaterialSelected = new THREE.MeshBasicMaterial({color: 0xe1cbf9});
-var edgeMaterialDelete = new THREE.MeshBasicMaterial({color:0xff0000});
-var edgeMaterialBeamEditing = new THREE.MeshBasicMaterial({color:0xb67df0});
-var edgeMaterial = new THREE.MeshBasicMaterial({color:0x555555});
-var edgeGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1);
+var edgeMaterialHighlight = new THREE.LineBasicMaterial({color: 0xffffff, linewidth:4});
+var edgeMaterialSelected = new THREE.LineBasicMaterial({color: 0xe1cbf9, linewidth:4});
+var edgeMaterialDelete = new THREE.LineBasicMaterial({color:0xff0000, linewidth:4});
+var edgeMaterialBeamEditing = new THREE.LineBasicMaterial({color:0xb67df0, linewidth:4});
+var edgeMaterial = new THREE.LineBasicMaterial({color:0x555555, linewidth:4});
 
 function Edge(nodes, parent){
 
@@ -15,8 +14,13 @@ function Edge(nodes, parent){
     nodes[0].addEdge(this);
     nodes[1].addEdge(this);
     this.nodes = nodes;
+    this.vertices = [nodes[0].getPosition(true), nodes[1].getPosition(true)];
 
-    this.object3D = new THREE.Mesh(edgeGeometry, edgeMaterialBeamEditing);
+    var lineGeometry = new THREE.Geometry();
+    lineGeometry.dynamic = true;
+    lineGeometry.vertices = this.vertices;
+
+    this.object3D = new THREE.Line(lineGeometry, edgeMaterialLine);
     this.object3D._myEdge = this;
     parent.add(this.object3D);
     this.parent = parent;
@@ -41,12 +45,6 @@ Edge.prototype.getLength = function(){
     var vertex1Pos = this.nodes[0].getPosition();
     var vertex2Pos = this.nodes[1].getPosition();
     return vertex1Pos.sub(vertex2Pos).length();
-};
-
-Edge.prototype.getVector = function(fromNode){
-    var toNode = this.nodes[0];
-    if (this.nodes[0] == fromNode) toNode = this.nodes[1];
-    return toNode.getPosition().sub(fromNode.getPosition());
 };
 
 Edge.prototype.isFixed = function(){
@@ -76,14 +74,8 @@ Edge.prototype.getNodes = function(){
 };
 
 Edge.prototype.update = function(){
-    this.object3D.scale.y = this.getLength();
-    var edgeAxis = this.nodes[0].getPosition().sub(this.nodes[1].getPosition());
-    var axis = (new THREE.Vector3(0,1,0)).cross(edgeAxis).normalize();
-    var angle = Math.acos(new THREE.Vector3(0,1,0).dot(edgeAxis.normalize()));
-    var quaternion = (new THREE.Quaternion()).setFromAxisAngle(axis, angle);
-    var position = (this.nodes[0].getPosition().add(this.nodes[1].getPosition())).multiplyScalar(0.5);
-    this.object3D.position.set(position.x, position.y, position.z);
-    this.object3D.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+    this.object3D.geometry.verticesNeedUpdate = true;
+    this.object3D.geometry.computeBoundingSphere();
 };
 
 
@@ -100,4 +92,5 @@ Edge.prototype.destroy = function(){
     this.object3D._myEdge = null;
     this.object3D = null;
     this.nodes = null;
+    this.vertices = null;
 };

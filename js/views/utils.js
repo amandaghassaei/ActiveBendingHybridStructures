@@ -56,3 +56,42 @@ function setCheckbox(id, state, callback){
     });
     $input.prop('checked', state);
 }
+
+
+function setSlider(id, val, min, max, incr, callback, callbackOnStop){
+    var slider = $(id).slider({
+        orientation: 'horizontal',
+        range: false,
+        value: val,
+        min: min,
+        max: max,
+        step: incr
+    });
+    slider.on("slide", function(e, ui){
+        var val = ui.value;
+        callback(val);
+    });
+    slider.on("slidestop", function(){
+        var val = slider.slider('value');
+        if (callbackOnStop) callbackOnStop(val);
+    })
+}
+
+function setInput(id, val, callback, min, max){
+    var $input = $(id);
+    $input.change(function(){
+        var val = $input.val();
+        if ($input.hasClass("int")){
+            if (isNaN(parseInt(val))) return;
+            val = parseInt(val);
+        } else {
+            if (isNaN(parseFloat(val))) return;
+            val = parseFloat(val);
+        }
+        if (min !== undefined && val < min) val = min;
+        if (max !== undefined && val > max) val = max;
+        $input.val(val);
+        callback(val);
+    });
+    $input.val(val);
+}
