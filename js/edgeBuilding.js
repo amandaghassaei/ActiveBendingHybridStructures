@@ -32,6 +32,7 @@ EdgeBuilding.prototype.setNode = function(node){
     var position = node.getPosition();
     this.vertices[0].set(position.x, position.y, position.z);
     this.vertices[1].set(position.x, position.y, position.z);
+    this.update();
     this.show();
 };
 
