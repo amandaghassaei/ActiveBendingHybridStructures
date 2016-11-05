@@ -23,6 +23,8 @@ function initStructure(globals){
             this.currentEditingBeam = null;
             this.selectedEdges = [];
 
+            this.numFixed = 0;
+
             this.object3D = new THREE.Object3D();
             this.nodesContainer = new THREE.Object3D();
             this.object3D.add(this.nodesContainer);
@@ -36,7 +38,7 @@ function initStructure(globals){
             this.object3D.add(this.simContainer);
             globals.threeView.sceneAdd(this.object3D);
 
-            this.intersector = initIntersector3D(globals, this);
+            initIntersector3D(globals, this);
 
             this.listenTo(globals, "change:mode", this.updateForMode);
             this.listenTo(globals, "change:radialMembraneLayers", this.radialMembraneLayersChanged);
@@ -67,6 +69,7 @@ function initStructure(globals){
                     membrane.setEdgeMaterial(edgeMaterialBeamEditing);
                 });
             } else if (mode === "boundaryEditing"){
+                if (globals.get("needsRemesh")) this.syncSim();
                 _.each(this.simMembranes, function(membrane){
                     membrane.setEdgeMaterial(simEdgeMaterial);
                 });
@@ -126,6 +129,10 @@ function initStructure(globals){
         },
         getEdgesToIntersect: function(){
             return this.edgesContainer.children;
+        },
+
+        getNumFixed: function(){
+            return this.numFixed;
         },
 
         addNodeToBeam: function(node){
