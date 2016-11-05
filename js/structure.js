@@ -41,6 +41,9 @@ function initStructure(globals){
             this.listenTo(globals, "change:mode", this.updateForMode);
             this.listenTo(globals, "change:radialMembraneLayers", this.radialMembraneLayersChanged);
             this.listenTo(globals, "change:segmentLength", this.segmentLengthChanged);
+            this.listenTo(this, "change:beams change:membranes", function(){
+                globals.set("needsRemesh", true);
+            });
             this.updateForMode();
         },
 
@@ -53,7 +56,7 @@ function initStructure(globals){
             if (mode == "beamEditing"){
                 beamMaterial = edgeMaterialBeamEditing;
             } else if (mode === "meshing"){
-                this.syncSim();
+                if (globals.get("needsRemesh")) this.syncSim();
             }
             _.each(this.beams, function(beam){
                 beam.setMaterial(beamMaterial);
@@ -139,7 +142,6 @@ function initStructure(globals){
         },
 
         syncSim: function(){
-
             var nodes = this.nodes;
             var beams = this.beams;
             var membranes = this.membranes;
@@ -213,6 +215,8 @@ function initStructure(globals){
                 this.simMembranes[i].setBorderNodes();
                 this.simMembranes[i].mesh(numLayers);
             }
+
+            globals.set("needsRemesh", false);
         },
 
         radialMembraneLayersChanged: function(){

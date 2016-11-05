@@ -13,7 +13,8 @@ function initGlobals(){
 
             //simulation params
             segmentLength: 1,
-            radialMembraneLayers: 2
+            radialMembraneLayers: 2,
+            needsRemesh: false
         },
 
         initialize: function(){

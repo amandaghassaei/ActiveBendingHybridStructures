@@ -86,33 +86,55 @@ SimMembrane.prototype.setupStaticMatrices = function(){
     var numEdges = this.innerEdges.length;
     var numNodes = this.innerNodes.length;
     var numBorderNodes = this.borderNodes.length;
-    var _C = initEmptyArray(numEdges, numNodes);
-    var _Cf = initEmptyArray(numEdges, numBorderNodes);
-    var _Q = initEmptyArray(numEdges, numEdges);
-    var _Xf = initEmptyArray(numBorderNodes);
+    this.C = initEmptyArray(numEdges, numNodes);
+    this.Cf = initEmptyArray(numEdges, numBorderNodes);
+    this.Q = initEmptyArray(numEdges, numEdges);
+    this.Xf = initEmptyArray(numBorderNodes);
 
     for (var i=0;i<numEdges;i++){
         var edge = this.innerEdges[i];
         var _nodes = edge.getNodes();
-        if (_nodes[0].isBeamNode) _Cf[i][this.borderNodes.indexOf(_nodes[0])] = 1;
-        else _C[i][this.innerNodes.indexOf(_nodes[0])] = 1;
-        if (_nodes[1].isBeamNode) _Cf[i][this.borderNodes.indexOf(_nodes[1])] = -1;
-        else _C[i][this.innerNodes.indexOf(_nodes[1])] = -1;
-        _Q[i][i] = edge.getForceDensity();
+        if (_nodes[0].isBeamNode) this.Cf[i][this.borderNodes.indexOf(_nodes[0])] = 1;
+        else this.C[i][this.innerNodes.indexOf(_nodes[0])] = 1;
+        if (_nodes[1].isBeamNode) this.Cf[i][this.borderNodes.indexOf(_nodes[1])] = -1;
+        else this.C[i][this.innerNodes.indexOf(_nodes[1])] = -1;
+        this.Q[i][i] = edge.getForceDensity();
     }
 
     for (var i=0;i<numBorderNodes;i++){
         var position = this.borderNodes[i].getPosition();
-        _Xf[i] = [-position.x, -position.y, -position.z];
+        this.Xf[i] = [-position.x, -position.y, -position.z];
     }
 
-    this.Ctranspose = numeric.transpose(_C);
-    var Ctrans_Q = numeric.dot(this.Ctranspose, _Q);
-    var Ctrans_Q_C = numeric.dot(Ctrans_Q, _C);
+    this.Ctranspose = numeric.transpose(this.C);
+    var Ctrans_Q = numeric.dot(this.Ctranspose, this.Q);
+    var Ctrans_Q_C = numeric.dot(Ctrans_Q, this.C);
     this.inv_Ctrans_Q_C = numeric.inv(Ctrans_Q_C);
-    this.Ctrans_Q_Cf = numeric.dot(Ctrans_Q, _Cf);
-    var Ctrans_Q_Cf_Xf = numeric.dot(this.Ctrans_Q_Cf, _Xf);
+    this.Ctrans_Q_Cf = numeric.dot(Ctrans_Q, this.Cf);
+    var Ctrans_Q_Cf_Xf = numeric.dot(this.Ctrans_Q_Cf, this.Xf);
 
+    this.solve(Ctrans_Q_Cf_Xf);
+};
+
+SimMembrane.prototype.updateQs = function(){
+    for (var i=0;i<this.innerEdges.length;i++){
+        this.Q[i][i] = this.innerEdges[i].getForceDensity();
+    }
+    var Ctrans_Q = numeric.dot(this.Ctranspose, this.Q);
+    var Ctrans_Q_C = numeric.dot(Ctrans_Q, this.C);
+    this.inv_Ctrans_Q_C = numeric.inv(Ctrans_Q_C);
+    this.Ctrans_Q_Cf = numeric.dot(Ctrans_Q, this.Cf);
+    var Ctrans_Q_Cf_Xf = numeric.dot(this.Ctrans_Q_Cf, this.Xf);
+
+    this.solve(Ctrans_Q_Cf_Xf);
+};
+
+SimMembrane.prototype.updateBoundaries = function(){
+    for (var i=0;i<this.Xf.length;i++){
+        var position = this.borderNodes[i].getPosition();
+        this.Xf[i] = [-position.x, -position.y, -position.z];
+    }
+    var Ctrans_Q_Cf_Xf = numeric.dot(this.Ctrans_Q_Cf, this.Xf);
     this.solve(Ctrans_Q_Cf_Xf);
 };
 
@@ -140,6 +162,13 @@ SimMembrane.prototype.destroy = function(){
     this.simEdges = null;
     this.simNodes = null;
     this.borderNodes = null;
+    this.C = null;
+    this.Cf = null;
+    this.Q = null;
+    this.Xf = null;
+    this.Ctranspose = null;
+    this.inv_Ctrans_Q_C = null;
+    this.Ctrans_Q_Cf = null;
 };
 
 function initEmptyArray(dim1, dim2, dim3){
