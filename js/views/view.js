@@ -67,7 +67,8 @@ function initView(globals){
             if (globals.structure.getNumMembranes()==0) return 'You need to add membranes before moving on to the next step of the design process, do this in "Membrane Editing Mode".';
             if (mode === "meshing") return null;
             if (mode === "boundaryEditing") return null;
-            if (globals.structure.getNumFixed() == 0) return 'You must define boundary conditions before moving on to optimization, do this in "Boundaries Editing Mode".';
+            if (globals.structure.getNumFixed() == 0) return 'You must define boundary conditions before moving on to simulation and optimization, do this in "Boundaries Editing Mode".';
+            if (mode === "simulation") return null;
             if (mode === "optimization") return null;
             return null;
         },

@@ -91,6 +91,13 @@ function initStructure(globals){
         getNumBeams: function(){
             return this.beams.length;
         },
+        getBeamsJSON: function(){
+            var beamsJSON = [];
+            _.each(this.beams, function(beam){
+                beamsJSON.push(beam.toJSON());
+            });
+            return {beams:beamsJSON};
+        },
 
         newNode: function(position){
             if (this.nodeAtPosition(position)) return;
@@ -141,6 +148,7 @@ function initStructure(globals){
             } else {
                 this.currentEditingBeam = this.newBeam(node);
             }
+            this.trigger("change:beamsMeta");
         },
         stopEditingBeam: function(){
             if (this.currentEditingBeam) this.currentEditingBeam.stopEditing();

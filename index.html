@@ -73,7 +73,7 @@
     </label>
     Num Nodes: &nbsp;&nbsp;<span id="numNodes"></span><br/>
     Num Beams: &nbsp;&nbsp;<span id="numBeams"></span><br/>
-    <div id="#beamMeta"></div>
+    <span id="beamMeta"></span>
 </div>
 <div class="controls" id="membraneEditingControls">
     Num Membranes: &nbsp;&nbsp;<span id="numMembranes"></span><br/>
@@ -90,6 +90,9 @@
 </div>
 <div class="controls" id="boundaryEditingControls">
     boundaries
+</div>
+<div class="controls" id="simulationControls">
+    simulation
 </div>
 <div class="controls" id="optimizationControls">
     optimization
@@ -122,6 +125,10 @@
             <label class="radio">
                 <input name="mode" value="boundaryEditing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
                 Boundaries Editing
+            </label>
+            <label class="radio">
+                <input name="mode" value="simulation" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                Simulation
             </label>
             <label class="radio">
                 <input name="mode" value="optimization" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>

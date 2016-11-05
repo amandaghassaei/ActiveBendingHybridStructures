@@ -5,6 +5,10 @@
 
 function initBeamEditingView(globals){
 
+    var beamsMetaTemplate = _.template("<% _.each(beams, function(beam){ %>" +
+            "<div>Edges : <%= beam.numEdges %></div>" +
+            "<% }); %>");
+
     return new (Backbone.View.extend({
 
         el: "#beamEditingControls",
@@ -22,6 +26,8 @@ function initBeamEditingView(globals){
             this.listenTo(this.model, "change:beamsMeta", this.updateBeamsMeta);
             this.listenTo(this.model, "change:nodes", this.updateNumNodes);
             this.updateNumNodes();
+
+
         },
 
         updateNumBeams: function(){
@@ -36,8 +42,7 @@ function initBeamEditingView(globals){
         },
 
         updateBeamsMeta: function(){
-            var $div = $("#beamMeta");
-
+            $("#beamMeta").html(beamsMetaTemplate(this.model.getBeamsJSON()));
         }
 
     }))({model:globals.structure});

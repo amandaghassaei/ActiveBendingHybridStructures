@@ -53,6 +53,13 @@ Beam.prototype.setMaterial = function(material){
 };
 
 
+Beam.prototype.toJSON = function(){
+    return {
+        numNodes: this.getNodes().length,
+        numEdges: this.getEdges().length
+    }
+};
+
 Beam.prototype.destroy = function(){
     this.nodes = null;
     this.parent.remove(this.object3D);
