@@ -52,20 +52,30 @@ function initStructure(globals){
             this.selectedEdges = [];
             var mode = globals.get("mode");
             this.object3D.visible = mode !== "meshEditing";
-            var beamMaterial = edgeMaterial;
             if (mode == "beamEditing"){
-                beamMaterial = edgeMaterialBeamEditing;
-            } else if (mode === "meshing"){
-                if (globals.get("needsRemesh")) this.syncSim();
+                _.each(this.beams, function(beam){
+                    beam.setMaterial(edgeMaterialBeamEditing);
+                });
+            } else {
+                _.each(this.beams, function(beam){
+                    beam.setMaterial(edgeMaterial);
+                });
             }
-            _.each(this.beams, function(beam){
-                beam.setMaterial(beamMaterial);
-            });
-            this.simContainer.visible = mode === "meshing";
-            this.nodesContainer.visible = mode !== "meshing";
-            this.beamsContainer.visible =  mode !== "meshing";
-            this.edgesContainer.visible =  mode !== "meshing";
-            this.membraneContainer.visible = mode !== "meshing" && (mode === "membraneEditing" || mode === "forceEditing");
+            if (mode === "meshing"){
+                if (globals.get("needsRemesh")) this.syncSim();
+                _.each(this.simMembranes, function(membrane){
+                    membrane.setEdgeMaterial(edgeMaterialBeamEditing);
+                });
+            } else if (mode === "boundaryEditing"){
+                _.each(this.simMembranes, function(membrane){
+                    membrane.setEdgeMaterial(simEdgeMaterial);
+                });
+            }
+            this.simContainer.visible = mode === "meshing" || mode === "boundaryEditing";
+            this.nodesContainer.visible = !(mode === "boundaryEditing" || mode === "meshing");
+            this.beamsContainer.visible =  !(mode === "boundaryEditing" || mode === "meshing");
+            this.edgesContainer.visible =  !(mode === "boundaryEditing" || mode === "meshing");
+            this.membraneContainer.visible = !(mode === "boundaryEditing" || mode === "meshing") && (mode === "membraneEditing");
             globals.threeView.render();
         },
 

@@ -155,7 +155,7 @@ function initIntersector3D(globals, structure){
                 setHighlightedObj(_highlightedObj);
                 return;
                 break;
-            case "forceEditing":
+            case "boundaryEditing":
                 break;
         }
 

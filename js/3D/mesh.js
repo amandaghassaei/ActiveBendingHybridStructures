@@ -30,8 +30,8 @@ function initMesh(globals){
             if (!this.object3D) return;
             var mode = globals.get("mode");
             this.setTransparent(mode != "meshEditing");
-            this.object3D.visible = !(mode === "forceEditing" || mode === "meshing");
-            this.wireframe.visible = !(mode === "forceEditing" || mode === "meshing");
+            this.object3D.visible = !(mode === "boundaryEditing" || mode === "meshing");
+            this.wireframe.visible = !(mode === "boundaryEditing" || mode === "meshing");
             globals.threeView.render();
         },
 

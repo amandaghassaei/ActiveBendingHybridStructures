@@ -154,6 +154,12 @@ SimMembrane.prototype.render = function(X){
 };
 
 
+SimMembrane.prototype.setEdgeMaterial = function(material){
+    for (var i=0;i<this.innerEdges.length;i++){
+        this.innerEdges[i].setMaterial(material);
+    }
+};
+
 
 SimMembrane.prototype.destroy = function(){
     this.parent = null;

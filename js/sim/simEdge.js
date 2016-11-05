@@ -67,6 +67,12 @@ SimEdge.prototype.destroyElements = function(){
     this.innerNodes = [];
 };
 
+SimEdge.prototype.setMaterial = function(material){
+    _.each(this.elements, function(element){
+        element.setMaterial(material);
+    });
+};
+
 SimEdge.prototype.destroy = function(){
     this.destroyElements();
     this.elements = null;

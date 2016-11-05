@@ -78,9 +78,6 @@
 <div class="controls" id="membraneEditingControls">
     Num Membranes: &nbsp;&nbsp;<span id="numMembranes"></span><br/>
 </div>
-<div class="controls" id="forceEditingControls">
-    force editing
-</div>
 <div class="controls" id="meshingControls">
     <div class="sliderInput" id="segmentLength">
         <span class="label-slider">Beam Segment Length (m): <br/></span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
@@ -90,6 +87,12 @@
         <span class="label-slider">Num Radial Membrane Layers: <br/></span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
         <input value="" placeholder="" class="form-control int" type="text">
     </div>
+</div>
+<div class="controls" id="boundaryEditingControls">
+    boundaries
+</div>
+<div class="controls" id="optimizationControls">
+    optimization
 </div>
 <div id="controlsLeft">
     <a id="logo" target="_blank" href="http://cba.mit.edu/">
@@ -117,8 +120,12 @@
                 FEA meshing
             </label>
             <label class="radio">
-                <input name="mode" value="forceEditing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                <input name="mode" value="boundaryEditing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
                 Boundaries Editing
+            </label>
+            <label class="radio">
+                <input name="mode" value="optimization" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                Optimization
             </label>
         </div>
     </div>

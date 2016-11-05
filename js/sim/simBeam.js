@@ -13,6 +13,12 @@ SimBeam.prototype.mesh = function(beamElSize){
     }
 };
 
+SimBeam.prototype.setMaterial = function(material){
+    _.each(this.edges, function(edge){
+        edge.setMaterial(material);
+    });
+};
+
 SimBeam.prototype.destroy = function(){
     _.each(this.edges, function(edge){
         edge.destroy();

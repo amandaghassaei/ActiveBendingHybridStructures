@@ -66,7 +66,7 @@ function initView(globals){
             if (mode === "membraneEditing") return null;
             if (globals.structure.getNumMembranes()==0) return 'You need to add membranes before moving on to the next step of the design process, do this in "Membrane Editing Mode".';
             if (mode === "meshing") return null;
-            if (mode === "forceEditing") return null;
+            if (mode === "boundaryEditing") return null;
         },
         updateUIForMode: function(){
             var mode = globals.get("mode");
