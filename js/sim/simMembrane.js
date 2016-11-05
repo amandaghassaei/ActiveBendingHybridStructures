@@ -11,7 +11,7 @@ function SimMembrane(simEdges, simNodes, parent){
     this.simNodes = simNodes;
     this.innerNodes = [];
     this.innerEdges = [];
-    this.setBorderNodes();
+    this.borderNodes = [];
 }
 
 SimMembrane.prototype.setBorderNodes = function(){
@@ -21,7 +21,7 @@ SimMembrane.prototype.setBorderNodes = function(){
         var lastNode = borderNodes[borderNodes.length-1];
         var edge = this.simEdges[i];
         var edgeNodes = edge.getInnerNodes(lastNode);
-        for (var j=0;j<edgeNodes;j++){
+        for (var j=0;j<edgeNodes.length;j++){
             borderNodes.push(edgeNodes[j]);
         }
         borderNodes.push(edge.getOtherNode(lastNode));
@@ -51,6 +51,7 @@ SimMembrane.prototype.mesh = function(numLayers){
         this.innerEdges.push(edge);
         lastLayer = nextLayer;
     }
+    console.log(this.innerEdges);
 };
 
 SimMembrane.prototype.destroyInnerNodes = function(){
@@ -68,10 +69,9 @@ SimMembrane.prototype.setNumLayers = function(numLayers){
 
 SimMembrane.prototype.destroy = function(){
     this.parent = null;
-    this.object3D.children = [];
+    this.destroyInnerNodes();
     this.object3D = null;
     this.simEdges = null;
     this.simNodes = null;
-    this.destroyInnerNodes();
     this.borderNodes = null;
 };

@@ -78,7 +78,6 @@ Node.prototype.removeEdge = function(edge){
     if (this.edges === null) return;
     var index = this.edges.indexOf(edge);
     if (index>=0) this.edges.splice(index, 1);
-    if (this.edges.length == 0) globals.removeNode(this);
 };
 
 Node.prototype.getEdges = function(){

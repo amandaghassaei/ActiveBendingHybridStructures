@@ -14,7 +14,7 @@ function initMeshingView(globals){
 
         initialize: function(){
 
-            setSliderInput("#radialMembraneElements", globals.get("segmentLength"), 0, 10, 1, this.meshRadialResolutionChanged);
+            setSliderInput("#radialMembraneElements", globals.get("radialMembraneElements"), 0, 10, 1, this.meshRadialResolutionChanged);
             setSliderInput("#segmentLength", globals.get("segmentLength"), 0.01, 5, 0.01, this.beamSegmentLengthChanged);
         },
 

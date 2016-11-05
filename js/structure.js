@@ -193,10 +193,11 @@ function initStructure(globals){
                 orientedNodes.push(simEdges[0].getNodes()[0]);
                 for (var j=0;j<simEdges.length;j++){
                     var lastNode = orientedNodes[orientedNodes.length-1];
-                    var nextEdge = this._getNextEdge(lastNode, simEdges);
+                    var nextEdge = this._getNextEdge(lastNode, simEdges, orientedEdges);
                     orientedEdges.push(nextEdge);
                     orientedNodes.push(nextEdge.getOtherNode(lastNode));
                 }
+                orientedNodes.pop();
                 var simMembrane = new SimMembrane(orientedEdges, orientedNodes, parent);
                 this.simMembranes.push(simMembrane);
             }
@@ -207,15 +208,18 @@ function initStructure(globals){
             }
             var numLayers = globals.get("radialMembraneElements");
             for (var i=0;i<this.simMembranes.length;i++){
+                this.simMembranes[i].setBorderNodes();
                 this.simMembranes[i].mesh(numLayers);
             }
         },
 
-        _getNextEdge: function(lastNode, edges){
-            for (var j=1;j<edges.length;j++){
-                var nodes = edges[j].getNodes();
+        _getNextEdge: function(lastNode, edges, orientedEdges){
+            for (var j=0;j<edges.length;j++){
+                var edge = edges[j];
+                var nodes = edge.getNodes();
                 if (nodes.indexOf(lastNode) > -1){
-                    return edges[j];
+                    if (orientedEdges.indexOf(edge) > -1) continue;
+                    return edge;
                 }
             }
             console.warn("couldn't find next edge");

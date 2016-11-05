@@ -19,7 +19,6 @@ SimEdge.prototype.getInnerNodes = function(node0){
     if (this.nodes[0] === node0) return this.innerNodes;
     var innerNodes = this.innerNodes.slice();
     return innerNodes.reverse();
-
 };
 
 SimEdge.prototype.getLength = function(){
@@ -42,7 +41,7 @@ SimEdge.prototype.mesh = function(elementLength){
     var vector = this.getVector().normalize();
     var lastNode = this.nodes[0];
     for (var i=0;i<numNodes;i++){
-        var node = new Node(vector.clone().multiplyScalar(i/(numNodes)*length).add(this.nodes[1].getPosition()), this.parent);
+        var node = new Node(vector.clone().multiplyScalar((i+1)/(numElements)*length).add(this.nodes[1].getPosition()), this.parent);
         this.innerNodes.push(node);
         var edge = new Edge([lastNode, node], this.parent);
         this.elements.push(edge);
