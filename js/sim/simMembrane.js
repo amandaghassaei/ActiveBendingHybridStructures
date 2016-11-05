@@ -46,8 +46,12 @@ SimMembrane.prototype.mesh = function(numLayers){
             nextLayer.push(node);
             this.innerNodes.push(node);
             if (i>0) {
-                edge = new SimTensionEl([node, nextLayer[nextLayer.length-1]], this, this.object3D);
+                edge = new SimTensionEl([node, nextLayer[i-1]], this, this.object3D);
                 this.innerEdges.push(edge);
+                if (i==this.borderNodes.length){
+                    edge = new SimTensionEl([node, nextLayer[0]], this, this.object3D);
+                    this.innerEdges.push(edge);
+                }
             }
             edge = new SimTensionEl([node, lastLayer[i]], this, this.object3D);
             this.innerEdges.push(edge);
