@@ -57,11 +57,12 @@ SimMembrane.prototype.mesh = function(numLayers){
         lastLayer = nextLayer;
     }
     node = new SimNode(centerPosition.clone(), this.object3D);
-    nextLayer.push(node);
+    this.innerNodes.push(node);
     for (var i=0;i<lastLayer.length;i++){
         edge = new SimTensionEl([node, lastLayer[i]], this, this.object3D);
         this.innerEdges.push(edge);
     }
+    this.setupStaticMatrices();
 };
 
 SimMembrane.prototype.destroyInnerNodes = function(){
@@ -77,6 +78,57 @@ SimMembrane.prototype.setNumLayers = function(numLayers){
     this.mesh(numLayers);
 };
 
+SimMembrane.prototype.setupStaticMatrices = function(){
+    var numEdges = this.innerEdges.length;
+    var numNodes = this.innerNodes.length;
+    var numBorderNodes = this.borderNodes.length;
+    var _C = initEmptyArray(numEdges, numNodes);
+    var _Cf = initEmptyArray(numEdges, numBorderNodes);
+    var _Q = initEmptyArray(numEdges, numEdges);
+    var _Xf = initEmptyArray(numBorderNodes);
+
+    for (var i=0;i<numEdges;i++){
+        var edge = this.innerEdges[i];
+        var _nodes = edge.getNodes();
+        if (_nodes[0].isBeamNode) _Cf[i][this.borderNodes.indexOf(_nodes[0])] = 1;
+        else _C[i][this.innerNodes.indexOf(_nodes[0])] = 1;
+        if (_nodes[1].isBeamNode) _Cf[i][this.borderNodes.indexOf(_nodes[1])] = -1;
+        else _C[i][this.innerNodes.indexOf(_nodes[1])] = -1;
+        _Q[i][i] = edge.getForceDensity();
+    }
+
+    for (var i=0;i<numBorderNodes;i++){
+        var position = this.borderNodes[i].getPosition();
+        _Xf[i] = [-position.x, -position.y, -position.z];
+    }
+
+    this.Ctranspose = numeric.transpose(_C);
+    var Ctrans_Q = numeric.dot(this.Ctranspose, _Q);
+    var Ctrans_Q_C = numeric.dot(Ctrans_Q, _C);
+    this.inv_Ctrans_Q_C = numeric.inv(Ctrans_Q_C);
+    this.Ctrans_Q_Cf = numeric.dot(Ctrans_Q, _Cf);
+    var Ctrans_Q_Cf_Xf = numeric.dot(this.Ctrans_Q_Cf, _Xf);
+
+    this.solve(Ctrans_Q_Cf_Xf);
+};
+
+SimMembrane.prototype.solve = function(Ctrans_Q_Cf_Xf){
+    var X = numeric.dot(this.inv_Ctrans_Q_C, Ctrans_Q_Cf_Xf);
+    this.render(X);
+};
+
+SimMembrane.prototype.render = function(X){
+    for (var i=0;i<X.length;i++){
+        var nodePosition = new THREE.Vector3(X[i][0],X[i][1],X[i][2]);
+        this.innerNodes[i].move(nodePosition);
+    }
+    for (var i=0;i<this.innerEdges.length;i++){
+        this.innerEdges[i].update();
+    }
+};
+
+
+
 SimMembrane.prototype.destroy = function(){
     this.parent = null;
     this.destroyInnerNodes();
@@ -85,3 +137,21 @@ SimMembrane.prototype.destroy = function(){
     this.simNodes = null;
     this.borderNodes = null;
 };
+
+function initEmptyArray(dim1, dim2, dim3){
+    if (dim2 === undefined) dim2 = 0;
+    if (dim3 === undefined) dim3 = 0;
+    var array = [];
+    for (var i=0;i<dim1;i++){
+        if (dim2 == 0) array.push(0);
+        else array.push([]);
+        for (var j=0;j<dim2;j++){
+            if (dim3 == 0) array[i].push(0);
+            else array[i].push([]);
+            for (var k=0;k<dim3;k++){
+                array[i][j].push(0);
+            }
+        }
+    }
+    return array;
+}

@@ -8,6 +8,7 @@ function SimEdge(nodes, parent){
     this.innerNodes = [];
     this.nodes = nodes;
     this.parent = parent;
+
 }
 
 SimEdge.prototype.getOtherNode = function(node){
@@ -16,7 +17,7 @@ SimEdge.prototype.getOtherNode = function(node){
 };
 
 SimEdge.prototype.getInnerNodes = function(node0){
-    if (this.nodes[0] === node0) return this.innerNodes;
+    if (this.nodes[0] != node0) return this.innerNodes;
     var innerNodes = this.innerNodes.slice();
     return innerNodes.reverse();
 };
@@ -40,15 +41,16 @@ SimEdge.prototype.mesh = function(elementLength){
     var numNodes = numElements - 1;
     var vector = this.getVector().normalize();
     var lastNode = this.nodes[0];
+    var edge = new SimBeamEl([lastNode, this.nodes[1]], this.parent);
+    this.elements.push(edge);
     for (var i=0;i<numNodes;i++){
-        var node = new Node(vector.clone().multiplyScalar((i+1)/(numElements)*length).add(this.nodes[1].getPosition()), this.parent);
+        var node = new SimNode(vector.clone().multiplyScalar((i+1)/(numElements)*length).add(this.nodes[1].getPosition()), this.parent);
+        node.setIsBeamNode(true);
         this.innerNodes.push(node);
-        var edge = new Edge([lastNode, node], this.parent);
+        var edge = new SimBeamEl([lastNode, node], this.parent);
         this.elements.push(edge);
         lastNode = node;
     }
-    var edge = new Edge([lastNode, this.nodes[1]], this.parent);
-    this.elements.push(edge);
 };
 
 SimEdge.prototype.destroyElements = function(){

@@ -10,7 +10,7 @@ function SimTensionEl(nodes, membrane, parent){
 SimTensionEl.prototype = Object.create(Edge.prototype);
 
 SimTensionEl.prototype.getForceDensity = function(){
-    return this.membrane.getForceDensity();
+    return 1;
 };
 
 SimTensionEl.prototype.destroy = function(){

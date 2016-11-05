@@ -160,7 +160,7 @@ function initStructure(globals){
 
             for (var i=0;i<nodes.length;i++){
                 var simNode = new SimNode(nodes[i].getPosition(), parent);
-                simNode.setFixed();
+                simNode.setIsBeamNode(true);
                 this.simNodes.push(simNode);
             }
             var allEdges = [];

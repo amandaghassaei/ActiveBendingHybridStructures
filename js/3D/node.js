@@ -125,9 +125,9 @@ Node.prototype.isVisible = function(){
 
 Node.prototype.move = function(position){
     this.object3D.position.set(position.x, position.y, position.z);
-    _.each(this.edges, function(edge){
-        edge.update();
-    });
+    //_.each(this.edges, function(edge){
+    //    edge.update();
+    //});
     if (this.externalForce) this.externalForce.setOrigin(position.clone());
 };
 

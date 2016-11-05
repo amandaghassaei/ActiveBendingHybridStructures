@@ -9,6 +9,10 @@ function SimNode(position, parent){
 }
 SimNode.prototype = Object.create(Node.prototype);
 
+SimNode.prototype.setIsBeamNode = function(state){
+    this.isBeamNode = state;
+};
+
 SimNode.prototype.destroy = function(){
     this.parent = null;
     this.object3D = null;
