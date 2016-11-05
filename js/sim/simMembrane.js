@@ -34,10 +34,15 @@ SimMembrane.prototype.mesh = function(numLayers){
     this.destroyInnerNodes();
     var node, edge;
     var lastLayer = this.borderNodes;
+    var centerPosition = new THREE.Vector3(0,0,0);
+    for (var i=0;i<this.borderNodes.length;i++){
+        centerPosition.add(this.borderNodes[i].getPosition());
+    }
+    centerPosition.multiplyScalar(1/this.borderNodes.length);
     for (var j=0;j<numLayers;j++){
         var nextLayer = [];
         for (var i=0;i<this.borderNodes.length;i++){
-            node = new SimNode(new THREE.Vector3(), this.object3D);
+            node = new SimNode(centerPosition.clone(), this.object3D);
             nextLayer.push(node);
             this.innerNodes.push(node);
             if (i>0) {
@@ -51,7 +56,12 @@ SimMembrane.prototype.mesh = function(numLayers){
         this.innerEdges.push(edge);
         lastLayer = nextLayer;
     }
-    console.log(this.innerEdges);
+    node = new SimNode(centerPosition.clone(), this.object3D);
+    nextLayer.push(node);
+    for (var i=0;i<lastLayer.length;i++){
+        edge = new SimTensionEl([node, lastLayer[i]], this, this.object3D);
+        this.innerEdges.push(edge);
+    }
 };
 
 SimMembrane.prototype.destroyInnerNodes = function(){
