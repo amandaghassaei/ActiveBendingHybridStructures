@@ -39,6 +39,8 @@ function initStructure(globals){
             this.intersector = initIntersector3D(globals, this);
 
             this.listenTo(globals, "change:mode", this.updateForMode);
+            this.listenTo(globals, "change:radialMembraneLayers", this.radialMembraneLayersChanged);
+            this.listenTo(globals, "change:segmentLength", this.segmentLengthChanged);
             this.updateForMode();
         },
 
@@ -202,15 +204,35 @@ function initStructure(globals){
                 this.simMembranes.push(simMembrane);
             }
 
-            var elementLength = globals.get("segmentLength");
+            var segmentLength = globals.get("segmentLength");
             for (var i=0;i<this.simBeams.length;i++){
-                this.simBeams[i].mesh(elementLength);
+                this.simBeams[i].mesh(segmentLength);
             }
-            var numLayers = globals.get("radialMembraneElements");
+            var numLayers = globals.get("radialMembraneLayers");
             for (var i=0;i<this.simMembranes.length;i++){
                 this.simMembranes[i].setBorderNodes();
                 this.simMembranes[i].mesh(numLayers);
             }
+        },
+
+        radialMembraneLayersChanged: function(){
+            var numLayers = globals.get("radialMembraneLayers");
+            for (var i=0;i<this.simMembranes.length;i++){
+                this.simMembranes[i].mesh(numLayers);
+            }
+            globals.threeView.render();
+        },
+        segmentLengthChanged: function(){
+            var segmentLength = globals.get("segmentLength");
+            for (var i=0;i<this.simBeams.length;i++){
+                this.simBeams[i].mesh(segmentLength);
+            }
+            var numLayers = globals.get("radialMembraneLayers");
+            for (var i=0;i<this.simMembranes.length;i++){
+                this.simMembranes[i].setBorderNodes();
+                this.simMembranes[i].mesh(numLayers);
+            }
+            globals.threeView.render();
         },
 
         _getNextEdge: function(lastNode, edges, orientedEdges){

@@ -8,6 +8,8 @@ function SimEdge(nodes, parent){
     this.innerNodes = [];
     this.nodes = nodes;
     this.parent = parent;
+    this.object3D = new THREE.Object3D();
+    parent.add(this.object3D);
 
 }
 
@@ -41,19 +43,20 @@ SimEdge.prototype.mesh = function(elementLength){
     var numNodes = numElements - 1;
     var vector = this.getVector().normalize();
     var lastNode = this.nodes[0];
-    var edge = new SimBeamEl([lastNode, this.nodes[1]], this.parent);
+    var edge = new SimBeamEl([lastNode, this.nodes[1]], this.object3D);
     this.elements.push(edge);
     for (var i=0;i<numNodes;i++){
-        var node = new SimNode(vector.clone().multiplyScalar((i+1)/(numElements)*length).add(this.nodes[1].getPosition()), this.parent);
+        var node = new SimNode(vector.clone().multiplyScalar((i+1)/(numElements)*length).add(this.nodes[1].getPosition()), this.object3D);
         node.setIsBeamNode(true);
         this.innerNodes.push(node);
-        var edge = new SimBeamEl([lastNode, node], this.parent);
+        var edge = new SimBeamEl([lastNode, node], this.object3D);
         this.elements.push(edge);
         lastNode = node;
     }
 };
 
 SimEdge.prototype.destroyElements = function(){
+    this.object3D.children = [];
     for (var i=0;i<this.elements.length;i++){
         this.elements[i].destroy();
     }
@@ -68,4 +71,7 @@ SimEdge.prototype.destroy = function(){
     this.destroyElements();
     this.elements = null;
     this.nodes = null;
+    this.parent.remove(this.object3D);
+    this.object3D = null;
+    this.parent = null;
 };

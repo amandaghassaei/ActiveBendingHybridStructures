@@ -3,7 +3,7 @@
  */
 
 
-var simEdgeMaterial = new THREE.LineBasicMaterial({color:0x777777, linewidth:4});
+var simEdgeMaterial = new THREE.LineBasicMaterial({color:0xaaaaaa, linewidth:4});
 
 function SimBeamEl(nodes, parent){
     Edge.call(this, nodes, parent);
@@ -11,6 +11,10 @@ function SimBeamEl(nodes, parent){
 }
 SimBeamEl.prototype = Object.create(Edge.prototype);
 
-//SimBeamEl.prototype.destroy = function(){
-//
-//};
+SimBeamEl.prototype.destroy = function(){
+    this.parent = null;
+    this.object3D._myEdge = null;
+    this.object3D = null;
+    this.nodes = null;
+    this.vertices = null;
+};

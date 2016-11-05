@@ -14,12 +14,12 @@ function initMeshingView(globals){
 
         initialize: function(){
 
-            setSliderInput("#radialMembraneElements", globals.get("radialMembraneElements"), 0, 10, 1, this.meshRadialResolutionChanged);
+            setSliderInput("#radialMembraneLayers", globals.get("radialMembraneLayers"), 0, 5, 1, this.radialMembraneLayersChanged);
             setSliderInput("#segmentLength", globals.get("segmentLength"), 0.01, 5, 0.01, this.beamSegmentLengthChanged);
         },
 
-        meshRadialResolutionChanged: function(val){
-            globals.set("radialMembraneElements", val);
+        radialMembraneLayersChanged: function(val){
+            globals.set("radialMembraneLayers", val);
         },
 
         beamSegmentLengthChanged: function(val){
