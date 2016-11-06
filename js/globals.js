@@ -23,7 +23,7 @@ function initGlobals(){
             this.threeView = initThreeView(this);
             this.mesh = initMesh(this);
             this.structure = initStructure(this);
-            initView(this);
+            this.view = initView(this);
             initMeshEditingView(this);
             initBeamEditingView(this);
             initMembraneEditingView(this);

@@ -29,7 +29,7 @@ function initView(globals){
             this.updateUIForMode();
         },
 
-        showWarningModel: function(text){
+        showWarningModal: function(text){
             $("#warningModalP").html(text);
             $("#warningModal").modal('show');
         },
@@ -52,7 +52,7 @@ function initView(globals){
             var state = $("input[name=mode]:checked").val();
             var warning = this.shouldChangeToMode(state);
             if (warning) {
-                this.showWarningModel(warning);
+                this.showWarningModal(warning);
                 $(".radio>input[name=mode][value=" + globals.get("mode") + "]").prop("checked", true);
                 return;
             }

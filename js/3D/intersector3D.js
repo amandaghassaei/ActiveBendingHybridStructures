@@ -27,10 +27,14 @@ function initIntersector3D(globals, structure){
 
     var listener = _.extend({}, Backbone.Events);
     listener.listenTo(globals, "change:deleteNodeMode", function(){
-        if (globals.get("deleteNodeMode")) node.getObject3D().material = _nodeDeleteMaterial;
+        if (globals.get("deleteNodeMode")) {
+            node.getObject3D().material = _nodeDeleteMaterial;
+            if (highlightedObj && highlightedObj.type == "node") highlightedObj.setDeleteMode();
+        }
         else {
             node.getObject3D().material = _nodeMaterial;
             node.hide();
+            if (highlightedObj && highlightedObj.type == "node") highlightedObj.highlight();
         }
         globals.threeView.render();
     });
@@ -77,8 +81,9 @@ function initIntersector3D(globals, structure){
                     if (mode === "beamEditing") {
                         if (globals.get("deleteNodeMode")){
                             if (highlightedObj && highlightedObj.type == "node") {
-                                structure.removeNode(highlightedObj);
-                                highlightedObj = null;
+                                var deleted = structure.removeNode(highlightedObj);
+                                if (deleted) highlightedObj = null;
+                                else setHighlightedObj(null);
                             }
                             globals.set("deleteNodeMode", false);
                             break;

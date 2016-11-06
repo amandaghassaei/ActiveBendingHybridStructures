@@ -139,16 +139,43 @@ function initStructure(globals){
         removeNode: function(node, clear){
             var index = this.nodes.indexOf(node);
             if (index<0) return;
-            this._removeNode(this.nodes[index], index, clear);
+            return this._removeNode(this.nodes[index], index, clear);
         },
         _removeNode: function(node, index, clear){
-            node.destroy(clear);
-            globals.set("needsRemesh", true);
             if (clear === undefined) {
+                var edges = node.getEdges();
+                if (edges.length>1) {
+                    globals.view.showWarningModal("Can't delete node with multiple edges attached.  Delete beam instead.");
+                    return false;
+                } else if (edges.length == 1){
+                    this._removeEdge(edges[0], node);
+                }
+                node.destroy(clear);
+                globals.set("needsRemesh", true);
                 this.nodes.splice(index, 1);
                 this.trigger("change:nodes");
                 globals.threeView.render();
+            } else {
+                node.destroy(clear);
+                globals.set("needsRemesh", true);
             }
+            return true;
+        },
+        _removeEdge: function(edge, node){
+            for (var i=0;i<this.beams.length;i++){
+                var beam = this.beams[i];
+                if (beam.contains(edge)){
+                    if (beam.getEdges().length == 1){
+                        //remove beam
+                        this.removeBeam(beam);
+                    } else {
+                        beam.removeEdge(edge, node);
+                        this.trigger("change:beamsMeta");
+                    }
+                    return;
+                }
+            }
+            console.warn("no edge removed");
         },
         getNumNodes: function(){
             return this.nodes.length;

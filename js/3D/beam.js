@@ -43,6 +43,22 @@ Beam.prototype.getEdges = function(){
     return this.edges;
 };
 
+Beam.prototype.contains = function(edge){
+    return this.edges.indexOf(edge) != -1;
+};
+
+Beam.prototype.removeEdge = function(edge, node){
+    var edgeIndex = this.edges.indexOf(edge);
+    var nodeIndex = this.nodes.indexOf(node);
+    if (edgeIndex < 0 || nodeIndex < 0) {
+        console.warn("bad index");
+        return;
+    }
+    this.edges.splice(edgeIndex, 1);
+    this.nodes.splice(nodeIndex, 1);
+    edge.destroy();
+};
+
 Beam.prototype.stopEditing = function(){
     this.edgeInProgress.hide();
 };
