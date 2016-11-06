@@ -328,3 +328,9 @@ span.modal-close{
 #fileInput{
     display: none;
 }
+
+#clearAll{
+    position: absolute;
+    right: 20px;
+    top: 10px;
+}

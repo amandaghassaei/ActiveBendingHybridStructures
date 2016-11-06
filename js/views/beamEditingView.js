@@ -18,7 +18,8 @@ function initBeamEditingView(globals){
 
         events: {
             "click #deleteNodeMode": "setDeleteNodeMode",
-            "click .deleteBeam": "deleteBeam"
+            "click .deleteBeam": "deleteBeam",
+            "click #clearAll": "clearAll"
         },
 
         initialize: function(){
@@ -64,6 +65,11 @@ function initBeamEditingView(globals){
             $("#beamMeta").html(beamsMetaTemplate(json));
             setRadio("selectedBeam", json.beams.length-1, this.model.highlightBeam);
             this.model.highlightBeam(json.beams.length-1);
+        },
+
+        clearAll: function(e){
+            e.preventDefault();
+            this.model.reset();
         }
 
     }))({model:globals.structure});

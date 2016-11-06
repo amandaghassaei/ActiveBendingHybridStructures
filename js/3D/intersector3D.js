@@ -58,7 +58,7 @@ function initIntersector3D(globals, structure){
 
     document.addEventListener('mousedown', function(e){
         var $target = $(e.target);
-        if ($target.is("span") || $target.hasClass("modal") || $target.is("a")) return;
+        if ($target.is("span") || $target.hasClass("modal") || $target.hasClass("radio") || $target.hasClass("checkbox") || $target.is("a")) return;
         switch (e.which) {
             case 1://left button
                 mouseDown = true;
@@ -74,7 +74,7 @@ function initIntersector3D(globals, structure){
         mouseDown = false;
         if (!isDragging){
             var $target = $(e.target);
-            if ($target.is("span") || $target.hasClass("modal") || $target.is("a")) return;
+            if ($target.is("span") || $target.hasClass("modal") || $target.hasClass("radio") || $target.hasClass("checkbox") || $target.is("a")) return;
             switch (e.which) {
                 case 1://left button
                     var mode = globals.get("mode");
