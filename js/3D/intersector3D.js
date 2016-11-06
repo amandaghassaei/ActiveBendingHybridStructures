@@ -38,6 +38,8 @@ function initIntersector3D(globals, structure){
     });
 
     document.addEventListener('mousedown', function(e){
+        var $target = $(e.target);
+        if ($target.is("span") || $target.hasClass("modal") || $target.is("a")) return;
         switch (e.which) {
             case 1://left button
                 mouseDown = true;
@@ -50,7 +52,10 @@ function initIntersector3D(globals, structure){
     }, false);
 
     document.addEventListener('mouseup', function(e){
+        mouseDown = false;
         if (!isDragging){
+            var $target = $(e.target);
+            if ($target.is("span") || $target.hasClass("modal") || $target.is("a")) return;
             switch (e.which) {
                 case 1://left button
                     var mode = globals.get("mode");
@@ -78,7 +83,6 @@ function initIntersector3D(globals, structure){
             }
         }
         isDragging = false;
-        mouseDown = false;
     }, false);
 
     document.addEventListener('mousemove', function mouseMove(e){

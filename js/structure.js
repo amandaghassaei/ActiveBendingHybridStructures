@@ -12,7 +12,7 @@ function initStructure(globals){
 
         initialize: function(){
 
-            _.bindAll(this, "highlightBeam");
+            _.bindAll(this, "highlightBeam", "highlightMembrane");
 
             this.nodes = [];
             this.beams = [];
@@ -144,6 +144,20 @@ function initStructure(globals){
         },
         getNumMembranes: function(){
             return this.membranes.length;
+        },
+        getMembranesJSON: function(){
+            var membranesJSON = [];
+            _.each(this.membranes, function(membrane){
+                membranesJSON.push(membrane.toJSON());
+            });
+            return {membranes:membranesJSON};
+        },
+        highlightMembrane: function(index){
+            _.each(this.membranes, function(membrane){
+                membrane.unhighlight();
+            });
+            if (this.membranes[index]) this.membranes[index].highlight();
+            globals.threeView.render();
         },
 
         getNodesToIntersect: function(){

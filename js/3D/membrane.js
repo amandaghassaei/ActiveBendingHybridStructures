@@ -2,7 +2,8 @@
  * Created by ghassaei on 11/3/16.
  */
 
-var membraneMaterial = new THREE.MeshBasicMaterial({color: 0xb67df0, side: THREE.DoubleSide});
+var membraneMaterialHighlight = new THREE.MeshBasicMaterial({color: 0xb67df0, side: THREE.DoubleSide});
+var membraneMaterial = new THREE.MeshBasicMaterial({color: 0x777777, side: THREE.DoubleSide});
 
 function Membrane(edges, parent){
 
@@ -27,8 +28,21 @@ function Membrane(edges, parent){
     this.edges = edges;
 }
 
+Membrane.prototype.highlight = function(){
+    this.object3D.material = membraneMaterialHighlight;
+};
+Membrane.prototype.unhighlight = function(){
+    this.object3D.material = membraneMaterial;
+};
+
 Membrane.prototype.getEdges = function(){
     return this.edges;
+};
+
+Membrane.prototype.toJSON = function(){
+    return {
+        numEdges: this.edges.length
+    }
 };
 
 Membrane.prototype.destroy = function(){

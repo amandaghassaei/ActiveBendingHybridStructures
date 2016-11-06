@@ -5,7 +5,7 @@
 var nodeMaterial = new THREE.MeshBasicMaterial({color: 0x000000});
 var nodeMaterialFixed = new THREE.MeshBasicMaterial({color: 0x000000});
 var nodeMaterialDelete = new THREE.MeshBasicMaterial({color: 0xff0000});
-var nodeMaterialHighlight = new THREE.MeshBasicMaterial({color: 0xb67df0});
+var nodeMaterialHighlight = new THREE.MeshBasicMaterial({color: 0xdabef7});
 var nodeGeo = new THREE.SphereGeometry(0.2);
 var nodeFixedGeo = new THREE.CubeGeometry(0.5, 0.5, 0.5);
 
