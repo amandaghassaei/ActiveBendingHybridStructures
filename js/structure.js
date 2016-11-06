@@ -100,12 +100,16 @@ function initStructure(globals){
             this._removeBeam(beam, index, clear);
         },
         _removeBeam: function(beam, index, clear){
-            beam.destroy(clear);
-            globals.set("needsRemesh", true);
             if (clear === undefined) {
+                this.removeMembranesAttachedToEdges(beam.getEdges());
+                beam.destroy(clear);
+                globals.set("needsRemesh", true);
                 this.beams.splice(index, 1);
                 this.trigger("change:beams");
                 globals.threeView.render();
+            } else {
+                beam.destroy(clear);
+                globals.set("needsRemesh", true);
             }
         },
         getNumBeams: function(){
@@ -169,6 +173,7 @@ function initStructure(globals){
                         //remove beam
                         this.removeBeam(beam);
                     } else {
+                        this.removeMembranesAttachedToEdges([edge]);
                         beam.removeEdge(edge, node);
                         this.trigger("change:beamsMeta");
                     }
@@ -212,6 +217,21 @@ function initStructure(globals){
                 this.membranes.splice(index, 1);
                 this.trigger("change:membranes");
                 globals.threeView.render();
+            }
+        },
+        removeMembranesAttachedToEdges: function(edges){
+            var membranes = [];
+            for (var i=0;i<this.membranes.length;i++){
+                for (var j=0;j<edges.length;j++){
+                    var membrane = this.membranes[i];
+                    if (membrane.contains(edges[j])){
+                        membranes.push(membrane);
+                    }
+                }
+            }
+            _.uniq(membranes);
+            for (var i=0;i<membranes.length;i++){
+                this.removeMembrane(membranes[i]);
             }
         },
         getNumMembranes: function(){

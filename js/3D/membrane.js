@@ -39,6 +39,10 @@ Membrane.prototype.getEdges = function(){
     return this.edges;
 };
 
+Membrane.prototype.contains = function(edge){
+    return this.edges.indexOf(edge) != -1;
+};
+
 Membrane.prototype.toJSON = function(){
     return {
         numEdges: this.edges.length
