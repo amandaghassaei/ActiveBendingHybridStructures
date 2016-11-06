@@ -8,7 +8,7 @@ function initBeamEditingView(globals){
     var beamsMetaTemplate = _.template("<% _.each(beams, function(beam, index){ %>" +
             '<label class="radio">'+
                 '<input name="selectedBeam" value="<%= index %>" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>'+
-                'Beam <%= index + 1 %> :  <%= beam.numEdges %> edges <a href="#" id="beamNum<%=index%>" class="deleteBeam"><span class="fui-cross"></span></a>' +
+                'Beam <%= index + 1 %> :  <%= beam.numEdges %> edges <a href="#" data-index="<%=index%>" class="deleteBeam"><span class="fui-cross"></span></a>' +
             '</label>' +
             "<% });%>");
 
@@ -17,7 +17,8 @@ function initBeamEditingView(globals){
         el: "#beamEditingControls",
 
         events: {
-            "click #deleteNodeMode": "setDeleteNodeMode"
+            "click #deleteNodeMode": "setDeleteNodeMode",
+            "click .deleteBeam": "deleteBeam"
         },
 
         initialize: function(){
@@ -33,6 +34,13 @@ function initBeamEditingView(globals){
             this.updateNumNodes();
 
 
+        },
+
+        deleteBeam: function(e){
+            e.preventDefault();
+            var index = parseInt($(e.target).parent().data("index"));
+            if (isNaN(index)) return;
+            this.model.removeBeamAtIndex(index)
         },
 
         setDeleteNodeMode: function(e){
