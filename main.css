@@ -310,3 +310,17 @@ span.modal-close{
 #warningModalP{
     text-align: center;
 }
+
+.deleteBeam, .deleteMembrane{
+    color: #a21717;
+    display: inline-block;
+    margin-left:8px;
+    line-height: 1;
+}
+.deleteBeam, .deleteMembrane:hover{
+    color: #a21717;
+}
+.fui-cross{
+    top: 1px;
+    position: absolute;
+}

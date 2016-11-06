@@ -8,7 +8,7 @@ function initBeamEditingView(globals){
     var beamsMetaTemplate = _.template("<% _.each(beams, function(beam, index){ %>" +
             '<label class="radio">'+
                 '<input name="selectedBeam" value="<%= index %>" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>'+
-                'Beam <%= index + 1 %> :  <%= beam.numEdges %> edges' +
+                'Beam <%= index + 1 %> :  <%= beam.numEdges %> edges <a href="#" id="beamNum<%=index%>" class="deleteBeam"><span class="fui-cross"></span></a>' +
             '</label>' +
             "<% });%>");
 

@@ -8,7 +8,7 @@ function initMembraneEditingView(globals){
     var membranesMetaTemplate = _.template("<% _.each(membranes, function(membrane, index){ %>" +
             '<label class="radio">'+
                 '<input name="selectedMembrane" value="<%= index %>" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>'+
-                'Membrane <%= index + 1 %> :  <%= membrane.numEdges %> edges' +
+                'Membrane <%= index + 1 %> :  <%= membrane.numEdges %> edges <a href="#" id="membraneNum<%=index%>" class="deleteMembrane"><span class="fui-cross"></span></a>' +
             '</label>' +
             "<% });%>");
 
