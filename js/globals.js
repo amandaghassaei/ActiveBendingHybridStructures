@@ -28,6 +28,28 @@ function initGlobals(){
             initBeamEditingView(this);
             initMembraneEditingView(this);
             initMeshingView(this);
+
+            var self = this;
+            $(window).bind('keyup', function(e) {
+                var mode = self.get("mode");
+                if (mode === "membraneEditing"){
+                    if (e.keyCode == 13){
+                        self.structure.newMembrane();
+                    }
+                } else if (mode === "beamEditing"){
+                    if (e.keyCode == 68){
+                        self.set("deleteNodeMode", false);
+                    }
+                }
+            });
+            $(window).bind('keydown', function(e) {
+                var mode = self.get("mode");
+                if (mode === "beamEditing"){
+                    if (e.keyCode == 68){
+                        self.set("deleteNodeMode", true);
+                    }
+                }
+            });
         }
 
     }))();
