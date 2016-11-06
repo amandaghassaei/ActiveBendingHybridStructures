@@ -45,8 +45,10 @@ Membrane.prototype.toJSON = function(){
     }
 };
 
-Membrane.prototype.destroy = function(){
-    this.parent.remove(this.object3D);
+Membrane.prototype.destroy = function(clear){
+    if (clear === undefined){
+        this.parent.remove(this.object3D);
+    }
     this.parent = null;
     this.object3D = null;
     this.edges = null;

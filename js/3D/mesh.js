@@ -82,6 +82,9 @@ function initMesh(globals){
                 if (self.object3D){
                     globals.threeView.sceneRemove(self.object3D);
                     globals.threeView.sceneRemove(self.wireframe);
+                    if (globals.get("autoDeleteGeo")){
+                        globals.structure.reset();
+                    }
                 }
                 self.object3D = new THREE.Mesh(geometry, material);
                 var wireframeGeo = new THREE.WireframeGeometry(geometry);

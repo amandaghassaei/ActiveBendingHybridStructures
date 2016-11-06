@@ -68,12 +68,14 @@ Beam.prototype.toJSON = function(){
     }
 };
 
-Beam.prototype.destroy = function(){
+Beam.prototype.destroy = function(clear){
     this.nodes = null;
-    this.parent.remove(this.object3D);
+    if (clear === undefined){
+        this.parent.remove(this.object3D);
+    }
     this.parent = null;
     _.each(this.edges, function(edge){
-        edge.destroy();
+        edge.destroy(clear);
     });
     this.edgeParent = null;
     this.edges = null;

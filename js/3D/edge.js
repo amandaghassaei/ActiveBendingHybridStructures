@@ -83,12 +83,14 @@ Edge.prototype.update = function(){
 
 //deallocate
 
-Edge.prototype.destroy = function(){
+Edge.prototype.destroy = function(clear){
     var self = this;
-    _.each(this.nodes, function(node){
-        node.removeEdge(self);
-    });
-    this.parent.remove(this.object3D);
+    if (clear === undefined){
+        _.each(this.nodes, function(node){
+            node.removeEdge(self);
+        });
+        this.parent.remove(this.object3D);
+    }
     this.parent = null;
     this.object3D._myEdge = null;
     this.object3D = null;

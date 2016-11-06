@@ -10,12 +10,14 @@ function initMeshEditingView(globals){
         el: "#meshEditingControls",
 
         events: {
-            "click #uploadSTL": this.uploadSTL
+            "click #uploadSTL": "uploadSTL"
         },
 
         initialize: function(){
 
-            _.bindAll(this, "meshScaleChanged");
+            _.bindAll(this, "meshScaleChanged", "changeAutoDelete");
+
+            setCheckbox("#autoDeleteGeo", globals.get("autoDeleteGeo"), this.changeAutoDelete);
 
             var scale = this.model.get("scale");
             setSliderInput("#meshScaleX", scale.x, 0.0001, 20, 0.001, this.meshScaleChanged);
@@ -24,11 +26,34 @@ function initMeshEditingView(globals){
 
             this.listenTo(this.model, "change:scale change:stl", this.setMeshSize);
             this.setMeshSize();
+
+            var reader = new FileReader();
+
+            reader.addEventListener("load", function(){
+                globals.mesh.loadSTL(reader.result);
+            }, false);
+
+            $("#fileInput").change(function(e){
+                var files = $(e.target).get(0).files;
+                if (files === undefined) return;
+                if (files.length == 0) return;
+                var file = files[0];
+                var name = file.name.split(".");
+                if (name.length == 0) return;
+                var extension = name[name.length-1].toLowerCase();
+                if (extension === "stl"){
+                    reader.readAsDataURL(file);
+                }
+            });
+        },
+
+        changeAutoDelete: function(state){
+            globals.set("autoDeleteGeo", state);
         },
 
         uploadSTL: function(e){
             e.preventDefault();
-            //todo upload stl
+            $("#fileInput").click();
         },
 
         setMeshSize: function(){

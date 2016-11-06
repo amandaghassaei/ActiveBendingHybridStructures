@@ -10,6 +10,7 @@ function initGlobals(){
             mode: "meshEditing",
 
             snapToVertex: true,
+            autoDeleteGeo: true,
 
             //simulation params
             segmentLength: 2,

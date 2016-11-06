@@ -142,16 +142,18 @@ Node.prototype.getPosition = function(withRef){
 
 //deallocate
 
-Node.prototype.destroy = function(){
-    this.parent.remove(this.object3D);
-    this.parent = null;
+Node.prototype.destroy = function(clear){
+    if (clear === undefined){
+        this.parent.remove(this.object3D);
+        for (var i=this.edges.length-1;i>=0;i--){
+            var edge = this.edges[i];
+            edge.destroy()
+        }
+        if (this.externalForce) this.externalForce.destroy();
+    }
     this.object3D._myNode = null;
     this.object3D = null;
-    for (var i=this.edges.length-1;i>=0;i--){
-        var edge = this.edges[i];
-        edge.destroy()
-    }
+    this.parent = null;
     this.edges = null;
-    if (this.externalForce) this.externalForce.destroy();
     this.externalForce = null;
 };

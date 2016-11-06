@@ -91,18 +91,19 @@ function initStructure(globals){
             this.trigger("change:beams");
             return beam;
         },
-        removeBeamAtIndex: function(index){
-            if (!this.beams[index]) return;
-            this.beams[index].destroy();
-            this.beams.splice(index, 1);
-            this.trigger("change:beams");
+        removeBeamAtIndex: function(beam, index, clear){
+            beam.destroy(clear);
             globals.set("needsRemesh", true);
-            globals.threeView.render();
+            if (clear === undefined) {
+                this.beams.splice(index, 1);
+                this.trigger("change:beams");
+                globals.threeView.render();
+            }
         },
-        removeBeam: function(beam){
+        removeBeam: function(beam, clear){
             var index = this.beams.indexOf(beam);
             if (index<0) return;
-            this.removeBeamAtIndex(index);
+            this.removeBeamAtIndex(beam, index, clear);
         },
         getNumBeams: function(){
             return this.beams.length;
@@ -129,6 +130,20 @@ function initStructure(globals){
             this.trigger("change:nodes");
             globals.threeView.render();
         },
+        removeNodeAtIndex: function(node, index, clear){
+            node.destroy(clear);
+            globals.set("needsRemesh", true);
+            if (clear === undefined) {
+                this.nodes.splice(index, 1);
+                this.trigger("change:nodes");
+                globals.threeView.render();
+            }
+        },
+        removeNode: function(node, clear){
+            var index = this.nodes.indexOf(node);
+            if (index<0) return;
+            this.removeNodeAtIndex(node, index, clear);
+        },
         getNumNodes: function(){
             return this.nodes.length;
         },
@@ -150,17 +165,18 @@ function initStructure(globals){
             this.selectedEdges = [];
             globals.threeView.render();
         },
-        removeMembraneAtIndex: function(index){
-            if (!this.membranes[index]) return;
-            this.membranes[index].destroy();
-            this.membranes.splice(index, 1);
-            this.trigger("change:membranes");
-            globals.threeView.render();
+        removeMembraneAtIndex: function(membrane, index, clear){
+            membrane.destroy(clear);
+            if (clear === undefined) {
+                this.membranes.splice(index, 1);
+                this.trigger("change:membranes");
+                globals.threeView.render();
+            }
         },
-        removeMembrane: function(membrane){
+        removeMembrane: function(membrane, clear){
             var index = this.membranes.indexOf(membrane);
             if (index<0) return;
-            this.removeMembraneAtIndex(index);
+            this.removeMembraneAtIndex(index, clear);
         },
         getNumMembranes: function(){
             return this.membranes.length;
@@ -327,6 +343,30 @@ function initStructure(globals){
             }
             console.warn("couldn't find next edge");
             return null;
+        },
+
+        reset: function(){
+            globals.set("needsRemesh", true);
+            var self = this;
+            this.nodesContainer.children = [];
+            this.beamsContainer.children = [];
+            this.edgesContainer.children = [];
+            this.membraneContainer.children = [];
+            _.each(this.membranes, function(membrane, index){
+                self.removeMembraneAtIndex(membrane, index, true);
+            });
+            _.each(this.beams, function(beam, index){
+                self.removeBeamAtIndex(beam, index, true);
+            });
+            _.each(this.nodes, function(node, index){
+                self.removeNodeAtIndex(node, index, true);
+            });
+            this.nodes = [];
+            this.trigger("change:nodes");
+            this.beams = [];
+            this.trigger("change:beams");
+            this.membranes = [];
+            this.trigger("change:membranes");
         }
 
     }))();
