@@ -14,11 +14,22 @@ function initIntersector3D(globals, structure){
 
     var node = new Node(new THREE.Vector3(), globals.threeView.scene);
     node.type = "dummy";
-    node.getObject3D().material = node.getObject3D().material.clone();
-    node.getObject3D().material.transparent = true;
-    node.getObject3D().material.side = THREE.DoubleSide;
-    node.getObject3D().material.opacity = 0.5;
+    var _nodeMaterial = node.getObject3D().material.clone();
+    var _nodeDeleteMaterial = nodeMaterialDelete.clone();
+    _nodeDeleteMaterial.transparent = true;
+    _nodeDeleteMaterial.side = THREE.DoubleSide;
+    _nodeDeleteMaterial.opacity = 0.5;
+    _nodeMaterial.transparent = true;
+    _nodeMaterial.side = THREE.DoubleSide;
+    _nodeMaterial.opacity = 0.5;
+    node.getObject3D().material = _nodeMaterial;
     node.hide();
+
+    var listener = _.extend({}, Backbone.Events);
+    listener.listenTo(globals, "change:deleteNodeMode", function(){
+        if (globals.get("deleteNodeMode")) node.getObject3D().material = _nodeDeleteMaterial;
+        else node.getObject3D().material = _nodeMaterial;
+    });
 
     function setHighlightedObj(object){
         var shouldRender = false;
@@ -61,6 +72,12 @@ function initIntersector3D(globals, structure){
                     var mode = globals.get("mode");
                     if (mode === "beamEditing") {
                         if (highlightedObj && highlightedObj.type == "node") {
+                            if (globals.get("deleteNodeMode")){
+                                structure.removeNode(highlightedObj);
+                                highlightedObj = null;
+                                globals.set("deleteNodeMode", false);
+                                break;
+                            }
                             structure.addNodeToBeam(highlightedObj);
                         } else {
                             structure.stopEditingBeam();
@@ -112,6 +129,10 @@ function initIntersector3D(globals, structure){
                 if (_highlightedObj){
                     node.hide();
                     setHighlightedObj(_highlightedObj);
+                    if (globals.get("deleteNodeMode") && _highlightedObj.type == "node") {
+                        _highlightedObj.setDeleteMode();
+                        globals.threeView.render();
+                    }
                     return;
                 }
                 setHighlightedObj(_highlightedObj);
@@ -130,7 +151,7 @@ function initIntersector3D(globals, structure){
                     return;
                 } else {
                     var position = intersection.point;
-                    if (globals.get("snapToVertex")){
+                    if (!globals.get("deleteNodeMode") && globals.get("snapToVertex")){
                         var geometry = intersection.object.geometry;
                         var face = geometry.faces[intersection.faceIndex];
                         var vertices = [];

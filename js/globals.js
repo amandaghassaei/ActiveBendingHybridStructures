@@ -11,6 +11,7 @@ function initGlobals(){
 
             snapToVertex: true,
             autoDeleteGeo: true,
+            deleteNodeMode: false,
 
             //simulation params
             segmentLength: 2,

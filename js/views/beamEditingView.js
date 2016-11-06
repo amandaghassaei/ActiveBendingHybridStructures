@@ -17,6 +17,7 @@ function initBeamEditingView(globals){
         el: "#beamEditingControls",
 
         events: {
+            "click #deleteNodeMode": "setDeleteNodeMode"
         },
 
         initialize: function(){
@@ -32,6 +33,11 @@ function initBeamEditingView(globals){
             this.updateNumNodes();
 
 
+        },
+
+        setDeleteNodeMode: function(e){
+            e.preventDefault();
+            globals.set("deleteNodeMode", true);
         },
 
         updateNumBeams: function(){
