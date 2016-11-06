@@ -76,6 +76,7 @@ function initBeamEditingView(globals){
         clearAll: function(e){
             e.preventDefault();
             this.model.reset();
+            globals.threeView.render();
         }
 
     }))({model:globals.structure});
