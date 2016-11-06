@@ -91,7 +91,15 @@ function initStructure(globals){
             this.trigger("change:beams");
             return beam;
         },
-        removeBeamAtIndex: function(beam, index, clear){
+        removeBeamAtIndex: function(index, clear){
+            this._removeBeam(this.beams[index], index, clear);
+        },
+        removeBeam: function(beam, clear){
+            var index = this.beams.indexOf(beam);
+            if (index<0) return;
+            this._removeBeam(beam, index, clear);
+        },
+        _removeBeam: function(beam, index, clear){
             beam.destroy(clear);
             globals.set("needsRemesh", true);
             if (clear === undefined) {
@@ -99,11 +107,6 @@ function initStructure(globals){
                 this.trigger("change:beams");
                 globals.threeView.render();
             }
-        },
-        removeBeam: function(beam, clear){
-            var index = this.beams.indexOf(beam);
-            if (index<0) return;
-            this.removeBeamAtIndex(beam, index, clear);
         },
         getNumBeams: function(){
             return this.beams.length;
@@ -130,7 +133,15 @@ function initStructure(globals){
             this.trigger("change:nodes");
             globals.threeView.render();
         },
-        removeNodeAtIndex: function(node, index, clear){
+        removeNodeAtIndex: function(index, clear){
+            this._removeNode(this.nodes[index], index, clear);
+        },
+        removeNode: function(node, clear){
+            var index = this.nodes.indexOf(node);
+            if (index<0) return;
+            this._removeNode(this.nodes[index], index, clear);
+        },
+        _removeNode: function(node, index, clear){
             node.destroy(clear);
             globals.set("needsRemesh", true);
             if (clear === undefined) {
@@ -138,11 +149,6 @@ function initStructure(globals){
                 this.trigger("change:nodes");
                 globals.threeView.render();
             }
-        },
-        removeNode: function(node, clear){
-            var index = this.nodes.indexOf(node);
-            if (index<0) return;
-            this.removeNodeAtIndex(node, index, clear);
         },
         getNumNodes: function(){
             return this.nodes.length;
@@ -165,18 +171,21 @@ function initStructure(globals){
             this.selectedEdges = [];
             globals.threeView.render();
         },
-        removeMembraneAtIndex: function(membrane, index, clear){
+        removeMembraneAtIndex: function(index, clear){
+            this._removeMembrane(this.membranes[index], index, clear);
+        },
+        removeMembrane: function(membrane, clear){
+            var index = this.membranes.indexOf(membrane);
+            if (index<0) return;
+            this._removeMembrane(membrane, index, clear);
+        },
+        _removeMembrane: function(membrane, index, clear){
             membrane.destroy(clear);
             if (clear === undefined) {
                 this.membranes.splice(index, 1);
                 this.trigger("change:membranes");
                 globals.threeView.render();
             }
-        },
-        removeMembrane: function(membrane, clear){
-            var index = this.membranes.indexOf(membrane);
-            if (index<0) return;
-            this.removeMembraneAtIndex(index, clear);
         },
         getNumMembranes: function(){
             return this.membranes.length;
@@ -353,13 +362,13 @@ function initStructure(globals){
             this.edgesContainer.children = [];
             this.membraneContainer.children = [];
             _.each(this.membranes, function(membrane, index){
-                self.removeMembraneAtIndex(membrane, index, true);
+                self._removeMembrane(membrane, index, true);
             });
             _.each(this.beams, function(beam, index){
-                self.removeBeamAtIndex(beam, index, true);
+                self._removeBeam(beam, index, true);
             });
             _.each(this.nodes, function(node, index){
-                self.removeNodeAtIndex(node, index, true);
+                self._removeNode(node, index, true);
             });
             this.nodes = [];
             this.trigger("change:nodes");
