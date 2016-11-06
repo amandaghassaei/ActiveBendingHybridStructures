@@ -2,11 +2,12 @@
  * Created by ghassaei on 9/16/16.
  */
 
-var edgeMaterialHighlight = new THREE.LineBasicMaterial({color: 0xffffff, linewidth:4});
-var edgeMaterialSelected = new THREE.LineBasicMaterial({color: 0xe1cbf9, linewidth:4});
+var edgeMaterialWhite = new THREE.LineBasicMaterial({color: 0xffffff, linewidth:4});
+var edgeMaterialLightPurple = new THREE.LineBasicMaterial({color: 0xe1cbf9, linewidth:4});
 var edgeMaterialDelete = new THREE.LineBasicMaterial({color:0xff0000, linewidth:4});
-var edgeMaterialBeamEditing = new THREE.LineBasicMaterial({color:0xb67df0, linewidth:4});
-var edgeMaterial = new THREE.LineBasicMaterial({color:0x555555, linewidth:4});
+var edgeMaterialGrey = new THREE.LineBasicMaterial({color:0x444444, linewidth:4});
+var edgeMaterialLightGray = new THREE.LineBasicMaterial({color:0x777777, linewidth:4});
+var edgeMaterialPurple = new THREE.LineBasicMaterial({color:0xb67df0, linewidth:4});
 
 function Edge(nodes, parent){
 
@@ -20,7 +21,7 @@ function Edge(nodes, parent){
     lineGeometry.dynamic = true;
     lineGeometry.vertices = this.vertices;
 
-    this.object3D = new THREE.Line(lineGeometry, edgeMaterialLine);
+    this.object3D = new THREE.Line(lineGeometry, edgeMaterialPurple);
     this.object3D._myEdge = this;
     parent.add(this.object3D);
     this.parent = parent;
@@ -28,13 +29,13 @@ function Edge(nodes, parent){
 }
 
 Edge.prototype.highlight = function(){
-    if (this.object3D.material == edgeMaterialSelected) return;
-    this.object3D.material = edgeMaterialHighlight;
+    if (this.object3D.material == edgeMaterialLightPurple) return;
+    this.object3D.material = edgeMaterialWhite;
 };
 
 Edge.prototype.unhighlight = function(){
-    if (this.object3D.material == edgeMaterialSelected) return;
-    this.object3D.material = edgeMaterial;
+    if (this.object3D.material == edgeMaterialLightPurple) return;
+    this.object3D.material = edgeMaterialGrey;
 };
 
 Edge.prototype.setMaterial = function(material){

@@ -12,6 +12,8 @@ function initStructure(globals){
 
         initialize: function(){
 
+            _.bindAll(this, "highlightBeam");
+
             this.nodes = [];
             this.beams = [];
             this.membranes = [];
@@ -56,22 +58,23 @@ function initStructure(globals){
             this.object3D.visible = mode !== "meshEditing";
             if (mode == "beamEditing"){
                 _.each(this.beams, function(beam){
-                    beam.setMaterial(edgeMaterialBeamEditing);
+                    beam.setMaterial(edgeMaterialGrey);
                 });
+                this.highlightBeam($("input[name=selectedBeam]:checked").val());
             } else {
                 _.each(this.beams, function(beam){
-                    beam.setMaterial(edgeMaterial);
+                    beam.setMaterial(edgeMaterialGrey);
                 });
             }
             if (mode === "meshing"){
                 if (globals.get("needsRemesh")) this.syncSim();
                 _.each(this.simMembranes, function(membrane){
-                    membrane.setEdgeMaterial(edgeMaterialBeamEditing);
+                    membrane.setEdgeMaterial(edgeMaterialPurple);
                 });
             } else if (mode === "boundaryEditing"){
                 if (globals.get("needsRemesh")) this.syncSim();
                 _.each(this.simMembranes, function(membrane){
-                    membrane.setEdgeMaterial(simEdgeMaterial);
+                    membrane.setEdgeMaterial(edgeMaterialGrey);
                 });
             }
             this.simContainer.visible = mode === "meshing" || mode === "boundaryEditing";
@@ -88,6 +91,11 @@ function initStructure(globals){
             this.trigger("change:beams");
             return beam;
         },
+        removeBeam: function(beam){
+            this.beams.splice(this.beams.indexOf(beam), 1);
+            beam.destroy();
+            this.trigger("change:beams");
+        },
         getNumBeams: function(){
             return this.beams.length;
         },
@@ -97,6 +105,13 @@ function initStructure(globals){
                 beamsJSON.push(beam.toJSON());
             });
             return {beams:beamsJSON};
+        },
+        highlightBeam: function(index){
+            _.each(this.beams, function(beam){
+                beam.unhighlight();
+            });
+            if (this.beams[index]) this.beams[index].highlight();
+            globals.threeView.render();
         },
 
         newNode: function(position){
@@ -122,7 +137,7 @@ function initStructure(globals){
             this.membranes.push(membrane);
             this.trigger("change:membranes");
             _.each(this.selectedEdges, function(edge){
-                edge.setMaterial(edgeMaterial);
+                edge.setMaterial(edgeMaterialGrey);
             });
             this.selectedEdges = [];
             globals.threeView.render();
@@ -151,17 +166,20 @@ function initStructure(globals){
             this.trigger("change:beamsMeta");
         },
         stopEditingBeam: function(){
-            if (this.currentEditingBeam) this.currentEditingBeam.stopEditing();
+            if (this.currentEditingBeam) {
+                this.currentEditingBeam.stopEditing();
+                if (this.currentEditingBeam.getEdges().length == 0) this.removeBeam(this.currentEditingBeam);
+            }
             this.currentEditingBeam = null;
         },
 
         selectEdge: function(edge){
             var index = this.selectedEdges.indexOf(edge);
             if (index<0){
-                edge.setMaterial(edgeMaterialSelected);
+                edge.setMaterial(edgeMaterialLightPurple);
                 this.selectedEdges.push(edge);
             } else {
-                edge.setMaterial(edgeMaterial);
+                edge.setMaterial(edgeMaterialGrey);
                 this.selectedEdges.splice(index, 1);
             }
         },

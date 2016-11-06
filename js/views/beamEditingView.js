@@ -5,9 +5,12 @@
 
 function initBeamEditingView(globals){
 
-    var beamsMetaTemplate = _.template("<% _.each(beams, function(beam){ %>" +
-            "<div>Edges : <%= beam.numEdges %></div>" +
-            "<% }); %>");
+    var beamsMetaTemplate = _.template("<% _.each(beams, function(beam, index){ %>" +
+            '<label class="radio">'+
+                '<input name="selectedBeam" value="<%= index %>" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>'+
+                'Beam <%= index + 1 %> :  <%= beam.numEdges %> edges' +
+            '</label>' +
+            "<% });%>");
 
     return new (Backbone.View.extend({
 
@@ -19,11 +22,12 @@ function initBeamEditingView(globals){
         initialize: function(){
 
             _.bindAll(this, "snapToVertexChanged");
+
             setCheckbox("#snapToVertex", globals.get("snapToVertex"), this.snapToVertexChanged);
 
             this.listenTo(this.model, "change:beams", this.updateNumBeams);
             this.updateNumBeams();
-            this.listenTo(this.model, "change:beamsMeta", this.updateBeamsMeta);
+            this.listenTo(this.model, "change:beamsMeta change:beams", this.updateBeamsMeta);
             this.listenTo(this.model, "change:nodes", this.updateNumNodes);
             this.updateNumNodes();
 
@@ -42,7 +46,10 @@ function initBeamEditingView(globals){
         },
 
         updateBeamsMeta: function(){
-            $("#beamMeta").html(beamsMetaTemplate(this.model.getBeamsJSON()));
+            var json = this.model.getBeamsJSON();
+            $("#beamMeta").html(beamsMetaTemplate(json));
+            setRadio("selectedBeam", json.beams.length-1, this.model.highlightBeam);
+            this.model.highlightBeam(json.beams.length-1);
         }
 
     }))({model:globals.structure});

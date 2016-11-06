@@ -3,8 +3,6 @@
  */
 
 
-var edgeMaterialLine = new THREE.LineBasicMaterial({color:0xb67df0, linewidth:4});
-
 function EdgeBuilding(startNode, end, parent){
 
     this.type = "edgeBuilding";
@@ -16,7 +14,7 @@ function EdgeBuilding(startNode, end, parent){
     lineGeometry.dynamic = true;
     lineGeometry.vertices = this.vertices;
 
-    this.object3D = new THREE.Line(lineGeometry, edgeMaterialLine);
+    this.object3D = new THREE.Line(lineGeometry, edgeMaterialPurple);
     parent.add(this.object3D);
     this.parent = parent;
     this.update();

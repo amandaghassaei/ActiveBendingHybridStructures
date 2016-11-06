@@ -12,7 +12,7 @@ function initGlobals(){
             snapToVertex: true,
 
             //simulation params
-            segmentLength: 1,
+            segmentLength: 2,
             radialMembraneLayers: 2,
             needsRemesh: false
         },

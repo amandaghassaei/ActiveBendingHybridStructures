@@ -30,6 +30,7 @@ Beam.prototype.addNode = function(node){
         this.nodes.push(node);
         this.edges.push(new Edge([this.edgeInProgress.getNode(), node], this.edgeParent));
         this.edgeInProgress.setNode(node);
+        this.setMaterial(edgeMaterialPurple);
     }
 
 };
@@ -50,6 +51,13 @@ Beam.prototype.setMaterial = function(material){
     _.each(this.edges, function(edge){
         edge.setMaterial(material);
     });
+};
+
+Beam.prototype.highlight = function(){
+    this.setMaterial(edgeMaterialPurple);
+};
+Beam.prototype.unhighlight = function(){
+    this.setMaterial(edgeMaterialGrey);
 };
 
 
