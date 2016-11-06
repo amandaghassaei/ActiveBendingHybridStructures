@@ -11,6 +11,8 @@ function initBeamEditingView(globals){
                 'Beam <%= index + 1 %> :  <%= beam.numEdges %> edges <a href="#" data-index="<%=index%>" class="deleteBeam"><span class="fui-cross"></span></a>' +
             '</label>' +
             "<% });%>");
+    var defaultMessage = "<br/>Add nodes by mousing over the mesh and clicking.<br/><br/>" +
+        "Add beams by selecting a series of nodes.";
 
     return new (Backbone.View.extend({
 
@@ -34,7 +36,7 @@ function initBeamEditingView(globals){
             this.listenTo(this.model, "change:nodes", this.updateNumNodes);
             this.updateNumNodes();
 
-
+            this.updateBeamsMeta();
         },
 
         deleteBeam: function(e){
@@ -61,6 +63,10 @@ function initBeamEditingView(globals){
         },
 
         updateBeamsMeta: function(){
+            if (this.model.getNumBeams() == 0){
+                $("#beamMeta").html(defaultMessage);
+                return;
+            }
             var json = this.model.getBeamsJSON();
             $("#beamMeta").html(beamsMetaTemplate(json));
             setRadio("selectedBeam", json.beams.length-1, this.model.highlightBeam);

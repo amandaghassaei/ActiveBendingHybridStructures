@@ -193,7 +193,10 @@ function initStructure(globals){
         },
 
         newMembrane: function(){
-            if (this.selectedEdges.length < 2) return;
+            if (!this.selectedEdgesFormClosedLoop()) {
+                globals.view.showWarningModal("Selected edges must form a closed loop to create a new membrane.");
+                return;
+            }
             var membrane = new Membrane(this.selectedEdges, this.membraneContainer);
             this.membranes.push(membrane);
             this.trigger("change:membranes");
@@ -202,6 +205,21 @@ function initStructure(globals){
             });
             this.selectedEdges = [];
             globals.threeView.render();
+        },
+        selectedEdgesFormClosedLoop: function(){
+            var selectedEdges = this.selectedEdges;
+            if (selectedEdges.length < 3) return false;
+            var orientedEdges = [];
+            var orientedNodes = [];
+            orientedNodes.push(selectedEdges[0].getNodes()[0]);
+            for (var j=0;j<selectedEdges.length;j++){
+                var lastNode = orientedNodes[orientedNodes.length-1];
+                var nextEdge = this._getNextEdge(lastNode, selectedEdges, orientedEdges);
+                if (nextEdge === null) return false;
+                orientedEdges.push(nextEdge);
+                orientedNodes.push(nextEdge.getOtherNode(lastNode));
+            }
+            return orientedNodes[0] == orientedNodes[orientedNodes.length-1];
         },
         removeMembraneAtIndex: function(index, clear){
             this._removeMembrane(this.membranes[index], index, clear);

@@ -11,6 +11,7 @@ function initMembraneEditingView(globals){
                 'Membrane <%= index + 1 %> :  <%= membrane.numEdges %> edges <a href="#" data-index="<%=index%>" class="deleteMembrane"><span class="fui-cross"></span></a>' +
             '</label>' +
             "<% });%>");
+    var defaultMessage = "<br/>Select edges that form a closed loop and hit Enter to create a membrane.";
 
     return new (Backbone.View.extend({
 
@@ -25,6 +26,7 @@ function initMembraneEditingView(globals){
             this.listenTo(this.model, "change:membranes", this.updateNumMembranes);
             this.listenTo(this.model, "change:membranes", this.updateMembranesMeta);
             this.updateNumMembranes();
+            this.updateMembranesMeta();
         },
 
         updateNumMembranes: function(){
@@ -32,6 +34,10 @@ function initMembraneEditingView(globals){
         },
 
         updateMembranesMeta: function(){
+            if (this.model.getNumMembranes() == 0){
+                $("#membranesMeta").html(defaultMessage);
+                return;
+            }
             var json = this.model.getMembranesJSON();
             $("#membranesMeta").html(membranesMetaTemplate(json));
             setRadio("selectedMembrane", json.membranes.length-1, this.model.highlightMembrane);
