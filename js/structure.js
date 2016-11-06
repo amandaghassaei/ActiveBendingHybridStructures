@@ -91,10 +91,18 @@ function initStructure(globals){
             this.trigger("change:beams");
             return beam;
         },
-        removeBeam: function(beam){
-            this.beams.splice(this.beams.indexOf(beam), 1);
-            beam.destroy();
+        removeBeamAtIndex: function(index){
+            if (!this.beams[index]) return;
+            this.beams[index].destroy();
+            this.beams.splice(index, 1);
             this.trigger("change:beams");
+            globals.set("needsRemesh", true);
+            globals.threeView.render();
+        },
+        removeBeam: function(beam){
+            var index = this.beams.indexOf(beam);
+            if (index<0) return;
+            this.removeBeamAtIndex(index);
         },
         getNumBeams: function(){
             return this.beams.length;
@@ -141,6 +149,18 @@ function initStructure(globals){
             });
             this.selectedEdges = [];
             globals.threeView.render();
+        },
+        removeMembraneAtIndex: function(index){
+            if (!this.membranes[index]) return;
+            this.membranes[index].destroy();
+            this.membranes.splice(index, 1);
+            this.trigger("change:membranes");
+            globals.threeView.render();
+        },
+        removeMembrane: function(membrane){
+            var index = this.membranes.indexOf(membrane);
+            if (index<0) return;
+            this.removeMembraneAtIndex(index);
         },
         getNumMembranes: function(){
             return this.membranes.length;

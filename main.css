@@ -317,7 +317,7 @@ span.modal-close{
     margin-left:8px;
     line-height: 1;
 }
-.deleteBeam, .deleteMembrane:hover{
+.deleteBeam:hover, .deleteMembrane:hover{
     color: #a21717;
 }
 .fui-cross{
