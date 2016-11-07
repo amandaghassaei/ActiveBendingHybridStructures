@@ -41,7 +41,7 @@ function initMembraneEditingView(globals){
             }
             var json = this.model.getMembranesJSON();
             $("#membranesMeta").html(membranesMetaTemplate(json));
-
+            setRadio("selectedMembrane", json.membranes.length-1, this.model.highlightMembrane);
             this.model.highlightMembrane(json.membranes.length-1);
         },
 
