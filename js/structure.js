@@ -54,6 +54,8 @@ function initStructure(globals){
         updateForMode: function(){
             this.currentEditingBeam = null;
             this.selectedEdges = [];
+            globals.set("deleteNodeMode", false);
+            globals.set("deleteBeamMode", false);
             var mode = globals.get("mode");
             this.object3D.visible = mode !== "meshEditing";
             if (mode == "beamEditing"){
