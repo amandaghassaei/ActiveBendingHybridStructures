@@ -13,6 +13,14 @@ SimBeam.prototype.mesh = function(beamElSize, numElements){
     }
 };
 
+SimBeam.prototype.setupMatrices = function(){
+    //nodes, tensionEdges, fixed, externalForces
+};
+
+SimBeam.prototype.step = function(){
+
+};
+
 SimBeam.prototype.setMaterial = function(material){
     _.each(this.edges, function(edge){
         edge.setMaterial(material);
