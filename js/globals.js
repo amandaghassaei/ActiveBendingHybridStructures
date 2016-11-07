@@ -16,6 +16,7 @@ function initGlobals(){
 
             meshingMode: "radialMeshing",
             boundaryEditingMode: "fixed",
+            constantNumElements: false,
 
             //simulation params
             segmentLength: 2,
