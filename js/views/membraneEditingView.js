@@ -18,7 +18,8 @@ function initMembraneEditingView(globals){
         el: "#membraneEditingControls",
 
         events: {
-            "click .deleteMembrane": "deleteMembrane"
+            "click .deleteMembrane": "deleteMembrane",
+            "click .clearAll": "clearAll"
         },
 
         initialize: function(){
@@ -40,7 +41,7 @@ function initMembraneEditingView(globals){
             }
             var json = this.model.getMembranesJSON();
             $("#membranesMeta").html(membranesMetaTemplate(json));
-            setRadio("selectedMembrane", json.membranes.length-1, this.model.highlightMembrane);
+
             this.model.highlightMembrane(json.membranes.length-1);
         },
 
@@ -49,6 +50,13 @@ function initMembraneEditingView(globals){
             var index = parseInt($(e.target).parent().data("index"));
             if (isNaN(index)) return;
             this.model.removeMembraneAtIndex(index);
+        },
+
+        clearAll: function(e){
+            e.preventDefault();
+            this.model.removeAllMembranes();
+            $(e.target).blur();
+            globals.threeView.render();
         }
 
     }))({model:globals.structure});

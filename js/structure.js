@@ -44,7 +44,9 @@ function initStructure(globals){
 
             this.listenTo(globals, "change:mode", this.updateForMode);
             this.listenTo(globals, "change:radialMembraneLayers", this.radialMembraneLayersChanged);
-            this.listenTo(globals, "change:segmentLength", this.segmentLengthChanged);
+            this.listenTo(globals, "change:segmentLength", this.meshRadial);
+            this.listenTo(globals, "change:numEdgeElements", this.meshParallel);
+            this.listenTo(globals, "change:meshingMode", this.syncSim);
             this.listenTo(this, "change:beams change:membranes", function(){
                 globals.set("needsRemesh", true);
             });
@@ -206,6 +208,7 @@ function initStructure(globals){
             this.membranes.push(membrane);
             this.trigger("change:membranes");
             _.each(this.selectedEdges, function(edge){
+                edge.selected = false;
                 edge.setMaterial(edgeMaterialGrey);
             });
             this.selectedEdges = [];
@@ -256,6 +259,15 @@ function initStructure(globals){
             for (var i=0;i<membranes.length;i++){
                 this.removeMembrane(membranes[i]);
             }
+        },
+        removeAllMembranes: function(){
+            this.membraneContainer.children = [];
+            var self = this;
+            _.each(this.membranes, function(membrane, index){
+                self._removeMembrane(membrane, index, true);
+            });
+            this.membranes = [];
+            this.trigger("change:membranes");
         },
         getNumMembranes: function(){
             return this.membranes.length;
@@ -313,14 +325,9 @@ function initStructure(globals){
             }
         },
 
+
         syncSim: function(){
-            var nodes = this.nodes;
-            var beams = this.beams;
-            var membranes = this.membranes;
-
             this.simContainer.children = [];
-            var parent = this.simContainer;
-
             for (var i=0;i<this.simNodes.length;i++){
                 this.simNodes[i].destroy();
             }
@@ -333,6 +340,11 @@ function initStructure(globals){
                 this.simMembranes[i].destroy();
             }
             this.simMembranes = [];
+
+            var nodes = this.nodes;
+            var beams = this.beams;
+            var membranes = this.membranes;
+            var parent = this.simContainer;
 
             for (var i=0;i<nodes.length;i++){
                 var simNode = new SimNode(nodes[i].getPosition(), parent);
@@ -378,27 +390,37 @@ function initStructure(globals){
                 this.simMembranes.push(simMembrane);
             }
 
-            var segmentLength = globals.get("segmentLength");
-            for (var i=0;i<this.simBeams.length;i++){
-                this.simBeams[i].mesh(segmentLength);
+            var mode = globals.get("meshingMode");
+            if (mode === "radialMeshing"){
+                this.meshRadial();
+            } else if (mode === "parallelMeshing"){
+                this.meshParallel()
             }
-            var numLayers = globals.get("radialMembraneLayers");
-            for (var i=0;i<this.simMembranes.length;i++){
-                this.simMembranes[i].setBorderNodes();
-                this.simMembranes[i].mesh(numLayers);
-            }
-
             globals.set("needsRemesh", false);
         },
 
-        radialMembraneLayersChanged: function(){
+        meshParallel: function(){
+            var numElements = globals.get("numEdgeElements");
+            for (var i=0;i<this.simMembranes.length;i++){
+                var simEdges = this.simMembranes[i].getSimEdges();
+                for (var j=0;j<simEdges.length;j++){
+                    simEdges[j].mesh(null, numElements);
+                }
+            }
             var numLayers = globals.get("radialMembraneLayers");
             for (var i=0;i<this.simMembranes.length;i++){
-                this.simMembranes[i].mesh(numLayers);
+                this.simMembranes[i].setBorderNodes();
+                var simEdges = this.simMembranes[i].getSimEdges();
+                if (simEdges.length != 4){
+                    this.simMembranes[i].meshRadial(numLayers);
+                    continue;
+                }
+                this.simMembranes[i].meshParallel(numElements);
             }
             globals.threeView.render();
         },
-        segmentLengthChanged: function(){
+
+        meshRadial: function(){
             var segmentLength = globals.get("segmentLength");
             for (var i=0;i<this.simBeams.length;i++){
                 this.simBeams[i].mesh(segmentLength);
@@ -406,7 +428,23 @@ function initStructure(globals){
             var numLayers = globals.get("radialMembraneLayers");
             for (var i=0;i<this.simMembranes.length;i++){
                 this.simMembranes[i].setBorderNodes();
-                this.simMembranes[i].mesh(numLayers);
+                this.simMembranes[i].meshRadial(numLayers);
+            }
+            globals.threeView.render();
+        },
+
+        radialMembraneLayersChanged: function() {
+            var numLayers = globals.get("radialMembraneLayers");
+            if (globals.get("meshingMode") === "radialMeshing"){
+                for (var i = 0; i < this.simMembranes.length; i++) {
+                    this.simMembranes[i].meshRadial(numLayers);
+                }
+            } else {
+                for (var i=0;i<this.simMembranes.length;i++){
+                    if (this.simMembranes[i].getSimEdges().length != 4){
+                        this.simMembranes[i].meshRadial(numLayers);
+                    }
+                }
             }
             globals.threeView.render();
         },

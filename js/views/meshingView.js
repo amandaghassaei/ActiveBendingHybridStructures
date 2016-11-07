@@ -16,6 +16,11 @@ function initMeshingView(globals){
 
             setSliderInput("#radialMembraneLayers", globals.get("radialMembraneLayers"), 0, 5, 1, this.radialMembraneLayersChanged);
             setSliderInput("#segmentLength", globals.get("segmentLength"), 0.1, 5, 0.1, this.beamSegmentLengthChanged);
+            setSliderInput("#numEdgeElements", globals.get("numEdgeElements"), 1, 10, 1, this.numElementsChanged);
+
+            setRadio("meshingMode", globals.get("meshingMode"), this.meshingModeChanged);
+
+            this.meshingModeChanged(globals.get("meshingMode"));
         },
 
         radialMembraneLayersChanged: function(val){
@@ -24,6 +29,26 @@ function initMeshingView(globals){
 
         beamSegmentLengthChanged: function(val){
             globals.set("segmentLength", val);
+        },
+
+        numElementsChanged: function(val){
+            globals.set("numEdgeElements", val);
+        },
+
+        meshingModeChanged: function(val){
+            var $radialOptions = $(".radialMeshingOption");
+            var $parallelOptions = $(".parallelMeshingOption");
+            if (val === "radialMeshing"){
+                $radialOptions.show();
+                $parallelOptions.hide();
+            } else if (val === "parallelMeshing"){
+                $radialOptions.hide();
+                $parallelOptions.show();
+            } else {
+                console.warn("invalid meshing mode");
+                return;
+            }
+            globals.set("meshingMode", val);
         }
 
     }))({model:globals.structure});

@@ -21,7 +21,7 @@ function initBeamEditingView(globals){
         events: {
             "click #deleteNodeMode": "setDeleteNodeMode",
             "click .deleteBeam": "deleteBeam",
-            "click #clearAll": "clearAll"
+            "click .clearAll": "clearAll"
         },
 
         initialize: function(){
@@ -76,6 +76,7 @@ function initBeamEditingView(globals){
         clearAll: function(e){
             e.preventDefault();
             this.model.reset();
+            $(e.target).blur();
             globals.threeView.render();
         }
 

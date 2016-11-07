@@ -36,10 +36,15 @@ SimEdge.prototype.getVector = function(){
     return this.nodes[0].getPosition().sub(this.nodes[1].getPosition());
 };
 
-SimEdge.prototype.mesh = function(elementLength){
+SimEdge.prototype.getNumElements = function(elementLength){
+    var length = this.getLength();
+    return Math.round(length/elementLength);
+};
+
+SimEdge.prototype.mesh = function(elementLength, numElements){
     this.destroyElements();
     var length = this.getLength();
-    var numElements = Math.round(length/elementLength);
+    if (numElements === undefined) numElements = this.getNumElements(elementLength);
     var numNodes = numElements - 1;
     var vector = this.getVector().normalize();
     var lastNode = this.nodes[0];

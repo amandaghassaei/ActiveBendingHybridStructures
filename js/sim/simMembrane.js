@@ -30,7 +30,46 @@ SimMembrane.prototype.setBorderNodes = function(){
     this.borderNodes =  borderNodes;
 };
 
-SimMembrane.prototype.mesh = function(numLayers){
+SimMembrane.prototype.meshParallel = function(numElements){
+    //this.destroyInnerNodes();
+    //var node, edge;
+    //var lastLayer = this.borderNodes;
+    //var centerPosition = new THREE.Vector3(0,0,0);
+    //for (var i=0;i<this.borderNodes.length;i++){
+    //    centerPosition.add(this.borderNodes[i].getPosition());
+    //}
+    //centerPosition.multiplyScalar(1/this.borderNodes.length);
+    //for (var j=0;j<numLayers;j++){
+    //    var nextLayer = [];
+    //    for (var i=0;i<this.borderNodes.length;i++){
+    //        node = new SimNode(centerPosition.clone(), this.object3D);
+    //        nextLayer.push(node);
+    //        this.innerNodes.push(node);
+    //        if (i>0) {
+    //            edge = new SimTensionEl([node, nextLayer[i-1]], this, this.object3D);
+    //            this.innerEdges.push(edge);
+    //            if (i==this.borderNodes.length){
+    //                edge = new SimTensionEl([node, nextLayer[0]], this, this.object3D);
+    //                this.innerEdges.push(edge);
+    //            }
+    //        }
+    //        edge = new SimTensionEl([node, lastLayer[i]], this, this.object3D);
+    //        this.innerEdges.push(edge);
+    //    }
+    //    edge = new SimTensionEl([node, nextLayer[0]], this, this.object3D);
+    //    this.innerEdges.push(edge);
+    //    lastLayer = nextLayer;
+    //}
+    //node = new SimNode(centerPosition.clone(), this.object3D);
+    //this.innerNodes.push(node);
+    //for (var i=0;i<lastLayer.length;i++){
+    //    edge = new SimTensionEl([node, lastLayer[i]], this, this.object3D);
+    //    this.innerEdges.push(edge);
+    //}
+    //this.setupStaticMatrices();
+};
+
+SimMembrane.prototype.meshRadial = function(numLayers){
     this.destroyInnerNodes();
     var node, edge;
     var lastLayer = this.borderNodes;
@@ -158,6 +197,10 @@ SimMembrane.prototype.setEdgeMaterial = function(material){
     for (var i=0;i<this.innerEdges.length;i++){
         this.innerEdges[i].setMaterial(material);
     }
+};
+
+SimMembrane.prototype.getSimEdges = function(){
+    return this.simEdges;
 };
 
 

@@ -14,9 +14,12 @@ function initGlobals(){
             deleteNodeMode: false,
             deleteBeamMode: false,
 
+            meshingMode: "radialMeshing",
+
             //simulation params
             segmentLength: 2,
             radialMembraneLayers: 2,
+            numEdgeElements: 4,
             needsRemesh: false
         },
 
