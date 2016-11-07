@@ -6,7 +6,7 @@
 function initIntersector3D(globals, structure){
 
     var raycaster = new THREE.Raycaster();
-    raycaster.linePrecision = 0.1;
+    raycaster.linePrecision = 0.3;
     var mouse = new THREE.Vector2();
     var raycasterPlane = new THREE.Plane(new THREE.Vector3(0,0,1));
     var highlightedObj;
