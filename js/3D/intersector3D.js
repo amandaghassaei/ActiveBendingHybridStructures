@@ -46,7 +46,7 @@ function initIntersector3D(globals, structure){
             node.getObject3D().geometry = nodeGeo;
         } else if (mode === "boundaryEditing"){
             if (globals.get("boundaryEditingMode") === "fixed") {
-                node.show();
+                //node.show();
                 node.getObject3D().geometry = nodeFixedGeo;
             }
         } else {

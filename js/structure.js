@@ -297,10 +297,6 @@ function initStructure(globals){
             return this.edgesContainer.children;
         },
 
-        getNumFixed: function(){
-            return this.numFixed;
-        },
-
         addNodeToBeam: function(node){
             if (this.currentEditingBeam){
                 this.currentEditingBeam.addNode(node);
