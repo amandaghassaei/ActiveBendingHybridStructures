@@ -29,13 +29,12 @@ function Edge(nodes, parent){
 }
 
 Edge.prototype.highlight = function(){
-    if (this.object3D.material == edgeMaterialLightPurple) return;
     this.object3D.material = edgeMaterialWhite;
 };
 
 Edge.prototype.unhighlight = function(){
-    if (this.object3D.material == edgeMaterialLightPurple) return;
-    this.object3D.material = edgeMaterialGrey;
+    if (this.selected) this.setMaterial(edgeMaterialLightPurple);
+    else this.object3D.material = edgeMaterialGrey;
 };
 
 Edge.prototype.setMaterial = function(material){
@@ -50,6 +49,12 @@ Edge.prototype.getLength = function(){
 
 Edge.prototype.isFixed = function(){
     return this.nodes[0].fixed && this.nodes[1].fixed;
+};
+
+Edge.prototype.setSelected = function(selected){
+    if (selected) this.setMaterial(edgeMaterialLightPurple);
+    else this.setMaterial(edgeMaterialGrey);
+    this.selected = selected;
 };
 
 Edge.prototype.getOtherNode = function(node){

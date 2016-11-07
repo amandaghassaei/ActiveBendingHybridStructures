@@ -53,6 +53,9 @@ function initStructure(globals){
 
         updateForMode: function(){
             this.currentEditingBeam = null;
+            for (var i=0;i<this.selectedEdges.length;i++){
+                this.selectedEdges[i].selected = false;
+            }
             this.selectedEdges = [];
             globals.set("deleteNodeMode", false);
             globals.set("deleteBeamMode", false);
@@ -302,10 +305,10 @@ function initStructure(globals){
         selectEdge: function(edge){
             var index = this.selectedEdges.indexOf(edge);
             if (index<0){
-                edge.setMaterial(edgeMaterialLightPurple);
+                edge.setSelected(true);
                 this.selectedEdges.push(edge);
             } else {
-                edge.setMaterial(edgeMaterialGrey);
+                edge.setSelected(false);
                 this.selectedEdges.splice(index, 1);
             }
         },
