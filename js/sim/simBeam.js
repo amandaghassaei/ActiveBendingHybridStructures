@@ -7,9 +7,9 @@ function SimBeam(edges){
     this.edges = edges;
 }
 
-SimBeam.prototype.mesh = function(beamElSize){
+SimBeam.prototype.mesh = function(beamElSize, numElements){
     for (var i=0;i<this.edges.length;i++){
-        this.edges[i].mesh(beamElSize);
+        this.edges[i].mesh(beamElSize, numElements);
     }
 };
 

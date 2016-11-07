@@ -347,9 +347,11 @@ function initStructure(globals){
             var parent = this.simContainer;
 
             for (var i=0;i<nodes.length;i++){
-                var simNode = new SimNode(nodes[i].getPosition(), parent);
-                simNode.setIsBeamNode(true);
-                this.simNodes.push(simNode);
+                if (nodes[i].getEdges().length>0){
+                    var simNode = new SimNode(nodes[i].getPosition(), parent);
+                    simNode.setIsBeamNode(true);
+                    this.simNodes.push(simNode);
+                }
             }
             var allEdges = [];
             var allSimEdges = [];
@@ -401,11 +403,8 @@ function initStructure(globals){
 
         meshParallel: function(){
             var numElements = globals.get("numEdgeElements");
-            for (var i=0;i<this.simMembranes.length;i++){
-                var simEdges = this.simMembranes[i].getSimEdges();
-                for (var j=0;j<simEdges.length;j++){
-                    simEdges[j].mesh(null, numElements);
-                }
+            for (var i=0;i<this.simBeams.length;i++){
+                    this.simBeams[i].mesh(null, numElements);
             }
             var numLayers = globals.get("radialMembraneLayers");
             for (var i=0;i<this.simMembranes.length;i++){
