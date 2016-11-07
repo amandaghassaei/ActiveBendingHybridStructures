@@ -6,7 +6,6 @@
 function SimMembrane(simEdges, simNodes, parent){
     this.object3D = new THREE.Object3D();
     parent.add(this.object3D);
-    this.parent = parent;
     this.simEdges = simEdges;
     this.simNodes = simNodes;
     this.innerNodes = [];
@@ -203,7 +202,6 @@ SimMembrane.prototype.getSimEdges = function(){
 
 
 SimMembrane.prototype.destroy = function(){
-    this.parent = null;
     this.destroyInnerNodes();
     this.object3D = null;
     this.simEdges = null;

@@ -18,13 +18,18 @@ function initIntersector3D(globals, structure){
     var _nodeMaterial = node.getObject3D().material.clone();
     var _nodeDeleteMaterial = nodeMaterialDelete.clone();
     _nodeDeleteMaterial.transparent = true;
-    _nodeDeleteMaterial.side = THREE.DoubleSide;
+    _nodeDeleteMaterial.side = THREE.FrontSide;
     _nodeDeleteMaterial.opacity = 0.5;
     _nodeMaterial.transparent = true;
-    _nodeMaterial.side = THREE.DoubleSide;
+    _nodeMaterial.side = THREE.FrontSide;
     _nodeMaterial.opacity = 0.5;
     node.getObject3D().material = _nodeMaterial;
     node.hide();
+
+    //for adding boundary conditions
+    var beamNodesToIntersect = [];
+    var beamEdgesToIntersect = [];
+    var allNodesToIntersect = [];
 
     var listener = _.extend({}, Backbone.Events);
     listener.listenTo(globals, "change:deleteNodeMode", function(){
@@ -208,7 +213,7 @@ function initIntersector3D(globals, structure){
                 break;
             case "boundaryEditing":
                 if (globals.get("boundaryEditingMode") === "fixed"){
-                    _highlightedObj = checkForIntersections(e, structure.getSimNodesToIntersect());
+                    _highlightedObj = checkForIntersections(e, beamNodesToIntersect);
                     if (_highlightedObj){
                         node.hide();
                         setHighlightedObj(_highlightedObj);
@@ -218,7 +223,25 @@ function initIntersector3D(globals, structure){
                         }
                         return;
                     }
-                    setHighlightedObj(_highlightedObj);
+                    _highlightedObj = checkForIntersections(e, beamEdgesToIntersect);
+                    if (_highlightedObj){
+                        node.hide();
+                        setHighlightedObj(_highlightedObj);
+                        //if (_highlightedObj.fixed && _highlightedObj.type == "node") {
+                        //    _highlightedObj.setDeleteMode();
+                        //    globals.threeView.render();
+                        //}
+                        //return;
+                    }
+                    setHighlightedObj(null);
+
+                    var intersection = getIntersectionWithObjectPlane(new THREE.Vector3());
+                    node.move(intersection);
+                    node.show();
+                    globals.threeView.render();
+                    return;
+                } else if (globals.get("boundaryEditingMode") === "force"){
+
                 }
 
                 break;

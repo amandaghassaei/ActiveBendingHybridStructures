@@ -22,7 +22,8 @@ function initGlobals(){
             segmentLength: 2,
             radialMembraneLayers: 2,
             numEdgeElements: 4,
-            needsRemesh: false
+            needsRemesh: false,
+            meshingChanged: true
         },
 
         initialize: function(){

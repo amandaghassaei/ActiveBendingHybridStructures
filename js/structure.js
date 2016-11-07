@@ -35,9 +35,16 @@ function initStructure(globals){
             this.object3D.add(this.edgesContainer);
             this.membraneContainer = new THREE.Object3D();
             this.object3D.add(this.membraneContainer);
-            this.simContainer = new THREE.Object3D();
-            this.object3D.add(this.simContainer);
+            //this.simContainer = new THREE.Object3D();
+            //this.object3D.add(this.simContainer);
+            this.simNodesContainer = new THREE.Object3D();
+            this.object3D.add(this.simNodesContainer);
+            this.simEdgesContainer = new THREE.Object3D();
+            this.object3D.add(this.simEdgesContainer);
+            this.simMembraneContainer = new THREE.Object3D();
+            this.object3D.add(this.simMembraneContainer);
             globals.threeView.sceneAdd(this.object3D);
+
 
             initIntersector3D(globals, this);
 
@@ -84,7 +91,8 @@ function initStructure(globals){
                     membrane.setEdgeMaterial(edgeMaterialGrey);
                 });
             }
-            this.simContainer.visible = mode === "meshing" || mode === "boundaryEditing";
+            this.simNodesContainer.visible = mode === "meshing" || mode === "boundaryEditing";
+            this.simEdgesContainer.visible = this.simNodesContainer.visible;
             this.nodesContainer.visible = !(mode === "boundaryEditing" || mode === "meshing");
             this.beamsContainer.visible =  !(mode === "boundaryEditing" || mode === "meshing");
             this.edgesContainer.visible =  !(mode === "boundaryEditing" || mode === "meshing");
@@ -292,7 +300,7 @@ function initStructure(globals){
             return this.nodesContainer.children;
         },
         getSimNodesToIntersect: function(){
-            return this.simContainer.children;//todo simNodesContainer
+            return this.simNodesContainer.children;
         },
         getEdgesToIntersect: function(){
             return this.edgesContainer.children;
@@ -327,7 +335,9 @@ function initStructure(globals){
 
 
         syncSim: function(){
-            this.simContainer.children = [];
+            this.simNodesContainer.children = [];
+            this.simEdgesContainer.children = [];
+            this.membraneContainer.children = [];
             for (var i=0;i<this.simNodes.length;i++){
                 if (this.simNodes[i]) this.simNodes[i].destroy();
             }
@@ -344,14 +354,13 @@ function initStructure(globals){
             var nodes = this.nodes;
             var beams = this.beams;
             var membranes = this.membranes;
-            var parent = this.simContainer;
 
             for (var i=0;i<nodes.length;i++){
                 if (nodes[i].getEdges().length==0){//no orphans
                     this.simNodes.push(null);
                     continue;
                 }
-                var simNode = new SimNode(nodes[i].getPosition(), parent);
+                var simNode = new SimNode(nodes[i].getPosition(), this.simNodesContainer);
                 simNode.setIsBeamNode(true);
                 this.simNodes.push(simNode);
             }
@@ -365,7 +374,7 @@ function initStructure(globals){
                     var edgeNodes = edges[j].getNodes();
                     var index1 = nodes.indexOf(edgeNodes[0]);
                     var index2 = nodes.indexOf(edgeNodes[1]);
-                    var simEdge = new SimEdge([this.simNodes[index1], this.simNodes[index2]], parent);
+                    var simEdge = new SimEdge([this.simNodes[index1], this.simNodes[index2]], this.simEdgesContainer);
                     allSimEdges.push(simEdge);
                     simEdges.push(simEdge);
                 }
@@ -390,7 +399,7 @@ function initStructure(globals){
                     orientedNodes.push(nextEdge.getOtherNode(lastNode));
                 }
                 orientedNodes.pop();
-                var simMembrane = new SimMembrane(orientedEdges, orientedNodes, parent);
+                var simMembrane = new SimMembrane(orientedEdges, orientedNodes, this.simMembraneContainer);
                 this.simMembranes.push(simMembrane);
             }
 
@@ -418,6 +427,7 @@ function initStructure(globals){
                 }
                 this.simMembranes[i].meshParallel(numElements);
             }
+            globals.set("meshingChanged", true);
             globals.threeView.render();
         },
 
@@ -433,6 +443,7 @@ function initStructure(globals){
                 this.simMembranes[i].setBorderNodes();
                 this.simMembranes[i].meshRadial(numLayers);
             }
+            globals.set("meshingChanged", true);
             globals.threeView.render();
         },
 
@@ -449,6 +460,7 @@ function initStructure(globals){
                     }
                 }
             }
+            globals.set("meshingChanged", true);
             globals.threeView.render();
         },
 
