@@ -15,6 +15,7 @@ function initGlobals(){
             deleteBeamMode: false,
 
             meshingMode: "radialMeshing",
+            boundaryEditingMode: "fixed",
 
             //simulation params
             segmentLength: 2,
@@ -32,6 +33,7 @@ function initGlobals(){
             initBeamEditingView(this);
             initMembraneEditingView(this);
             initMeshingView(this);
+            initBoundaryEditingView(this);
 
             var self = this;
             $(window).bind('keyup', function(e) {

@@ -8,7 +8,7 @@ function initBeamEditingView(globals){
     var beamsMetaTemplate = _.template("<% _.each(beams, function(beam, index){ %>" +
             '<label class="radio">'+
                 '<input name="selectedBeam" value="<%= index %>" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>'+
-                'Beam <%= index + 1 %> :  <%= beam.numEdges %> edges <a href="#" data-index="<%=index%>" class="deleteBeam"><span class="fui-cross"></span></a>' +
+                'Beam <%= index + 1 %> :  <%= beam.numEdges %> edge<% if (beam.numEdges>1 || beam.numEdges==0){ %>s<% } %> <a href="#" data-index="<%=index%>" class="deleteBeam"><span class="fui-cross"></span></a>' +
             '</label>' +
             "<% });%>");
     var defaultMessage = "<br/>Add nodes by mousing over the mesh and clicking.<br/><br/>" +

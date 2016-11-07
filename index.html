@@ -43,6 +43,7 @@
     <script type="text/javascript" src="js/views/beamEditingView.js"></script>
     <script type="text/javascript" src="js/views/membraneEditingView.js"></script>
     <script type="text/javascript" src="js/views/meshingView.js"></script>
+    <script type="text/javascript" src="js/views/boundaryEditingView.js"></script>
     <script type="text/javascript" src="js/views/view.js"></script>
     <script type="text/javascript" src="js/structure.js"></script>
     <script type="text/javascript" src="js/3D/intersector3D.js"></script>
@@ -95,7 +96,7 @@
     <div>
         <label class="radio">
             <input name="meshingMode" value="radialMeshing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
-            Radial Membrane Meshing
+            Radial Meshing
         </label>
         <label class="radio">
             <input name="meshingMode" value="parallelMeshing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
@@ -120,7 +121,20 @@
 </div>
 <div class="controls" id="boundaryEditingControls">
     <div>
-    boundaries
+        <label class="radio">
+            <input name="boundaryEditingMode" value="fixed" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+            Add/Remove Fixed
+        </label>
+        <div class="doubleIndent">
+            Num Fixed: &nbsp;&nbsp;<span id="numFixed"></span>
+        </div><br/><br/>
+        <label class="radio">
+            <input name="boundaryEditingMode" value="forces" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+            Add/Remove Forces
+        </label>
+        <div class="doubleIndent">
+            Num Forces: &nbsp;&nbsp;<span id="numForces"></span>
+        </div>
     </div>
 </div>
 <div class="controls" id="simulationControls">

@@ -39,6 +39,20 @@ function initIntersector3D(globals, structure){
         }
         globals.threeView.render();
     });
+    listener.listenTo(globals, "change:mode", function(){
+        var mode = globals.get("mode");
+        if (mode === "beamEditing"){
+            node.show();
+            node.getObject3D().geometry = nodeGeo;
+        } else if (mode === "boundaryEditing"){
+            if (globals.get("boundaryEditingMode") === "fixed") {
+                node.show();
+                node.getObject3D().geometry = nodeFixedGeo;
+            }
+        } else {
+            node.hide();
+        }
+    });
 
     function setHighlightedObj(object){
         var shouldRender = false;
@@ -193,6 +207,20 @@ function initIntersector3D(globals, structure){
                 return;
                 break;
             case "boundaryEditing":
+                if (globals.get("boundaryEditingMode") === "fixed"){
+                    _highlightedObj = checkForIntersections(e, structure.getSimNodesToIntersect());
+                    if (_highlightedObj){
+                        node.hide();
+                        setHighlightedObj(_highlightedObj);
+                        if (_highlightedObj.fixed && _highlightedObj.type == "node") {
+                            _highlightedObj.setDeleteMode();
+                            globals.threeView.render();
+                        }
+                        return;
+                    }
+                    setHighlightedObj(_highlightedObj);
+                }
+
                 break;
         }
 

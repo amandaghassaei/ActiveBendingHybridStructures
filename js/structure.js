@@ -8,6 +8,7 @@ function initStructure(globals){
     return new (Backbone.Model.extend({
 
         defaults: {
+            numFixed: 0
         },
 
         initialize: function(){
@@ -24,8 +25,6 @@ function initStructure(globals){
 
             this.currentEditingBeam = null;
             this.selectedEdges = [];
-
-            this.numFixed = 0;
 
             this.object3D = new THREE.Object3D();
             this.nodesContainer = new THREE.Object3D();
@@ -156,7 +155,7 @@ function initStructure(globals){
             if (clear === undefined) {
                 var edges = node.getEdges();
                 if (edges.length>1) {
-                    globals.view.showWarningModal("Can't delete node with multiple edges attached.  Delete beam instead.");
+                    globals.view.showWarningModal("Can't delete node with multiple edges attached.  Delete edges first.");
                     return false;
                 } else if (edges.length == 1){
                     this._removeEdge(edges[0], node);
@@ -200,6 +199,7 @@ function initStructure(globals){
         },
 
         newMembrane: function(){
+            //todo check if selected edges already form a membrane
             if (!this.selectedEdgesFormClosedLoop()) {
                 globals.view.showWarningModal("Selected edges must form a closed loop to create a new membrane.");
                 return;
@@ -290,6 +290,9 @@ function initStructure(globals){
         getNodesToIntersect: function(){
             return this.nodesContainer.children;
         },
+        getSimNodesToIntersect: function(){
+            return this.simContainer.children;//todo simNodesContainer
+        },
         getEdgesToIntersect: function(){
             return this.edgesContainer.children;
         },
@@ -329,7 +332,7 @@ function initStructure(globals){
         syncSim: function(){
             this.simContainer.children = [];
             for (var i=0;i<this.simNodes.length;i++){
-                this.simNodes[i].destroy();
+                if (this.simNodes[i]) this.simNodes[i].destroy();
             }
             this.simNodes = [];
             for (var i=0;i<this.simBeams.length;i++){
@@ -347,11 +350,13 @@ function initStructure(globals){
             var parent = this.simContainer;
 
             for (var i=0;i<nodes.length;i++){
-                if (nodes[i].getEdges().length>0){
-                    var simNode = new SimNode(nodes[i].getPosition(), parent);
-                    simNode.setIsBeamNode(true);
-                    this.simNodes.push(simNode);
+                if (nodes[i].getEdges().length==0){//no orphans
+                    this.simNodes.push(null);
+                    continue;
                 }
+                var simNode = new SimNode(nodes[i].getPosition(), parent);
+                simNode.setIsBeamNode(true);
+                this.simNodes.push(simNode);
             }
             var allEdges = [];
             var allSimEdges = [];
