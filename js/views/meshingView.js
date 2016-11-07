@@ -16,7 +16,7 @@ function initMeshingView(globals){
 
             setSliderInput("#radialMembraneLayers", globals.get("radialMembraneLayers"), 0, 5, 1, this.radialMembraneLayersChanged);
             setSliderInput("#segmentLength", globals.get("segmentLength"), 0.1, 5, 0.1, this.beamSegmentLengthChanged);
-            setSliderInput("#numEdgeElements", globals.get("numEdgeElements"), 1, 10, 1, this.numElementsChanged);
+            setSliderInput("#numEdgeElements", globals.get("numEdgeElements"), 2, 10, 1, this.numElementsChanged);
 
             setRadio("meshingMode", globals.get("meshingMode"), this.meshingModeChanged);
 

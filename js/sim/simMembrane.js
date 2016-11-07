@@ -31,42 +31,40 @@ SimMembrane.prototype.setBorderNodes = function(){
 };
 
 SimMembrane.prototype.meshParallel = function(numElements){
-    //this.destroyInnerNodes();
-    //var node, edge;
-    //var lastLayer = this.borderNodes;
-    //var centerPosition = new THREE.Vector3(0,0,0);
-    //for (var i=0;i<this.borderNodes.length;i++){
-    //    centerPosition.add(this.borderNodes[i].getPosition());
-    //}
-    //centerPosition.multiplyScalar(1/this.borderNodes.length);
-    //for (var j=0;j<numLayers;j++){
-    //    var nextLayer = [];
-    //    for (var i=0;i<this.borderNodes.length;i++){
-    //        node = new SimNode(centerPosition.clone(), this.object3D);
-    //        nextLayer.push(node);
-    //        this.innerNodes.push(node);
-    //        if (i>0) {
-    //            edge = new SimTensionEl([node, nextLayer[i-1]], this, this.object3D);
-    //            this.innerEdges.push(edge);
-    //            if (i==this.borderNodes.length){
-    //                edge = new SimTensionEl([node, nextLayer[0]], this, this.object3D);
-    //                this.innerEdges.push(edge);
-    //            }
-    //        }
-    //        edge = new SimTensionEl([node, lastLayer[i]], this, this.object3D);
-    //        this.innerEdges.push(edge);
-    //    }
-    //    edge = new SimTensionEl([node, nextLayer[0]], this, this.object3D);
-    //    this.innerEdges.push(edge);
-    //    lastLayer = nextLayer;
-    //}
-    //node = new SimNode(centerPosition.clone(), this.object3D);
-    //this.innerNodes.push(node);
-    //for (var i=0;i<lastLayer.length;i++){
-    //    edge = new SimTensionEl([node, lastLayer[i]], this, this.object3D);
-    //    this.innerEdges.push(edge);
-    //}
-    //this.setupStaticMatrices();
+    this.destroyInnerNodes();
+
+    var side0 = this.borderNodes.slice(1, numElements);
+    var side1 = this.borderNodes.slice(numElements+1, 2*numElements);
+    var side2 = this.borderNodes.slice(2*numElements+1, 3*numElements);
+    var side3 = this.borderNodes.slice(3*numElements+1, 4*numElements);
+    side2.reverse();
+    side3.reverse();
+
+    var lastLayer = side0;
+
+    var node, edge;
+    for (var i=0;i<numElements-1;i++){
+        var lastNode = side3[i];
+        var nextLayer = [];
+        for (var j=0;j<numElements-1;j++){
+            node = new SimNode(new THREE.Vector3(), this.object3D);
+            nextLayer.push(node);
+            this.innerNodes.push(node);
+            edge = new SimTensionEl([node, lastLayer[j]], this, this.object3D);
+            this.innerEdges.push(edge);
+            edge = new SimTensionEl([node, lastNode], this, this.object3D);
+            this.innerEdges.push(edge);
+            lastNode = node;
+        }
+        edge = new SimTensionEl([side1[i], lastNode], this, this.object3D);
+        this.innerEdges.push(edge);
+        lastLayer = nextLayer;
+    }
+    for (var j=0;j<numElements-1;j++){
+        edge = new SimTensionEl([side2[j], lastLayer[j]], this, this.object3D);
+        this.innerEdges.push(edge);
+    }
+    this.setupStaticMatrices();
 };
 
 SimMembrane.prototype.meshRadial = function(numLayers){
