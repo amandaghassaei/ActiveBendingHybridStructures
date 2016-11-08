@@ -16,7 +16,9 @@ function initMesh(globals){
     return new (Backbone.Model.extend({
 
         defaults: {
-            scale: new THREE.Vector3(1, 1, 1)
+            scale: new THREE.Vector3(1, 1, 1),
+            showMesh: true,
+            meshOpacity: 0.5
         },
 
         initialize: function(){
@@ -24,14 +26,28 @@ function initMesh(globals){
             this.loadSTL("assets/sinewave.stl");
             this.listenTo(this, "change:scale", this.scaleChanged);
             this.listenTo(globals, "change:mode", this.updateForMode);
+
+            this.listenTo(this, "change:showMesh", function(){
+                var visible = this.get("showMesh");
+                if (!this.object3D) return;
+                this.object3D.visible = visible;
+                this.wireframe.visible = visible;
+                globals.threeView.render();
+            });
+            this.listenTo(this, "change:meshOpacity", this.updateMeshOpacity);
+            this.updateMeshOpacity();
+        },
+
+        updateMeshOpacity: function(){
+            transparentMaterial.opacity = this.get("meshOpacity");
         },
 
         updateForMode: function(){
             if (!this.object3D) return;
             var mode = globals.get("mode");
             this.setTransparent(mode != "meshEditing");
-            this.object3D.visible = !(mode === "boundaryEditing" || mode === "meshing");
-            this.wireframe.visible = !(mode === "boundaryEditing" || mode === "meshing");
+            //this.object3D.visible = !(mode === "boundaryEditing" || mode === "meshing");
+            //this.wireframe.visible = !(mode === "boundaryEditing" || mode === "meshing");
             globals.threeView.render();
         },
 

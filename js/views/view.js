@@ -25,6 +25,13 @@ function initView(globals){
             setSliderInput("#meshScaleY", mesh.get("scale").y, 0.0001, 20, 0.001, this.meshScaleChanged);
             setSliderInput("#meshScaleZ", mesh.get("scale").z, 0.0001, 20, 0.001, this.meshScaleChanged);
 
+            setSliderInput("#meshOpacity", mesh.get("meshOpacity"), 0, 1, 0.01, function(val){
+                mesh.set("meshOpacity", val);
+            });
+            setCheckbox("#showMesh", mesh.get("showMesh"), function(state){
+                mesh.set("showMesh", state);
+            });
+
             this.listenTo(this.model, "change:mode", this.updateUIForMode);
             this.updateUIForMode();
         },
@@ -83,6 +90,9 @@ function initView(globals){
                 this.$currentControlsDiv = $("#" + mode + "Controls");
                 this.$currentControlsDiv.animate({right:0});
             }
+            if (mode === "meshEditing") $("#meshOptions").hide();
+            else $("#meshOptions").show();
+
         },
 
         meshScaleChanged: function(val, id){

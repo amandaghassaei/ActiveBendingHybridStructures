@@ -53,7 +53,7 @@ function initStructure(globals){
             this.listenTo(globals, "change:segmentLength", this.meshRadial);
             this.listenTo(globals, "change:constantNumElements", this.meshRadial);
             this.listenTo(globals, "change:numEdgeElements", this.mesh);
-            this.listenTo(globals, "change:meshingMode", this.syncSim);
+            this.listenTo(globals, "change:meshingMode", this.mesh);
             this.listenTo(this, "change:beams change:membranes", function(){
                 globals.set("needsRemesh", true);
             });

@@ -134,13 +134,13 @@
         <div class="doubleIndent">
             Num Fixed: &nbsp;&nbsp;<span id="numFixed"></span>
         </div><br/><br/>
-        <label class="radio">
-            <input name="boundaryEditingMode" value="forces" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
-            Add/Remove Forces
-        </label>
-        <div class="doubleIndent">
-            Num Forces: &nbsp;&nbsp;<span id="numForces"></span>
-        </div>
+        <!--<label class="radio">-->
+            <!--<input name="boundaryEditingMode" value="forces" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>-->
+            <!--Add/Remove Forces-->
+        <!--</label>-->
+        <!--<div class="doubleIndent">-->
+            <!--Num Forces: &nbsp;&nbsp;<span id="numForces"></span>-->
+        <!--</div>-->
     </div>
 </div>
 <div class="controls" id="simulationControls">
@@ -205,6 +205,16 @@
                 <input name="mode" value="optimization" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
                 Optimization
             </label>
+        </div>
+    </div>
+    <div id="meshOptions">
+        <label class="checkbox" for="showMesh">
+            <input id="showMesh" data-toggle="checkbox" class="custom-checkbox layersSelector" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+            Show Mesh
+        </label>
+        <div class="sliderInput" id="meshOpacity">
+            <span class="label-slider floatLeft">Opacity: <br/></span><div class="widerSlider flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
+            <input value="" placeholder="" class="form-control int" type="text">
         </div>
     </div>
 </div>
