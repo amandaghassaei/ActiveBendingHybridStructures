@@ -9,6 +9,7 @@ function SimEdge(nodes, parent){
     this.nodes = nodes;
     this.parent = parent;
     this.object3D = new THREE.Object3D();
+    this.length = this.nodes[0].getOriginalPosition().sub(this.nodes[1].getOriginalPosition()).length();
     parent.add(this.object3D);
 
 }
