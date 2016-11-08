@@ -16,11 +16,11 @@ function initGlobals(){
 
             meshingMode: "radialMeshing",
             boundaryEditingMode: "fixed",
-            constantNumElements: false,
+            constantNumElements: true,
 
             //simulation params
             segmentLength: 2,
-            radialMembraneLayers: 2,
+            radialMembraneLayers: 1,
             numEdgeElements: 4,
             needsRemesh: false,
             meshingChanged: true,

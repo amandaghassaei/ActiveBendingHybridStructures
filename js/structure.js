@@ -97,9 +97,9 @@ function initStructure(globals){
             this.simNodesContainer.visible = mode === "meshing" || mode === "boundaryEditing";
             this.simEdgesContainer.visible = this.simNodesContainer.visible;
             this.simMembraneContainer.visible = this.simNodesContainer.visible;
-            this.nodesContainer.visible = !(mode === "boundaryEditing" || mode === "meshing");
-            this.beamsContainer.visible =  !(mode === "boundaryEditing" || mode === "meshing");
-            this.edgesContainer.visible =  !(mode === "boundaryEditing" || mode === "meshing");
+            this.nodesContainer.visible = mode === "beamEditing" || mode === "membraneEditing";
+            this.beamsContainer.visible =  mode === "beamEditing" || mode === "membraneEditing";
+            this.edgesContainer.visible =  mode === "beamEditing" || mode === "membraneEditing";
             this.membraneContainer.visible = mode === "membraneEditing";
             globals.threeView.render();
         },
@@ -454,7 +454,11 @@ function initStructure(globals){
                 }
                 this.simMembranes[i].meshParallel(numElements);
             }
-            globals.set("numFixed", 0);
+            var numFixed = 0;
+            for (var i=0;i<this.simNodes.length;i++){
+                if (this.simNodes[i].fixed) numFixed++;
+            }
+            this.set("numFixed", numFixed);
             globals.set("meshingChanged", true);
             globals.threeView.render();
         },
@@ -471,7 +475,11 @@ function initStructure(globals){
                 this.simMembranes[i].setBorderNodes();
                 this.simMembranes[i].meshRadial(numLayers);
             }
-            globals.set("numFixed", 0);
+            var numFixed = 0;
+            for (var i=0;i<this.simNodes.length;i++){
+                if (this.simNodes[i].fixed) numFixed++;
+            }
+            this.set("numFixed", numFixed);
             globals.set("meshingChanged", true);
             globals.threeView.render();
         },
@@ -489,7 +497,6 @@ function initStructure(globals){
                     }
                 }
             }
-            globals.set("numFixed", 0);
             globals.set("meshingChanged", true);
             globals.threeView.render();
         },
