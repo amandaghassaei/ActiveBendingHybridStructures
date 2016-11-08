@@ -6,7 +6,7 @@ var edgeMaterialWhite = new THREE.LineBasicMaterial({color: 0xffffff, linewidth:
 var edgeMaterialLightPurple = new THREE.LineBasicMaterial({color: 0xdabef7, linewidth:4});
 var edgeMaterialDelete = new THREE.LineBasicMaterial({color:0xff0000, linewidth:4});
 var edgeMaterialGrey = new THREE.LineBasicMaterial({color:0x444444, linewidth:4});
-var edgeMaterialLightGray = new THREE.LineBasicMaterial({color:0x777777, linewidth:4});
+var edgeMaterialLightGray = new THREE.LineBasicMaterial({color:0x777777, linewidth:4, transparent:true, opacity:0.5});
 var edgeMaterialPurple = new THREE.LineBasicMaterial({color:0xb67df0, linewidth:4});
 
 function Edge(nodes, parent){

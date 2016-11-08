@@ -26,11 +26,6 @@ function initIntersector3D(globals, structure){
     node.getObject3D().material = _nodeMaterial;
     node.hide();
 
-    //for adding boundary conditions
-    var beamNodesToIntersect = [];
-    var beamEdgesToIntersect = [];
-    var allNodesToIntersect = [];
-
     var listener = _.extend({}, Backbone.Events);
     listener.listenTo(globals, "change:deleteNodeMode", function(){
         if (globals.get("deleteNodeMode")) {
@@ -49,14 +44,25 @@ function initIntersector3D(globals, structure){
         if (mode === "beamEditing"){
             node.show();
             node.getObject3D().geometry = nodeGeo;
-        } else if (mode === "boundaryEditing"){
+        } else if (mode === "boundaryEditing") {
             if (globals.get("boundaryEditingMode") === "fixed") {
                 //node.show();
                 node.getObject3D().geometry = nodeFixedGeo;
+            } else {
+                node.hide();
             }
         } else {
             node.hide();
         }
+    });
+    listener.listenTo(globals, "change:boundaryEditingMode", function(){
+        if (globals.get("boundaryEditingMode") === "fixed") {
+            //node.show();
+            node.getObject3D().geometry = nodeFixedGeo;
+        } else {
+            node.hide();
+        }
+        globals.threeView.render();
     });
 
     function setHighlightedObj(object){
@@ -120,6 +126,15 @@ function initIntersector3D(globals, structure){
                     } else if (mode === "membraneEditing"){
                         if (highlightedObj && highlightedObj.type == "edge") {
                             structure.selectEdge(highlightedObj);
+                        }
+                        globals.threeView.render();
+                    } else if (mode === "boundaryEditing"){
+                        if (highlightedObj && highlightedObj.type == "node") {
+                            var state = highlightedObj.setFixed(!highlightedObj.fixed);
+                            var numFixed = structure.get("numFixed");
+                            if (state) numFixed++;
+                            else numFixed--;
+                            structure.set("numFixed", numFixed);
                         }
                         globals.threeView.render();
                     }
@@ -213,7 +228,7 @@ function initIntersector3D(globals, structure){
                 break;
             case "boundaryEditing":
                 if (globals.get("boundaryEditingMode") === "fixed"){
-                    _highlightedObj = checkForIntersections(e, beamNodesToIntersect);
+                    _highlightedObj = checkForNodeIntersection(e, structure.getSimEdgesToIntersect().concat(structure.getSimNodesToIntersect()), true);
                     if (_highlightedObj){
                         node.hide();
                         setHighlightedObj(_highlightedObj);
@@ -222,16 +237,6 @@ function initIntersector3D(globals, structure){
                             globals.threeView.render();
                         }
                         return;
-                    }
-                    _highlightedObj = checkForIntersections(e, beamEdgesToIntersect);
-                    if (_highlightedObj){
-                        node.hide();
-                        setHighlightedObj(_highlightedObj);
-                        //if (_highlightedObj.fixed && _highlightedObj.type == "node") {
-                        //    _highlightedObj.setDeleteMode();
-                        //    globals.threeView.render();
-                        //}
-                        //return;
                     }
                     setHighlightedObj(null);
 
@@ -276,9 +281,25 @@ function initIntersector3D(globals, structure){
         return null;
     }
 
-    function checkForIntersections(e, objects){
+    function checkForNodeIntersection(e, objects, recursive){
         var _highlightedObj = null;
-        var intersections = raycaster.intersectObjects(objects, false);
+        var intersections = raycaster.intersectObjects(objects, recursive);
+        if (intersections.length > 0) {
+            var objectFound = false;
+            _.each(intersections, function (thing) {
+                if (objectFound) return;
+                if (thing.object && thing.object._myNode && thing.object._myNode.type == "node"){
+                    _highlightedObj = thing.object._myNode;
+                    objectFound = true;
+                }
+            });
+        }
+        return _highlightedObj;
+    }
+
+    function checkForIntersections(e, objects, recursive){
+        var _highlightedObj = null;
+        var intersections = raycaster.intersectObjects(objects, recursive);
         if (intersections.length > 0) {
             var objectFound = false;
             _.each(intersections, function (thing) {

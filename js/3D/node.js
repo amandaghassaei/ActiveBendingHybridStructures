@@ -6,6 +6,7 @@ var nodeMaterial = new THREE.MeshBasicMaterial({color: 0x000000});
 var nodeMaterialFixed = new THREE.MeshBasicMaterial({color: 0x000000});
 var nodeMaterialDelete = new THREE.MeshBasicMaterial({color: 0xff0000});
 var nodeMaterialHighlight = new THREE.MeshBasicMaterial({color: 0xdabef7});
+var nodeMaterialLightGray = new THREE.MeshBasicMaterial({color:0x777777, transparent:true, opacity:0.5});
 var nodeGeo = new THREE.SphereGeometry(0.2);
 var nodeFixedGeo = new THREE.CubeGeometry(0.5, 0.5, 0.5);
 
@@ -41,6 +42,7 @@ Node.prototype.setFixed = function(fixed){
         if (fixed) this.externalForce.hide();
         else this.externalForce.show();
     }
+    return fixed
 };
 
 

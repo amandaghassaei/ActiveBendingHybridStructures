@@ -13,6 +13,10 @@ SimNode.prototype.setIsBeamNode = function(state){
     this.isBeamNode = state;
 };
 
+SimNode.prototype.setMaterial = function(material){
+    this.object3D.material = material;
+};
+
 SimNode.prototype.destroy = function(){
     this.parent = null;
     this.object3D._myNode = null;

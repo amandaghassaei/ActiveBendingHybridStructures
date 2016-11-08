@@ -63,6 +63,7 @@ SimMembrane.prototype.meshParallel = function(numElements){
         edge = new SimTensionEl([side2[j], lastLayer[j]], this, this.object3D);
         this.innerEdges.push(edge);
     }
+    this.hideNodes();
     this.setupStaticMatrices();
 };
 
@@ -102,6 +103,7 @@ SimMembrane.prototype.meshRadial = function(numLayers){
         edge = new SimTensionEl([node, lastLayer[i]], this, this.object3D);
         this.innerEdges.push(edge);
     }
+    this.hideNodes();
     this.setupStaticMatrices();
 };
 
@@ -193,6 +195,21 @@ SimMembrane.prototype.render = function(X){
 SimMembrane.prototype.setEdgeMaterial = function(material){
     for (var i=0;i<this.innerEdges.length;i++){
         this.innerEdges[i].setMaterial(material);
+    }
+};
+SimMembrane.prototype.setNodeMaterial = function(material){
+    for (var i=0;i<this.innerNodes.length;i++){
+        this.innerNodes[i].setMaterial(material);
+    }
+};
+SimMembrane.prototype.hideNodes = function(){
+    for (var i=0;i<this.innerNodes.length;i++){
+        this.innerNodes[i].hide();
+    }
+};
+SimMembrane.prototype.showNodes = function(){
+    for (var i=0;i<this.innerNodes.length;i++){
+        this.innerNodes[i].show();
     }
 };
 

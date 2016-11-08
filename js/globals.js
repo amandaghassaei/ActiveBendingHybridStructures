@@ -23,7 +23,8 @@ function initGlobals(){
             radialMembraneLayers: 2,
             numEdgeElements: 4,
             needsRemesh: false,
-            meshingChanged: true
+            meshingChanged: true,
+            numFixedChanged: true
         },
 
         initialize: function(){

@@ -52,10 +52,14 @@ function initStructure(globals){
             this.listenTo(globals, "change:radialMembraneLayers", this.radialMembraneLayersChanged);
             this.listenTo(globals, "change:segmentLength", this.meshRadial);
             this.listenTo(globals, "change:constantNumElements", this.meshRadial);
-            this.listenTo(globals, "change:numEdgeElements", this.meshParallel);
+            this.listenTo(globals, "change:numEdgeElements", this.mesh);
             this.listenTo(globals, "change:meshingMode", this.syncSim);
             this.listenTo(this, "change:beams change:membranes", function(){
                 globals.set("needsRemesh", true);
+            });
+            this.listenTo(globals, "change:boundaryEditingMode", this.boundaryEditingModeChanged);
+            this.listenTo(this, "change:numFixed", function(){
+                globals.set("numFixedChanged", true);
             });
             this.updateForMode();
         },
@@ -84,19 +88,35 @@ function initStructure(globals){
                 if (globals.get("needsRemesh")) this.syncSim();
                 _.each(this.simMembranes, function(membrane){
                     membrane.setEdgeMaterial(edgeMaterialPurple);
+                    membrane.hideNodes();
                 });
             } else if (mode === "boundaryEditing"){
                 if (globals.get("needsRemesh")) this.syncSim();
-                _.each(this.simMembranes, function(membrane){
-                    membrane.setEdgeMaterial(edgeMaterialGrey);
-                });
+                this.boundaryEditingModeChanged();
             }
             this.simNodesContainer.visible = mode === "meshing" || mode === "boundaryEditing";
             this.simEdgesContainer.visible = this.simNodesContainer.visible;
+            this.simMembraneContainer.visible = this.simNodesContainer.visible;
             this.nodesContainer.visible = !(mode === "boundaryEditing" || mode === "meshing");
             this.beamsContainer.visible =  !(mode === "boundaryEditing" || mode === "meshing");
             this.edgesContainer.visible =  !(mode === "boundaryEditing" || mode === "meshing");
-            this.membraneContainer.visible = !(mode === "boundaryEditing" || mode === "meshing") && (mode === "membraneEditing");
+            this.membraneContainer.visible = mode === "membraneEditing";
+            globals.threeView.render();
+        },
+
+        boundaryEditingModeChanged: function(){
+            if (globals.get("boundaryEditingMode") === "fixed"){
+                _.each(this.simMembranes, function(membrane){
+                    membrane.setEdgeMaterial(edgeMaterialLightGray);
+                    membrane.hideNodes();
+                });
+            } else {
+                _.each(this.simMembranes, function(membrane){
+                    membrane.setEdgeMaterial(edgeMaterialLightGray);
+                    membrane.setNodeMaterial(nodeMaterial);
+                    membrane.showNodes();
+                });
+            }
             globals.threeView.render();
         },
 
@@ -299,11 +319,14 @@ function initStructure(globals){
         getNodesToIntersect: function(){
             return this.nodesContainer.children;
         },
+        getEdgesToIntersect: function(){
+            return this.edgesContainer.children;
+        },
         getSimNodesToIntersect: function(){
             return this.simNodesContainer.children;
         },
-        getEdgesToIntersect: function(){
-            return this.edgesContainer.children;
+        getSimEdgesToIntersect: function(){
+            return this.simEdgesContainer.children;
         },
 
         addNodeToBeam: function(node){
@@ -337,7 +360,7 @@ function initStructure(globals){
         syncSim: function(){
             this.simNodesContainer.children = [];
             this.simEdgesContainer.children = [];
-            this.membraneContainer.children = [];
+            this.simMembraneContainer.children = [];
             for (var i=0;i<this.simNodes.length;i++){
                 if (this.simNodes[i]) this.simNodes[i].destroy();
             }
@@ -403,13 +426,17 @@ function initStructure(globals){
                 this.simMembranes.push(simMembrane);
             }
 
+            this.mesh();
+            globals.set("needsRemesh", false);
+        },
+
+        mesh: function(){
             var mode = globals.get("meshingMode");
             if (mode === "radialMeshing"){
                 this.meshRadial();
             } else if (mode === "parallelMeshing"){
                 this.meshParallel()
             }
-            globals.set("needsRemesh", false);
         },
 
         meshParallel: function(){
@@ -427,6 +454,7 @@ function initStructure(globals){
                 }
                 this.simMembranes[i].meshParallel(numElements);
             }
+            globals.set("numFixed", 0);
             globals.set("meshingChanged", true);
             globals.threeView.render();
         },
@@ -443,6 +471,7 @@ function initStructure(globals){
                 this.simMembranes[i].setBorderNodes();
                 this.simMembranes[i].meshRadial(numLayers);
             }
+            globals.set("numFixed", 0);
             globals.set("meshingChanged", true);
             globals.threeView.render();
         },
@@ -460,6 +489,7 @@ function initStructure(globals){
                     }
                 }
             }
+            globals.set("numFixed", 0);
             globals.set("meshingChanged", true);
             globals.threeView.render();
         },
