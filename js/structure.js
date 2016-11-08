@@ -514,6 +514,19 @@ function initStructure(globals){
             return null;
         },
 
+        resetSim: function(){
+            for (var i=0;i<this.simNodes.length;i++){
+                this.simNodes[i].reset();
+            }
+            for (var i=0;i<this.simBeams.length;i++){
+                this.simBeams[i].reset();
+            }
+            for (var i=0;i<this.simMembranes.length;i++){
+                this.simMembranes[i].updateBoundaries();
+                this.simMembranes[i].solve();//todo may need to update something here
+            }
+        },
+
         reset: function(){
             globals.set("needsRemesh", true);
             var self = this;

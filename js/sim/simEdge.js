@@ -24,29 +24,17 @@ SimEdge.prototype.getInnerNodes = function(node0){
     return innerNodes.reverse();
 };
 
-SimEdge.prototype.getLength = function(){
-    return this.getVector().length();
-};
-
 SimEdge.prototype.getNodes = function(){
     return this.nodes;
 };
 
-SimEdge.prototype.getVector = function(){
-    return this.nodes[0].getPosition().sub(this.nodes[1].getPosition());
-};
-
-SimEdge.prototype.getNumElements = function(elementLength){
-    var length = this.getLength();
-    return Math.round(length/elementLength);
-};
-
 SimEdge.prototype.mesh = function(elementLength, numElements){
     this.destroyElements();
-    var length = this.getLength();
-    if (numElements === undefined) numElements = this.getNumElements(elementLength);
+    var vector = this.nodes[0].getOriginalPosition().sub(this.nodes[1].getOriginalPosition());
+    var length = vector.length();
+    if (numElements === undefined) numElements = Math.round(length/elementLength);
     var numNodes = numElements - 1;
-    var vector = this.getVector().normalize();
+    vector.normalize();
     var lastNode = this.nodes[0];
     var edge = new SimBeamEl([lastNode, this.nodes[1]], this.object3D);
     this.elements.push(edge);
@@ -76,6 +64,15 @@ SimEdge.prototype.setMaterial = function(material){
     _.each(this.elements, function(element){
         element.setMaterial(material);
     });
+};
+
+SimEdge.prototype.reset = function(){
+    for (var i=0;i<this.innerNodes.length;i++){
+        this.innerNodes[i].reset();
+    }
+    for (var i=0;i<this.elements.length;i++){
+        this.elements[i].update();
+    }
 };
 
 SimEdge.prototype.destroy = function(){

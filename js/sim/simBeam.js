@@ -27,6 +27,12 @@ SimBeam.prototype.setMaterial = function(material){
     });
 };
 
+SimBeam.prototype.reset = function(){
+    for (var i=0;i<this.edges.length;i++){
+        this.edges[i].reset();
+    }
+};
+
 SimBeam.prototype.destroy = function(){
     _.each(this.edges, function(edge){
         edge.destroy();
