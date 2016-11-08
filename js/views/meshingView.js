@@ -42,7 +42,6 @@ function initMeshingView(globals){
             var $constantElementsCheckbox = $("#constantNumElements");
             if (val === "radialMeshing"){
                 $constantElementsCheckbox.removeAttr("disabled");
-                $parallelOptions.hide();
                 if (globals.get("constantNumElements")) {
                     $numEdgeElements.show();
                     $segmentLength.hide();
