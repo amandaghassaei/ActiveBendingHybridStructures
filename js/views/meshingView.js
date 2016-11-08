@@ -37,14 +37,11 @@ function initMeshingView(globals){
         },
 
         meshingModeChanged: function(val){
-            var $radialOptions = $(".radialMeshingOption");
             var $segmentLength = $("#segmentLength");
             var $numEdgeElements = $("#numEdgeElements");
-            var $parallelOptions = $(".parallelMeshingOption");
             var $constantElementsCheckbox = $("#constantNumElements");
             if (val === "radialMeshing"){
                 $constantElementsCheckbox.removeAttr("disabled");
-                $radialOptions.show();
                 $parallelOptions.hide();
                 if (globals.get("constantNumElements")) {
                     $numEdgeElements.show();
@@ -57,9 +54,7 @@ function initMeshingView(globals){
             } else if (val === "parallelMeshing"){
                 $constantElementsCheckbox.attr("disabled", true);
                 $numEdgeElements.show();
-                $radialOptions.hide();
                 $segmentLength.hide();
-                $parallelOptions.show();
             } else {
                 console.warn("invalid meshing mode");
                 return;
