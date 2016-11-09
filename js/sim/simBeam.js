@@ -13,8 +13,28 @@ SimBeam.prototype.mesh = function(beamElSize, numElements){
     }
 };
 
-SimBeam.prototype.setupMatrices = function(){
-    //nodes, tensionEdges, fixed, externalForces
+SimBeam.prototype.getInnerNodes = function(){
+    var nodes = [];
+    for (var i=0;i<this.edges.length;i++){
+        nodes = nodes.concat(this.edges[i].getInnerNodes());
+    }
+    return nodes;
+};
+
+SimBeam.prototype.getNumNodes = function(){
+    var _numNodes = 0;
+    for (var i=0;i<this.edges.length;i++){
+        _numNodes += this.edges[i].getNumNodes();
+    }
+    return _numNodes;
+};
+
+SimBeam.prototype.getNumElements = function(){
+    var _numElements = 0;
+    for (var i=0;i<this.edges.length;i++){
+        _numElements += this.edges[i].getNumElements();
+    }
+    return _numElements;
 };
 
 SimBeam.prototype.step = function(){
@@ -30,6 +50,12 @@ SimBeam.prototype.setMaterial = function(material){
 SimBeam.prototype.reset = function(){
     for (var i=0;i<this.edges.length;i++){
         this.edges[i].reset();
+    }
+};
+
+SimBeam.prototype.setSimIndex = function(index){
+    for (var i=0;i<this.edges.length;i++){
+        this.edges[i].setSimIndex(index);
     }
 };
 

@@ -26,6 +26,14 @@ SimNode.prototype.getOriginalPosition = function(){
     return this.originalPosition.clone();
 };
 
+SimNode.prototype.setSimIndex = function(index){
+    this.simIndex = index;
+};
+
+SimNode.prototype.getSimIndex = function(){
+    return this.simIndex;
+};
+
 SimNode.prototype.destroy = function(){
     this.parent = null;
     this.object3D._myNode = null;

@@ -37,6 +37,7 @@ function initGlobals(){
             initMembraneEditingView(this);
             initMeshingView(this);
             initBoundaryEditingView(this);
+            initSolver(this);
 
             var self = this;
             $(window).bind('keyup', function(e) {

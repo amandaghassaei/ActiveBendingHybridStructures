@@ -5,6 +5,7 @@
 
 function SimTensionEl(nodes, membrane, parent){
     Edge.call(this, nodes, parent);
+    this.type = "tensionEdge";
 }
 SimTensionEl.prototype = Object.create(Edge.prototype);
 

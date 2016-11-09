@@ -62,6 +62,21 @@ function initStructure(globals){
                 globals.set("numFixedChanged", true);
             });
             this.updateForMode();
+
+            var node1 = this.newNode(new THREE.Vector3());
+            var node2 = this.newNode(new THREE.Vector3(10,0,0));
+            var node3 = this.newNode(new THREE.Vector3(0,0,10));
+            this.addNodeToBeam(node1);
+            this.addNodeToBeam(node2);
+            this.addNodeToBeam(node3);
+            this.addNodeToBeam(node1);
+            var beam = this.currentEditingBeam;
+            this.selectedEdges = beam.getEdges();
+            this.newMembrane();
+            this.syncSim();
+            this.simNodes[0].setFixed(true);
+            this.simNodes[1].setFixed(true);
+            this.set("numFixed", 2);
         },
 
         updateForMode: function(){
@@ -94,12 +109,12 @@ function initStructure(globals){
                 if (globals.get("needsRemesh")) this.syncSim();
                 this.boundaryEditingModeChanged();
             }
-            this.simNodesContainer.visible = mode === "meshing" || mode === "boundaryEditing";
+            this.simNodesContainer.visible = mode === "meshing" || mode === "boundaryEditing" || mode === "simulation";
             this.simEdgesContainer.visible = this.simNodesContainer.visible;
             this.simMembraneContainer.visible = this.simNodesContainer.visible;
             this.nodesContainer.visible = mode === "beamEditing" || mode === "membraneEditing";
-            this.beamsContainer.visible =  mode === "beamEditing" || mode === "membraneEditing";
-            this.edgesContainer.visible =  mode === "beamEditing" || mode === "membraneEditing";
+            this.beamsContainer.visible =  this.nodesContainer.visible;
+            this.edgesContainer.visible =  this.nodesContainer.visible;
             this.membraneContainer.visible = mode === "membraneEditing";
             globals.threeView.render();
         },
@@ -171,6 +186,7 @@ function initStructure(globals){
             this.nodes.push(node);
             this.trigger("change:nodes");
             globals.threeView.render();
+            return node;
         },
         removeNodeAtIndex: function(index, clear){
             this._removeNode(this.nodes[index], index, clear);

@@ -73,6 +73,10 @@ Node.prototype.getExternalForce = function(){
 //edges
 
 Node.prototype.addEdge = function(edge){
+    if (this.edges.indexOf(edge)>-1){
+        console.warn("adding edge more than once");
+        return;
+    }
     this.edges.push(edge);
 };
 
