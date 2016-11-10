@@ -32,12 +32,13 @@ function initGlobals(){
             this.mesh = initMesh(this);
             this.structure = initStructure(this);
             this.view = initView(this);
+            this.solver = initSolver(this);
             initMeshEditingView(this);
             initBeamEditingView(this);
             initMembraneEditingView(this);
             initMeshingView(this);
             initBoundaryEditingView(this);
-            initSolver(this);
+            initSimulationView(this);
 
             var self = this;
             $(window).bind('keyup', function(e) {

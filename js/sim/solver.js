@@ -68,8 +68,8 @@ function initSolver(globals){
             _.sortBy(nodeEdgesOrdered, function (edge) {
                 return edge.getSimIndex();
             });
-            for (var j = 0; j < nodeEdgesOrdered.length / 2; j++) {
-                if (nodeEdgesOrdered[2 * j].getSimIndex() != nodeEdgesOrdered[2 * j + 1].getSimIndex()) {
+            for (var j=0;j<nodeEdgesOrdered.length/2;j++) {
+                if (nodeEdgesOrdered.length-1<j || (nodeEdgesOrdered[2*j].getSimIndex() != nodeEdgesOrdered[2*j+1].getSimIndex())) {
                     nodeEdgesOrdered.splice(2 * j + 1, 0, null);
                 }
             }
@@ -100,10 +100,10 @@ function initSolver(globals){
             edgeIndex += nodeEdgesOrdered.length;
         }
 
-        solve();
+        step();
     }
 
-    function solve(){
+    function step(){
 
         for (var i=0;i<numNodes;i++){
 
@@ -148,10 +148,10 @@ function initSolver(globals){
             moment[rgbaIndex+2] = mVect.z;
         }
 
-        for (var i=0;i<numNodes;i++){
-            var rgbaIndex = i*4;
-            allNodes[i].setBendingForce(new THREE.Vector3(moment[rgbaIndex], moment[rgbaIndex+1], moment[rgbaIndex+2]));
-        }
+        //for (var i=0;i<numNodes;i++){
+        //    var rgbaIndex = i*4;
+        //    allNodes[i].setBendingForce(new THREE.Vector3(moment[rgbaIndex], moment[rgbaIndex+1], moment[rgbaIndex+2]));
+        //}
 
         for (var i=0;i<numNodes;i++) {
 
@@ -172,9 +172,7 @@ function initSolver(globals){
             for (var j=0;j<nodeMeta[1];j++){
 
                 var neighbor1Index = 4*neighborIndices[neighborMappingIndex+2*j];
-                var neighbor1Length = 4*edgeLengths[neighborMappingIndex+2*j];
                 var neighbor2Index = 4*neighborIndices[neighborMappingIndex+2*j+1];
-                var neighbor2Length = 4*edgeLengths[neighborMappingIndex+2*j+1];
 
                 if (neighbor1Index<0 || neighbor2Index<0){
                     //todo only one connection
@@ -185,11 +183,24 @@ function initSolver(globals){
                 var neighbor1moment = new THREE.Vector3(moment[neighbor1Index], moment[neighbor1Index+1], moment[neighbor1Index+2]);
                 var neighbor2moment = new THREE.Vector3(moment[neighbor2Index], moment[neighbor2Index+1], moment[neighbor2Index+2]);
 
-                forceSum.add(nodeMoment.clone().sub(neighbor1moment).add(nodeMoment.clone().sub(neighbor2moment)));
+                forceSum.add(nodeMoment.clone().sub(neighbor1moment).multiplyScalar(1/edgeLengths[neighborMappingIndex+2*j]));
+                forceSum.add(nodeMoment.clone().sub(neighbor2moment).multiplyScalar(1/edgeLengths[neighborMappingIndex+2*j+1]));
             }
             force[rgbaIndex] = forceSum.x;
             force[rgbaIndex+1] = forceSum.y;
             force[rgbaIndex+2] = forceSum.z;
         }
+
+        for (var i=0;i<numNodes;i++){
+            var rgbaIndex = i*4;
+            allNodes[i].setBendingForce(new THREE.Vector3(force[rgbaIndex], force[rgbaIndex+1], force[rgbaIndex+2]));
+        }
+
+        //https://learning-modules.mit.edu/service/materials/groups/144285/files/a270219e-4017-4381-90d5-dd7ecb9d9af5/link?errorRedirect=%2Fmaterials%2Findex.html
+
+    }
+
+    return {
+        step: step
     }
 }

@@ -71,7 +71,7 @@ function initView(globals){
             if (mode === "beamEditing") return null;
             if (globals.structure.getNumBeams()==0) return 'You need to add beams before moving on to the next step of the design process, do this in "Nodes and Beam Editing Mode".';
             if (mode === "membraneEditing") return null;
-            if (globals.structure.getNumMembranes()==0) return 'You need to add membranes before moving on to the next step of the design process, do this in "Membrane Editing Mode".';
+            //if (globals.structure.getNumMembranes()==0) return 'You need to add membranes before moving on to the next step of the design process, do this in "Membrane Editing Mode".';
             if (mode === "meshing") return null;
             if (mode === "boundaryEditing") return null;
             if (globals.structure.get("numFixed") == 0) return 'You must define at least one fixed node before moving on to simulation and optimization, do this in "Boundaries Editing Mode".';

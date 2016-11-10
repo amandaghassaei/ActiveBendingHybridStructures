@@ -7,7 +7,7 @@ function initBoundaryEditingView(globals){
 
     return new (Backbone.View.extend({
 
-        el: "#meshingControls",
+        el: "#boundaryEditingControls",
 
         events: {
         },

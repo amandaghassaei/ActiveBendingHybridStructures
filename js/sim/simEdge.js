@@ -45,7 +45,7 @@ SimEdge.prototype.mesh = function(elementLength, numElements){
     if (numElements === undefined) numElements = Math.round(length/elementLength);
     var numNodes = numElements - 1;
     vector.normalize();
-    var lastNode = this.nodes[0];
+    var lastNode = this.nodes[1];
     for (var i=0;i<numNodes;i++){
         var node = new SimNode(vector.clone().multiplyScalar((i+1)/(numElements)*length).add(this.nodes[1].getPosition()), this.object3D);
         node.setIsBeamNode(true);
@@ -54,7 +54,7 @@ SimEdge.prototype.mesh = function(elementLength, numElements){
         this.elements.push(edge);
         lastNode = node;
     }
-    var edge = new SimBeamEl([lastNode, this.nodes[1]], this.object3D, this);
+    var edge = new SimBeamEl([lastNode, this.nodes[0]], this.object3D, this);
     this.elements.push(edge);
 };
 
