@@ -40,8 +40,10 @@ SimNode.prototype.setBendingForce = function(vect){
         this.bendingForce.line.material.linewidth = 4;
         this.object3D.add(this.bendingForce);
     }
-    this.bendingForce.setDirection(vect);
-    this.bendingForce.visible = vect.length() > 0.0001;
+    var length = vect.length();
+    this.bendingForce.setLength(length, 0.5, 0.5);
+    this.bendingForce.setDirection(vect.normalize());
+    this.bendingForce.visible = length > 0.5;
 };
 
 
