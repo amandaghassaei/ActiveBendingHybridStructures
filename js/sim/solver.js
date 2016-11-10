@@ -199,8 +199,8 @@ function initSolver(globals){
                 var dist1Length = dist1.length();
                 var dist2Length = dist2.length();
 
-                forceSum.add(dist1.normalize().multiplyScalar(dist1Length-length1));
-                forceSum.add(dist2.normalize().multiplyScalar(dist2Length-length2));
+                forceSum.add(dist1.normalize().multiplyScalar((dist1Length-length1)/dist1Length));
+                forceSum.add(dist2.normalize().multiplyScalar((dist2Length-length2)/dist2Length));
                 forceSum.add(nodeMoment.clone().sub(neighbor1moment).multiplyScalar(1/length1));
                 forceSum.add(nodeMoment.clone().sub(neighbor2moment).multiplyScalar(1/length2));
             }
@@ -226,7 +226,7 @@ function initSolver(globals){
     function render(){
         for (var i=0;i<numNodes;i++){
             var rgbaIndex = i*4;
-            allNodes[i].setBendingForce(new THREE.Vector3(moment[rgbaIndex], moment[rgbaIndex+1], moment[rgbaIndex+2]));
+            allNodes[i].setBendingForce((new THREE.Vector3(moment[rgbaIndex], moment[rgbaIndex+1], moment[rgbaIndex+2])).multiplyScalar(10));
             allNodes[i].move(new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]));
         }
         for (var i=0;i<allEdges.length;i++){
