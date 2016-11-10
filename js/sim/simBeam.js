@@ -29,6 +29,14 @@ SimBeam.prototype.getNumNodes = function(){
     return _numNodes;
 };
 
+SimBeam.prototype.getElements = function(){
+    var elements = [];
+    for (var i=0;i<this.edges.length;i++){
+        elements = elements.concat(this.edges[i].getElements());
+    }
+    return elements;
+};
+
 SimBeam.prototype.getNumElements = function(){
     var _numElements = 0;
     for (var i=0;i<this.edges.length;i++){
@@ -37,9 +45,6 @@ SimBeam.prototype.getNumElements = function(){
     return _numElements;
 };
 
-SimBeam.prototype.step = function(){
-
-};
 
 SimBeam.prototype.setMaterial = function(material){
     _.each(this.edges, function(edge){

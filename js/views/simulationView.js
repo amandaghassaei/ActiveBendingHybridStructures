@@ -11,7 +11,8 @@ function initSimulationView(globals){
         el: "#simulationControls",
 
         events: {
-            "click #stepForward": "stepForward"
+            "click #stepForward": "stepForward",
+            "click #resetSim": "reset"
         },
 
         initialize: function(){

@@ -26,6 +26,10 @@ SimEdge.prototype.getInnerNodes = function(node0){
     return innerNodes.reverse();
 };
 
+SimEdge.prototype.getElements = function(){
+    return this.elements;
+};
+
 SimEdge.prototype.getNodes = function(){
     return this.nodes;
 };

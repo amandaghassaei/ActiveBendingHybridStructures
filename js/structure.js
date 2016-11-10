@@ -65,7 +65,7 @@ function initStructure(globals){
 
             var node1 = this.newNode(new THREE.Vector3());
             var node2 = this.newNode(new THREE.Vector3(10,0,0));
-            var node3 = this.newNode(new THREE.Vector3(5,0,10));
+            var node3 = this.newNode(new THREE.Vector3(2,0,10));
             this.addNodeToBeam(node1);
             this.addNodeToBeam(node2);
             this.addNodeToBeam(node3);

@@ -8,30 +8,34 @@ function initSolver(globals){
     listener.listenTo(globals, "change:mode", function(){
         var mode = globals.get("mode");
         if (mode === "simulation"){
-            setupSolver();
+            reset();
         }
     });
 
     var structure = globals.structure;
 
-    var allNodes, numNodes;
+    var allNodes, numNodes, allEdges;
     var position, edgeLengths, moment, force, velocity, externalForces, neighborIndices, meta;
+    var dt = 0.1;
 
-    function setupSolver(){
+    function reset(){
 
         var nodes = structure.simNodes;
         var beams = structure.simBeams;
         var membranes = structure.simMembranes;
 
         var _allNodes = nodes;
+        var _allEdges = [];
         for (var i=0;i<beams.length;i++){
             _allNodes = _allNodes.concat(beams[i].getInnerNodes());
+            _allEdges = _allEdges.concat(beams[i].getElements());
         }
         numNodes = _allNodes.length;
         for (var i=0;i<numNodes;i++){
             _allNodes[i].setSimIndex(i);
         }
         allNodes = _allNodes;
+        allEdges = _allEdges;
 
         position = new Float32Array(numNodes*4);
 
@@ -99,8 +103,7 @@ function initSolver(globals){
             meta[rgbaIndex + 2] = edgeIndex;//start index
             edgeIndex += nodeEdgesOrdered.length;
         }
-
-        step();
+        render();
     }
 
     function step(){
@@ -189,18 +192,36 @@ function initSolver(globals){
             force[rgbaIndex] = forceSum.x;
             force[rgbaIndex+1] = forceSum.y;
             force[rgbaIndex+2] = forceSum.z;
+
+            var lastVelocity = new THREE.Vector3(velocity[rgbaIndex], velocity[rgbaIndex+1], velocity[rgbaIndex+2]);
+            var _velocity = forceSum.multiplyScalar(dt).add(lastVelocity);
+            velocity[rgbaIndex] = _velocity.x;
+            velocity[rgbaIndex+1] = _velocity.y;
+            velocity[rgbaIndex+2] = _velocity.z;
+            var lastPosition = new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]);
+            var _position = _velocity.multiplyScalar(dt).add(lastPosition);
+            position[rgbaIndex] = _position.x;
+            position[rgbaIndex+1] = _position.y;
+            position[rgbaIndex+2] = _position.z;
         }
 
+        render();
+    }
+
+    function render(){
         for (var i=0;i<numNodes;i++){
             var rgbaIndex = i*4;
             allNodes[i].setBendingForce(new THREE.Vector3(force[rgbaIndex], force[rgbaIndex+1], force[rgbaIndex+2]));
+            allNodes[i].move(new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]));
         }
-
-        //https://learning-modules.mit.edu/service/materials/groups/144285/files/a270219e-4017-4381-90d5-dd7ecb9d9af5/link?errorRedirect=%2Fmaterials%2Findex.html
-
+        for (var i=0;i<allEdges.length;i++){
+            allEdges[i].update();
+        }
+        globals.threeView.render();
     }
 
     return {
-        step: step
+        step: step,
+        reset: reset
     }
 }
