@@ -108,6 +108,11 @@ function initStructure(globals){
             } else if (mode === "boundaryEditing"){
                 if (globals.get("needsRemesh")) this.syncSim();
                 this.boundaryEditingModeChanged();
+            } else if (mode === "simulation"){
+                _.each(this.simMembranes, function(membrane){
+                    membrane.setEdgeMaterial(edgeMaterialLightGray);
+                    membrane.hideNodes();
+                });
             }
             this.simNodesContainer.visible = mode === "meshing" || mode === "boundaryEditing" || mode === "simulation";
             this.simEdgesContainer.visible = this.simNodesContainer.visible;

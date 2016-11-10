@@ -14,7 +14,7 @@ function initSolver(globals){
 
     var structure = globals.structure;
 
-    var numNodes;
+    var allNodes, numNodes;
     var position, edgeLengths, moment, force, velocity, externalForces, neighborIndices, meta;
 
     function setupSolver(){
@@ -23,14 +23,15 @@ function initSolver(globals){
         var beams = structure.simBeams;
         var membranes = structure.simMembranes;
 
-        var allNodes = nodes;
+        var _allNodes = nodes;
         for (var i=0;i<beams.length;i++){
-            allNodes = allNodes.concat(beams[i].getInnerNodes());
+            _allNodes = _allNodes.concat(beams[i].getInnerNodes());
         }
-        numNodes = allNodes.length;
+        numNodes = _allNodes.length;
         for (var i=0;i<numNodes;i++){
-            allNodes[i].setSimIndex(i);
+            _allNodes[i].setSimIndex(i);
         }
+        allNodes = _allNodes;
 
         position = new Float32Array(numNodes*4);
 
@@ -146,7 +147,11 @@ function initSolver(globals){
             moment[rgbaIndex+1] = mVect.y;
             moment[rgbaIndex+2] = mVect.z;
         }
-        console.log(moment);
+
+        for (var i=0;i<numNodes;i++){
+            var rgbaIndex = i*4;
+            allNodes[i].setBendingForce(new THREE.Vector3(moment[rgbaIndex], moment[rgbaIndex+1], moment[rgbaIndex+2]));
+        }
 
         for (var i=0;i<numNodes;i++) {
 
