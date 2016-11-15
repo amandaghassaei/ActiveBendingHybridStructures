@@ -15,7 +15,7 @@ function initSolver(globals){
     var structure = globals.structure;
 
     var allNodes, numNodes, allEdges;
-    var position, edgeLengths, moment, force, velocity, externalForces, neighborIndices, meta;
+    var position, edgeLengths, moment, velocity, externalForces, neighborIndices, meta;
     var dt = 0.1;
     var E = 1;
     var I = 1;
@@ -44,7 +44,6 @@ function initSolver(globals){
 
         moment = new Float32Array(numNodes*4);
         velocity = new Float32Array(numNodes*4);
-        force = new Float32Array(numNodes*4);
         externalForces = new Float32Array(numNodes*4);
         meta = new Uint8Array(numNodes*4);//fixed, numNeighbors, neighborStartIndex
 
@@ -111,6 +110,7 @@ function initSolver(globals){
 
     function step(){
 
+        //calc moment
         for (var i=0;i<numNodes;i++){
 
             var rgbaIndex = i*4;
@@ -154,20 +154,16 @@ function initSolver(globals){
             moment[rgbaIndex+2] = mVect.z;
         }
 
-        //for (var i=0;i<numNodes;i++){
-        //    var rgbaIndex = i*4;
-        //    allNodes[i].setBendingForce(new THREE.Vector3(moment[rgbaIndex], moment[rgbaIndex+1], moment[rgbaIndex+2]));
-        //}
-
+        //calc velocity
         for (var i=0;i<numNodes;i++) {
 
             var rgbaIndex = i * 4;
 
             var nodeMeta = [meta[rgbaIndex], meta[rgbaIndex+1], meta[rgbaIndex+2]];
             if (nodeMeta[0] == 1) {//fixed
-                force[rgbaIndex] = 0;
-                force[rgbaIndex+1] = 0;
-                force[rgbaIndex+2] = 0;
+                velocity[rgbaIndex] = 0;
+                velocity[rgbaIndex+1] = 0;
+                velocity[rgbaIndex+2] = 0;
                 continue;
             }
 
@@ -204,16 +200,31 @@ function initSolver(globals){
                 forceSum.add(nodeMoment.clone().sub(neighbor1moment).multiplyScalar(1/length1));
                 forceSum.add(nodeMoment.clone().sub(neighbor2moment).multiplyScalar(1/length2));
             }
-            force[rgbaIndex] = forceSum.x;
-            force[rgbaIndex+1] = forceSum.y;
-            force[rgbaIndex+2] = forceSum.z;
-
 
             var lastVelocity = new THREE.Vector3(velocity[rgbaIndex], velocity[rgbaIndex+1], velocity[rgbaIndex+2]);
             var _velocity = forceSum.multiplyScalar(dt).add(lastVelocity);
             velocity[rgbaIndex] = _velocity.x;
             velocity[rgbaIndex+1] = _velocity.y;
             velocity[rgbaIndex+2] = _velocity.z;
+
+        }
+
+        //calc position
+        for (var i=0;i<numNodes;i++) {
+
+            var rgbaIndex = i * 4;
+
+            var nodePosition = new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]);
+            var nodeMeta = [meta[rgbaIndex], meta[rgbaIndex+1], meta[rgbaIndex+2]];
+            if (nodeMeta[0] == 1) {//fixed
+                position[rgbaIndex] = nodePosition.x;
+                position[rgbaIndex+1] = nodePosition.y;
+                position[rgbaIndex+2] = nodePosition.z;
+                continue;
+            }
+
+            var _velocity = new THREE.Vector3(velocity[rgbaIndex], velocity[rgbaIndex+1], velocity[rgbaIndex+2]);
+
             var _position = _velocity.multiplyScalar(dt).add(nodePosition);
             position[rgbaIndex] = _position.x;
             position[rgbaIndex+1] = _position.y;
