@@ -18,6 +18,8 @@ function initGlobals(){
             boundaryEditingMode: "fixed",
             constantNumElements: true,
 
+            kineticDampingTolerance: 0.0001,
+
             //simulation params
             segmentLength: 2,
             radialMembraneLayers: 1,

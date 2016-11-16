@@ -14,7 +14,8 @@ function initSimulationView(globals){
             "click #stepForward": "stepForward",
             "click #resetSim": "reset",
             "click #startSim": "start",
-            "click #pauseSim": "pause"
+            "click #pauseSim": "pause",
+            "click #staticSolve": "staticSolve"
         },
 
         initialize: function(){
@@ -28,6 +29,11 @@ function initSimulationView(globals){
         start: function(e){
             e.preventDefault();
             globals.solver.start();
+        },
+
+        staticSolve: function(e){
+            e.preventDefault();
+            globals.solver.staticSolve();
         },
 
         pause: function(e){

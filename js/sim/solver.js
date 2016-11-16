@@ -16,7 +16,7 @@ function initSolver(globals){
 
     var allNodes, numNodes, allEdges;
     var position, edgeLengths, moment, velocity, externalForces, neighborIndices, meta;
-    var lastKineticEnergy;
+    var lastKineticEnergy, solved;
     var dt = 0.1;
     var E = 1;
     var I = 1;
@@ -25,6 +25,7 @@ function initSolver(globals){
     function reset(){
 
         lastKineticEnergy = -1;
+        solved = false;
 
         var nodes = structure.simNodes;
         var beams = structure.simBeams;
@@ -112,6 +113,11 @@ function initSolver(globals){
     }
 
     function step(){
+        _stepKE();
+        render();
+    }
+
+    function _stepKE(){
          //calc moment
         for (var i=0;i<numNodes;i++){
 
@@ -161,9 +167,8 @@ function initSolver(globals){
             var rgbaIndex = i * 4;
             kineticEnergy += velocity[rgbaIndex+3];
         }
-        console.log(kineticEnergy);
         if (kineticEnergy<lastKineticEnergy){
-            console.log("reset");
+            if (kineticEnergy < globals.get("kineticDampingTolerance")) solved = true;
             //reset velocity
             for (var i=0;i<numNodes;i++) {
                 var rgbaIndex = i * 4;
@@ -255,6 +260,13 @@ function initSolver(globals){
             position[rgbaIndex+1] = _position.y;
             position[rgbaIndex+2] = _position.z;
         }
+    }
+
+    function staticSolve(){
+        solved = false;
+        while (solved == false){
+            _stepKE();
+        }
         render();
     }
 
@@ -281,6 +293,7 @@ function initSolver(globals){
         step: step,
         reset: reset,
         start: start,
-        pause: pause
+        pause: pause,
+        staticSolve: staticSolve
     }
 }
