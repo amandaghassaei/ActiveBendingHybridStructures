@@ -51,7 +51,7 @@ function initSolver(globals){
         moment = new Float32Array(numNodes*4);
         velocity = new Float32Array(numNodes*4);
         externalForces = new Float32Array(numNodes*4);
-        meta = new Uint8Array(numNodes*4);//fixed, numNeighbors, neighborStartIndex
+        meta = new Uint8Array(numNodes*4);//fixed, numNeighbors/2, neighborStartIndex
 
         for (var i=0;i<beams.length;i++){
             beams[i].setSimIndex(i);
@@ -90,10 +90,10 @@ function initSolver(globals){
             orderedEdges.push(nodeEdgesOrdered);
             numConnections += nodeEdgesOrdered.length;
         }
-        neighborIndices = new Uint16Array(numConnections);
+        neighborIndices = new Int16Array(numConnections);
         edgeLengths = new Float32Array(numConnections);
 
-        var edgeIndex = 1;//start at 1, zero means no edge
+        var edgeIndex = 0;
         for (var i=0;i<numNodes;i++) {
 
             var rgbaIndex = i * 4;
@@ -103,7 +103,8 @@ function initSolver(globals){
             for (var j=0;j<nodeEdgesOrdered.length;j++) {
                 var edge = nodeEdgesOrdered[j];
                 if (edge === null){
-                    neighborIndices[edgeIndex+j] = 0;
+                    neighborIndices[edgeIndex+j] = -1;
+                    edgeLengths[edgeIndex+j] = 0;
                 } else {
                     edgeLengths[edgeIndex+j] = edge.getSimLength();
                     neighborIndices[edgeIndex+j] = edge.getOtherNode(node).getSimIndex();
@@ -143,7 +144,7 @@ function initSolver(globals){
                 var neighbor2Index = 4*neighborIndices[neighborMappingIndex+2*j+1];
 
                 //only one connection
-                if (neighbor1Index==0 || neighbor2Index==0){
+                if (neighbor1Index<0 || neighbor2Index<0){
                     moment[rgbaIndex] = 0;
                     moment[rgbaIndex+1] = 0;
                     moment[rgbaIndex+2] = 0;
@@ -211,7 +212,7 @@ function initSolver(globals){
                 var neighbor1Index = 4*neighborIndices[neighborMappingIndex+2*j];
                 var neighbor2Index = 4*neighborIndices[neighborMappingIndex+2*j+1];
 
-                if (neighbor1Index>0){
+                if (neighbor1Index>=0){
                     var neighbor1moment = new THREE.Vector3(moment[neighbor1Index], moment[neighbor1Index+1], moment[neighbor1Index+2]);
                     var neighbor1position = new THREE.Vector3(position[neighbor1Index], position[neighbor1Index+1], position[neighbor1Index+2]);
                     var length1 = edgeLengths[neighborMappingIndex+2*j];
@@ -221,7 +222,7 @@ function initSolver(globals){
                     forceSum.add(dist1.normalize().multiplyScalar(EA*(dist1Length-length1)/dist1Length));
                     forceSum.add(nodeMoment.clone().sub(neighbor1moment).multiplyScalar(1/length1));
                 }
-                if (neighbor2Index>0){
+                if (neighbor2Index>=0){
                     var neighbor2moment = new THREE.Vector3(moment[neighbor2Index], moment[neighbor2Index+1], moment[neighbor2Index+2]);
                     var neighbor2position = new THREE.Vector3(position[neighbor2Index], position[neighbor2Index+1], position[neighbor2Index+2]);
                     var length2 = edgeLengths[neighborMappingIndex+2*j+1];
