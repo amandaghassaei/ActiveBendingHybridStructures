@@ -65,18 +65,18 @@ function initStructure(globals){
 
             var node1 = this.newNode(new THREE.Vector3());
             var node2 = this.newNode(new THREE.Vector3(10,0,0));
-            var node3 = this.newNode(new THREE.Vector3(2,0,10));
+            //var node3 = this.newNode(new THREE.Vector3(2,10,0));
             this.addNodeToBeam(node1);
             this.addNodeToBeam(node2);
-            this.addNodeToBeam(node3);
-            this.addNodeToBeam(node1);
-            var beam = this.currentEditingBeam;
-            this.selectedEdges = beam.getEdges();
-            this.newMembrane();
+            //this.addNodeToBeam(node3);
+            //this.addNodeToBeam(node1);
+            //var beam = this.currentEditingBeam;
+            //this.selectedEdges = beam.getEdges();
+            //this.newMembrane();
             this.syncSim();
-            this.simNodes[0].setFixed(true);
-            this.simNodes[1].setFixed(true);
-            this.set("numFixed", 2);
+            //this.simNodes[0].setFixed(true);
+            //this.simNodes[1].setFixed(true);
+            //this.set("numFixed", 2);
         },
 
         updateForMode: function(){

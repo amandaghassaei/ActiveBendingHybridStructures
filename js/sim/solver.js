@@ -20,7 +20,9 @@ function initSolver(globals){
     var dt = 0.1;
     var E = 1;
     var I = 1;
+    var EI = E*I;
     var A = 1;
+    var EA = E*A;
 
     function reset(){
 
@@ -78,9 +80,11 @@ function initSolver(globals){
             _.sortBy(nodeEdgesOrdered, function (edge) {
                 return edge.getSimIndex();
             });
+
             for (var j=0;j<nodeEdgesOrdered.length/2;j++) {
-                if (nodeEdgesOrdered.length-1<j || (nodeEdgesOrdered[2*j].getSimIndex() != nodeEdgesOrdered[2*j+1].getSimIndex())) {
-                    nodeEdgesOrdered.splice(2 * j + 1, 0, null);
+                if (nodeEdgesOrdered.length-2<j || (nodeEdgesOrdered[2*j].getSimIndex() != nodeEdgesOrdered[2*j+1].getSimIndex())) {
+                    if (nodeEdgesOrdered.length>2*j+1) nodeEdgesOrdered.splice(2 * j + 1, 0, null);
+                    else nodeEdgesOrdered.push(null);
                 }
             }
             orderedEdges.push(nodeEdgesOrdered);
@@ -89,7 +93,7 @@ function initSolver(globals){
         neighborIndices = new Uint16Array(numConnections);
         edgeLengths = new Float32Array(numConnections);
 
-        var edgeIndex = 0;
+        var edgeIndex = 1;//start at 1, zero means no edge
         for (var i=0;i<numNodes;i++) {
 
             var rgbaIndex = i * 4;
@@ -99,7 +103,7 @@ function initSolver(globals){
             for (var j=0;j<nodeEdgesOrdered.length;j++) {
                 var edge = nodeEdgesOrdered[j];
                 if (edge === null){
-                    neighborIndices[edgeIndex+j] = -1;
+                    neighborIndices[edgeIndex+j] = 0;
                 } else {
                     edgeLengths[edgeIndex+j] = edge.getSimLength();
                     neighborIndices[edgeIndex+j] = edge.getOtherNode(node).getSimIndex();
@@ -138,9 +142,11 @@ function initSolver(globals){
                 var neighbor1Index = 4*neighborIndices[neighborMappingIndex+2*j];
                 var neighbor2Index = 4*neighborIndices[neighborMappingIndex+2*j+1];
 
-                if (neighbor1Index<0 || neighbor2Index<0){
-                    //todo only one connection
-                    console.warn("here");
+                //only one connection
+                if (neighbor1Index==0 || neighbor2Index==0){
+                    moment[rgbaIndex] = 0;
+                    moment[rgbaIndex+1] = 0;
+                    moment[rgbaIndex+2] = 0;
                     continue;
                 }
 
@@ -154,7 +160,7 @@ function initSolver(globals){
                 var aCrossB = aVect.clone().cross(bVect);
 
                 var rVect = (bVect.clone().multiplyScalar(aSq).sub(aVect.clone().multiplyScalar(bSq))).cross(aCrossB).multiplyScalar(1/(2*aCrossB.lengthSq()));
-                mVect.add(rVect.clone().multiplyScalar(E*I/rVect.lengthSq()));
+                mVect.add(rVect.clone().multiplyScalar(EI/rVect.lengthSq()));
             }
             moment[rgbaIndex] = mVect.x;
             moment[rgbaIndex+1] = mVect.y;
@@ -205,28 +211,26 @@ function initSolver(globals){
                 var neighbor1Index = 4*neighborIndices[neighborMappingIndex+2*j];
                 var neighbor2Index = 4*neighborIndices[neighborMappingIndex+2*j+1];
 
-                if (neighbor1Index<0 || neighbor2Index<0){
-                    //todo only one connection
-                    console.warn("here");
-                    continue;
+                if (neighbor1Index>0){
+                    var neighbor1moment = new THREE.Vector3(moment[neighbor1Index], moment[neighbor1Index+1], moment[neighbor1Index+2]);
+                    var neighbor1position = new THREE.Vector3(position[neighbor1Index], position[neighbor1Index+1], position[neighbor1Index+2]);
+                    var length1 = edgeLengths[neighborMappingIndex+2*j];
+                    var dist1 = neighbor1position.clone().sub(nodePosition);
+                    var dist1Length = dist1.length();
+
+                    forceSum.add(dist1.normalize().multiplyScalar(EA*(dist1Length-length1)/dist1Length));
+                    forceSum.add(nodeMoment.clone().sub(neighbor1moment).multiplyScalar(1/length1));
                 }
+                if (neighbor2Index>0){
+                    var neighbor2moment = new THREE.Vector3(moment[neighbor2Index], moment[neighbor2Index+1], moment[neighbor2Index+2]);
+                    var neighbor2position = new THREE.Vector3(position[neighbor2Index], position[neighbor2Index+1], position[neighbor2Index+2]);
+                    var length2 = edgeLengths[neighborMappingIndex+2*j+1];
+                    var dist2 = neighbor2position.clone().sub(nodePosition);
+                    var dist2Length = dist2.length();
 
-                var neighbor1moment = new THREE.Vector3(moment[neighbor1Index], moment[neighbor1Index+1], moment[neighbor1Index+2]);
-                var neighbor2moment = new THREE.Vector3(moment[neighbor2Index], moment[neighbor2Index+1], moment[neighbor2Index+2]);
-                var neighbor1position = new THREE.Vector3(position[neighbor1Index], position[neighbor1Index+1], position[neighbor1Index+2]);
-                var neighbor2position = new THREE.Vector3(position[neighbor2Index], position[neighbor2Index+1], position[neighbor2Index+2]);
-                var length1 = edgeLengths[neighborMappingIndex+2*j];
-                var length2 = edgeLengths[neighborMappingIndex+2*j+1];
-
-                var dist1 = neighbor1position.clone().sub(nodePosition);
-                var dist2 = neighbor2position.clone().sub(nodePosition);
-                var dist1Length = dist1.length();
-                var dist2Length = dist2.length();
-
-                forceSum.add(dist1.normalize().multiplyScalar((dist1Length-length1)/dist1Length));
-                forceSum.add(dist2.normalize().multiplyScalar((dist2Length-length2)/dist2Length));
-                forceSum.add(nodeMoment.clone().sub(neighbor1moment).multiplyScalar(1/length1));
-                forceSum.add(nodeMoment.clone().sub(neighbor2moment).multiplyScalar(1/length2));
+                    forceSum.add(dist2.normalize().multiplyScalar(EA*(dist2Length-length2)/dist2Length));
+                    forceSum.add(nodeMoment.clone().sub(neighbor2moment).multiplyScalar(1/length2));
+                }
             }
 
             var lastVelocity = new THREE.Vector3(velocity[rgbaIndex], velocity[rgbaIndex+1], velocity[rgbaIndex+2]);

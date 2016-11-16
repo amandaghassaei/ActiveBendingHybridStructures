@@ -55,6 +55,10 @@ function initThreeView(globals) {
     }
 
     function startAnimation(callback){
+        if (isAnimating){
+            console.warn("already animating");
+            return;
+        }
         console.log("starting animation");
         isAnimating = true;
         _loop(function(){
@@ -64,7 +68,7 @@ function initThreeView(globals) {
 
     }
     function stopAnimation(){
-        console.log("stopping animation");
+        if (isAnimating) console.log("stopping animation");
         isAnimating = false;
     }
 
