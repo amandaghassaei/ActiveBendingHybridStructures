@@ -40,12 +40,18 @@ function initMesh(globals){
 
         updateMeshOpacity: function(){
             transparentMaterial.opacity = this.get("meshOpacity");
+            globals.threeView.render();
         },
 
         updateForMode: function(){
             if (!this.object3D) return;
             var mode = globals.get("mode");
             this.setTransparent(mode != "meshEditing");
+            if (this.object3D) {
+                this.object3D.visible = this.get("showMesh") || mode == "meshEditing";
+                this.wireframe.visible = this.get("showMesh") || mode == "meshEditing";
+            }
+
             //this.object3D.visible = !(mode === "boundaryEditing" || mode === "meshing");
             //this.wireframe.visible = !(mode === "boundaryEditing" || mode === "meshing");
             globals.threeView.render();
