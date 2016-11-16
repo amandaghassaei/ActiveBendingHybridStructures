@@ -12,7 +12,9 @@ function initSimulationView(globals){
 
         events: {
             "click #stepForward": "stepForward",
-            "click #resetSim": "reset"
+            "click #resetSim": "reset",
+            "click #startSim": "start",
+            "click #pauseSim": "pause"
         },
 
         initialize: function(){
@@ -21,6 +23,16 @@ function initSimulationView(globals){
         reset: function(e){
             e.preventDefault();
             globals.solver.reset();
+        },
+
+        start: function(e){
+            e.preventDefault();
+            globals.solver.start();
+        },
+
+        pause: function(e){
+            e.preventDefault();
+            globals.solver.pause();
         },
 
         stepForward: function(e){

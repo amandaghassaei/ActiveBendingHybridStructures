@@ -51,18 +51,19 @@ function initThreeView(globals) {
     }
 
     function render() {
-        if (!isAnimating) this._render();
+        if (!isAnimating) _render();
     }
 
     function startAnimation(callback){
         console.log("starting animation");
         isAnimating = true;
         _loop(function(){
+            callback();
             _render();
         });
 
     }
-    function stopAnimation(callBack){
+    function stopAnimation(){
         console.log("stopping animation");
         isAnimating = false;
     }

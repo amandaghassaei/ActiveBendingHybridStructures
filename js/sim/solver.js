@@ -112,8 +112,7 @@ function initSolver(globals){
     }
 
     function step(){
-
-        //calc moment
+         //calc moment
         for (var i=0;i<numNodes;i++){
 
             var rgbaIndex = i*4;
@@ -256,8 +255,14 @@ function initSolver(globals){
             position[rgbaIndex+1] = _position.y;
             position[rgbaIndex+2] = _position.z;
         }
-
         render();
+    }
+
+    function start(){
+        globals.threeView.startAnimation(step);
+    }
+    function pause(){
+        globals.threeView.stopAnimation();
     }
 
     function render(){
@@ -274,6 +279,8 @@ function initSolver(globals){
 
     return {
         step: step,
-        reset: reset
+        reset: reset,
+        start: start,
+        pause: pause
     }
 }
