@@ -16,12 +16,15 @@ function initSolver(globals){
 
     var allNodes, numNodes, allEdges;
     var position, edgeLengths, moment, velocity, externalForces, neighborIndices, meta;
+    var lastKineticEnergy;
     var dt = 0.1;
     var E = 1;
     var I = 1;
     var A = 1;
 
     function reset(){
+
+        lastKineticEnergy = -1;
 
         var nodes = structure.simNodes;
         var beams = structure.simBeams;
@@ -116,7 +119,6 @@ function initSolver(globals){
             var rgbaIndex = i*4;
 
             var nodeMeta = [meta[rgbaIndex], meta[rgbaIndex+1], meta[rgbaIndex+2]];
-
             if (nodeMeta[0] == 1) {//fixed
                 moment[rgbaIndex] = 0;
                 moment[rgbaIndex+1] = 0;
@@ -154,6 +156,27 @@ function initSolver(globals){
             moment[rgbaIndex+2] = mVect.z;
         }
 
+        //kinetic damping
+        var kineticEnergy = 0;
+        for (var i=0;i<numNodes;i++) {
+            var rgbaIndex = i * 4;
+            kineticEnergy += velocity[rgbaIndex+3];
+        }
+        console.log(kineticEnergy);
+        if (kineticEnergy<lastKineticEnergy){
+            console.log("reset");
+            //reset velocity
+            for (var i=0;i<numNodes;i++) {
+                var rgbaIndex = i * 4;
+                velocity[rgbaIndex] = 0;
+                velocity[rgbaIndex+1] = 0;
+                velocity[rgbaIndex+2] = 0;
+                velocity[rgbaIndex+3] = 0;
+            }
+            kineticEnergy = -1;
+        }
+        lastKineticEnergy = kineticEnergy;
+
         //calc velocity
         for (var i=0;i<numNodes;i++) {
 
@@ -164,6 +187,7 @@ function initSolver(globals){
                 velocity[rgbaIndex] = 0;
                 velocity[rgbaIndex+1] = 0;
                 velocity[rgbaIndex+2] = 0;
+                velocity[rgbaIndex+3] = 0;
                 continue;
             }
 
@@ -206,6 +230,8 @@ function initSolver(globals){
             velocity[rgbaIndex] = _velocity.x;
             velocity[rgbaIndex+1] = _velocity.y;
             velocity[rgbaIndex+2] = _velocity.z;
+            var velocityMag = _velocity.length();
+            velocity[rgbaIndex+3] = velocityMag*velocityMag;
 
         }
 

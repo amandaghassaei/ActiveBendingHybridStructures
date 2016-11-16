@@ -50,8 +50,8 @@ function initStructure(globals){
 
             this.listenTo(globals, "change:mode", this.updateForMode);
             this.listenTo(globals, "change:radialMembraneLayers", this.radialMembraneLayersChanged);
-            this.listenTo(globals, "change:segmentLength", this.meshRadial);
-            this.listenTo(globals, "change:constantNumElements", this.meshRadial);
+            this.listenTo(globals, "change:segmentLength", this.mesh);
+            this.listenTo(globals, "change:constantNumElements", this.mesh);
             this.listenTo(globals, "change:numEdgeElements", this.mesh);
             this.listenTo(globals, "change:meshingMode", this.mesh);
             this.listenTo(this, "change:beams change:membranes", function(){
@@ -452,6 +452,9 @@ function initStructure(globals){
         },
 
         mesh: function(){
+            for (var i=0;i<this.simNodes.length;i++){
+                if (this.simNodes[i]) this.simNodes[i].removeElements();
+            }
             var mode = globals.get("meshingMode");
             if (mode === "radialMeshing"){
                 this.meshRadial();

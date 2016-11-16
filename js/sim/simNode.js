@@ -34,6 +34,10 @@ SimNode.prototype.getSimIndex = function(){
     return this.simIndex;
 };
 
+SimNode.prototype.removeElements = function(){
+    this.edges = [];
+};
+
 SimNode.prototype.setBendingForce = function(vect){
     if (!this.bendingForce){
         this.bendingForce = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(), 1, 0xb67df0, 0.5, 0.5);

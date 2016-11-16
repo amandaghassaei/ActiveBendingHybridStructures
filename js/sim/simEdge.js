@@ -102,6 +102,7 @@ SimEdge.prototype.setSimIndex = function(index){
 SimEdge.prototype.destroy = function(){
     this.destroyElements();
     this.elements = null;
+    this.innerNodes = null;
     this.nodes = null;
     this.parent.remove(this.object3D);
     this.object3D = null;

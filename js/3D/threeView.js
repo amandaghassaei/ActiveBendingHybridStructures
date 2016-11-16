@@ -8,6 +8,7 @@ function initThreeView(globals) {
     var camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, -1000, 1000);//-40, 40);
     var renderer = new THREE.WebGLRenderer({antialias: true});
     var controls;
+    var isAnimating = false;
 
     init();
 
@@ -50,15 +51,20 @@ function initThreeView(globals) {
     }
 
     function render() {
-        renderer.render(scene, camera);
+        if (!isAnimating) this._render();
     }
 
     function startAnimation(callback){
         console.log("starting animation");
+        isAnimating = true;
         _loop(function(){
             _render();
         });
 
+    }
+    function stopAnimation(callBack){
+        console.log("stopping animation");
+        isAnimating = false;
     }
 
     function _render(){
@@ -68,7 +74,7 @@ function initThreeView(globals) {
     function _loop(callback){
         callback();
         requestAnimationFrame(function(){
-            _loop(callback);
+            if (isAnimating) _loop(callback);
         });
     }
 
@@ -107,7 +113,8 @@ function initThreeView(globals) {
         sceneAdd: sceneAdd,
         //sceneClear: sceneClear,
         render: render,
-        //startAnimation: startAnimation,
+        startAnimation: startAnimation,
+        stopAnimation: stopAnimation,
         enableControls: enableControls,
         scene: scene,
         camera: camera
