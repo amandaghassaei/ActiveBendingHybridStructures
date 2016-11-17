@@ -116,7 +116,7 @@ function initStructure(globals){
             }
             this.simNodesContainer.visible = mode === "meshing" || mode === "boundaryEditing" || mode === "simulation";
             this.simEdgesContainer.visible = this.simNodesContainer.visible;
-            this.simMembraneContainer.visible = this.simNodesContainer.visible;
+            this.simMembraneContainer.visible = mode === "meshing" || mode === "boundaryEditing";
             this.nodesContainer.visible = mode === "beamEditing" || mode === "membraneEditing";
             this.beamsContainer.visible =  this.nodesContainer.visible;
             this.edgesContainer.visible =  this.nodesContainer.visible;

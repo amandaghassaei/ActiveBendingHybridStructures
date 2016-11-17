@@ -359,13 +359,9 @@ function initSolver(globals){
 
     function staticSolve(){
         solved = false;
-        //if (globals.get("dampingType") == "kinetic") {
-            while (solved == false) {
-                _stepKE();
-            }
-        //} else {
-        //    //todo do this
-        //}
+        while (solved == false) {
+            _stepKE();
+        }
         render();
     }
 
