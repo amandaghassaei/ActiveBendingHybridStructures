@@ -32,6 +32,21 @@ function initSimulationView(globals){
             setInput("#numStepsPerFrame", globals.get("numStepsPerFrame"), function(val){
                 globals.set("numStepsPerFrame", val);
             }, 1);
+            setInput("#simE", globals.get("simE"), function(val){
+                globals.set("simE", val);
+            }, 0);
+            setInput("#simA", globals.get("simA"), function(val){
+                globals.set("simA", val);
+            }, 0);
+            setInput("#simI", globals.get("simI"), function(val){
+                globals.set("simI", val);
+            }, 0);
+
+            this.listenTo(globals, "change:mode", function(){
+                if (globals.get("mode") != "simulation"){
+                    globals.solver.pause();
+                }
+            });
 
             this.setButtonVis();
             this.setResetVis();

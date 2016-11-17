@@ -20,8 +20,8 @@ function initSolver(globals){
     var dt = 0.1;
     var E = 1;
     var I = 1;
-    var EI = E*I;
     var A = 1;
+    var EI = E*I;
     var EA = E*A;
 
     function reset(){
@@ -151,12 +151,12 @@ function initSolver(globals){
             var rgbaIndex = i*4;
 
             var nodeMeta = [meta[rgbaIndex], meta[rgbaIndex+1], meta[rgbaIndex+2]];
-            if (nodeMeta[0] == 1) {//fixed
-                moment[rgbaIndex] = 0;
-                moment[rgbaIndex+1] = 0;
-                moment[rgbaIndex+2] = 0;
-                continue;
-            }
+            //if (nodeMeta[0] == 1) {//fixed
+            //    moment[rgbaIndex] = 0;
+            //    moment[rgbaIndex+1] = 0;
+            //    moment[rgbaIndex+2] = 0;
+            //    continue;
+            //}
 
             var nodePosition = new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]);
             var neighborMappingIndex = nodeMeta[2];
