@@ -59,9 +59,6 @@ body{
     overflow:auto;
     padding:20px 20px;
 }
-.controls>div>a{
-    float:right;
-}
 
 #controlsLeft{
     position: absolute;
@@ -365,4 +362,8 @@ span.modal-close{
 
 #resetSim{
     margin-right:20px;
+}
+
+#staticSolve{
+    margin-right:15px;
 }

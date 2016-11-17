@@ -55,7 +55,7 @@
 <div  id="threeContainer"></div>
 <div class="controls" id="meshEditingControls">
     <div>
-        <a href="#" id="uploadSTL" class="btn btn-lg btn-default">Upload STL</a><br/><br/>
+        <a href="#" id="uploadSTL" class="floatRight btn btn-lg btn-default">Upload STL</a><br/><br/>
         <label class="checkbox" for="autoDeleteGeo">
             <input id="autoDeleteGeo" data-toggle="checkbox" class="custom-checkbox layersSelector" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
             Automatically Delete Existing Topology on STL Load
@@ -81,7 +81,7 @@
             <input id="snapToVertex" data-toggle="checkbox" class="custom-checkbox layersSelector" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
             Snap Nodes To Mesh Vertices
         </label>
-        Num Nodes: &nbsp;&nbsp;<span id="numNodes"></span><a href="#" id="deleteNodeMode" class="btn btn-lg btn-default">Delete Node Mode (D)</a><br/>
+        Num Nodes: &nbsp;&nbsp;<span id="numNodes"></span><a href="#" id="deleteNodeMode" class="floatRight btn btn-lg btn-default">Delete Node Mode (D)</a><br/>
         Num Beams: &nbsp;&nbsp;<span id="numBeams"></span><br/>
         <div id="beamMeta" class="indent"></div>
     </div>
@@ -157,12 +157,12 @@
                 <input name="dampingType" value="viscous" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
                 Viscous
             </label>
-        </div>
-        <a href="#" id="staticSolve" class="btn btn-lg btn-success">Static Solve</a><br/><br/>
-        <a href="#" id="startSim" class="btn btn-lg btn-success">Start Animation</a>
-        <a href="#" id="pauseSim" class="btn btn-lg btn-warning">Pause Animation</a>
-        <a href="#" id="resetSim" class="btn btn-lg btn-default">Reset</a><br/><br/>
-        <a href="#" id="stepForward" class="btn btn-lg btn-default">Step Forward</a><br/><br/>
+        </div><br/>
+        <div class="floatRight"><a href="#" id="staticSolve" class="btn btn-lg btn-success">Static Solve</a> Tolerance: &nbsp;&nbsp;<input id="kineticDampingTolerance" value="" placeholder="" class="form-control" type="text"></div><br/><br/>
+        <a href="#" id="startSim" class="floatRight btn btn-lg btn-success">Start Animation</a>
+        <a href="#" id="pauseSim" class="floatRight btn btn-lg btn-warning">Pause Animation</a>
+        <a href="#" id="resetSim" class="floatRight btn btn-lg btn-default">Reset</a><br/><br/>
+        <a href="#" id="stepForward" class="floatRight btn btn-lg btn-default">Step Forward</a><br/><br/>
     </div>
 </div>
 <div class="controls" id="optimizationControls">

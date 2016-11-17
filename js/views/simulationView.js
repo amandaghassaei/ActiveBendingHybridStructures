@@ -79,7 +79,7 @@ function initSimulationView(globals){
             e.preventDefault();
             globals.set("simNeedsReset", true);
             globals.solver.pause();
-            globals.solver.step();
+            globals.solver.singleStep();
         }
 
     }))({model:globals.structure});

@@ -119,7 +119,15 @@ function initSolver(globals){
         render();
     }
 
-    function step(){
+    function singleStep(){
+        if (globals.get("dampingType") == "kinetic") {
+            stepKE();
+        } else {
+
+        }
+    }
+
+    function stepKE(){
         _stepKE();
         render();
     }
@@ -271,15 +279,24 @@ function initSolver(globals){
 
     function staticSolve(){
         solved = false;
-        while (solved == false){
-            _stepKE();
+        if (globals.get("dampingType") == "kinetic") {
+            while (solved == false) {
+                _stepKE();
+            }
+        } else {
+
         }
         render();
     }
 
     function start(){
         globals.set("isAnimating", true);
-        globals.threeView.startAnimation(step);
+        if (globals.get("dampingType") == "kinetic"){
+            globals.threeView.startAnimation(stepKE);
+        } else {
+
+        }
+
     }
     function pause(){
         globals.threeView.stopAnimation();
@@ -299,7 +316,7 @@ function initSolver(globals){
     }
 
     return {
-        step: step,
+        singleStep: singleStep,
         reset: reset,
         start: start,
         pause: pause,

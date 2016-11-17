@@ -79,7 +79,7 @@ Beam.prototype.unhighlight = function(){
 
 Beam.prototype.toJSON = function(){
     return {
-        //numNodes: this.getNodes().length,
+        numNodes: _.uniq(this.getNodes()).length,
         numEdges: this.getEdges().length
     }
 };
