@@ -15,7 +15,7 @@ function initSolver(globals){
     var structure = globals.structure;
 
     var allNodes, numNodes, allEdges;
-    var position, edgeLengths, moment, velocity, externalForces, neighborIndices, meta;
+    var position, edgeLengths, moment, velocity, externalForces, neighborIndices, meta, damping;
     var lastKineticEnergy, solved;
     var dt = 0.1;
     var E = 1;
@@ -92,8 +92,10 @@ function initSolver(globals){
             orderedEdges.push(nodeEdgesOrdered);
             numConnections += nodeEdgesOrdered.length;
         }
+
         neighborIndices = new Int16Array(numConnections);
         edgeLengths = new Float32Array(numConnections);
+        damping = new Float32Array(numConnections);
 
         var edgeIndex = 0;
         for (var i=0;i<numNodes;i++) {
@@ -106,10 +108,10 @@ function initSolver(globals){
                 var edge = nodeEdgesOrdered[j];
                 if (edge === null){
                     neighborIndices[edgeIndex+j] = -1;
-                    edgeLengths[edgeIndex+j] = 0;
                 } else {
                     edgeLengths[edgeIndex+j] = edge.getSimLength();
                     neighborIndices[edgeIndex+j] = edge.getOtherNode(node).getSimIndex();
+                    damping[edgeIndex+j] = edge.getDampingConstant(EA, EI);
                 }
             }
             meta[rgbaIndex + 1] = nodeEdgesOrdered.length/2;//num beams
@@ -123,7 +125,7 @@ function initSolver(globals){
         if (globals.get("dampingType") == "kinetic") {
             stepKE();
         } else {
-
+            stepViscous();
         }
     }
 
@@ -132,8 +134,12 @@ function initSolver(globals){
         render();
     }
 
-    function _stepKE(){
-         //calc moment
+    function stepViscous(){
+        _stepViscous();
+        render();
+    }
+
+    function _calcMoment(){
         for (var i=0;i<numNodes;i++){
 
             var rgbaIndex = i*4;
@@ -177,7 +183,102 @@ function initSolver(globals){
             moment[rgbaIndex+1] = mVect.y;
             moment[rgbaIndex+2] = mVect.z;
         }
+    }
 
+    function _calcPosition(){
+        for (var i=0;i<numNodes;i++) {
+
+            var rgbaIndex = i * 4;
+
+            var nodePosition = new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]);
+            var nodeMeta = [meta[rgbaIndex], meta[rgbaIndex+1], meta[rgbaIndex+2]];
+            if (nodeMeta[0] == 1) {//fixed
+                position[rgbaIndex] = nodePosition.x;
+                position[rgbaIndex+1] = nodePosition.y;
+                position[rgbaIndex+2] = nodePosition.z;
+                continue;
+            }
+
+            var _velocity = new THREE.Vector3(velocity[rgbaIndex], velocity[rgbaIndex+1], velocity[rgbaIndex+2]);
+
+            var _position = _velocity.multiplyScalar(dt).add(nodePosition);
+            position[rgbaIndex] = _position.x;
+            position[rgbaIndex+1] = _position.y;
+            position[rgbaIndex+2] = _position.z;
+        }
+    }
+
+    function _stepViscous(){
+        _calcMoment();
+
+        //calc velocity
+        for (var i=0;i<numNodes;i++) {
+
+            var rgbaIndex = i * 4;
+
+            var nodeMeta = [meta[rgbaIndex], meta[rgbaIndex+1], meta[rgbaIndex+2]];
+            if (nodeMeta[0] == 1) {//fixed
+                velocity[rgbaIndex] = 0;
+                velocity[rgbaIndex+1] = 0;
+                velocity[rgbaIndex+2] = 0;
+                velocity[rgbaIndex+3] = 0;
+                continue;
+            }
+
+            var nodeMoment = new THREE.Vector3(moment[rgbaIndex], moment[rgbaIndex+1], moment[rgbaIndex+2]);
+            var nodePosition = new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]);
+            var lastVelocity = new THREE.Vector3(velocity[rgbaIndex], velocity[rgbaIndex+1], velocity[rgbaIndex+2]);
+
+            var forceSum = new THREE.Vector3(externalForces[rgbaIndex], externalForces[rgbaIndex+1], externalForces[rgbaIndex+2]);
+            var neighborMappingIndex = nodeMeta[2];
+            for (var j=0;j<nodeMeta[1];j++){
+
+                var neighbor1Index = 4*neighborIndices[neighborMappingIndex+2*j];
+                var neighbor2Index = 4*neighborIndices[neighborMappingIndex+2*j+1];
+
+                if (neighbor1Index>=0){
+                    var neighbor1moment = new THREE.Vector3(moment[neighbor1Index], moment[neighbor1Index+1], moment[neighbor1Index+2]);
+                    var neighbor1position = new THREE.Vector3(position[neighbor1Index], position[neighbor1Index+1], position[neighbor1Index+2]);
+                    var neighbor1velocity = new THREE.Vector3(velocity[neighbor1Index], velocity[neighbor1Index+1], velocity[neighbor1Index+2]);
+                    var length1 = edgeLengths[neighborMappingIndex+2*j];
+                    var dist1 = neighbor1position.clone().sub(nodePosition);
+                    var dVel1 = neighbor1velocity.sub(lastVelocity);
+                    var dist1Length = dist1.length();
+                    var damping1 = damping[neighborMappingIndex+2*j];
+
+                    forceSum.add(dist1.normalize().multiplyScalar(EA*(dist1Length-length1)/dist1Length));
+                    forceSum.add(nodeMoment.clone().sub(neighbor1moment).multiplyScalar(1/length1));
+                    forceSum.add(dVel1.multiplyScalar(damping1));
+                }
+                if (neighbor2Index>=0){
+                    var neighbor2moment = new THREE.Vector3(moment[neighbor2Index], moment[neighbor2Index+1], moment[neighbor2Index+2]);
+                    var neighbor2position = new THREE.Vector3(position[neighbor2Index], position[neighbor2Index+1], position[neighbor2Index+2]);
+                    var neighbor2velocity = new THREE.Vector3(velocity[neighbor2Index], velocity[neighbor2Index+1], velocity[neighbor2Index+2]);
+                    var length2 = edgeLengths[neighborMappingIndex+2*j+1];
+                    var dist2 = neighbor2position.clone().sub(nodePosition);
+                    var dVel2 = neighbor2velocity.sub(lastVelocity);
+                    var dist2Length = dist2.length();
+                    var damping2 = damping[neighborMappingIndex+2*j+1];
+
+                    forceSum.add(dist2.normalize().multiplyScalar(EA*(dist2Length-length2)/dist2Length));
+                    forceSum.add(nodeMoment.clone().sub(neighbor2moment).multiplyScalar(1/length2));
+                    forceSum.add(dVel2.multiplyScalar(damping2));
+                }
+            }
+
+            var _velocity = forceSum.multiplyScalar(dt).add(lastVelocity);
+            velocity[rgbaIndex] = _velocity.x;
+            velocity[rgbaIndex+1] = _velocity.y;
+            velocity[rgbaIndex+2] = _velocity.z;
+            var velocityMag = _velocity.length();
+            velocity[rgbaIndex+3] = velocityMag*velocityMag;
+
+        }
+        _calcPosition();
+    }
+
+    function _stepKE(){
+        _calcMoment();
         //kinetic damping
         var kineticEnergy = 0;
         for (var i=0;i<numNodes;i++) {
@@ -253,48 +354,38 @@ function initSolver(globals){
             velocity[rgbaIndex+3] = velocityMag*velocityMag;
 
         }
-
-        //calc position
-        for (var i=0;i<numNodes;i++) {
-
-            var rgbaIndex = i * 4;
-
-            var nodePosition = new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]);
-            var nodeMeta = [meta[rgbaIndex], meta[rgbaIndex+1], meta[rgbaIndex+2]];
-            if (nodeMeta[0] == 1) {//fixed
-                position[rgbaIndex] = nodePosition.x;
-                position[rgbaIndex+1] = nodePosition.y;
-                position[rgbaIndex+2] = nodePosition.z;
-                continue;
-            }
-
-            var _velocity = new THREE.Vector3(velocity[rgbaIndex], velocity[rgbaIndex+1], velocity[rgbaIndex+2]);
-
-            var _position = _velocity.multiplyScalar(dt).add(nodePosition);
-            position[rgbaIndex] = _position.x;
-            position[rgbaIndex+1] = _position.y;
-            position[rgbaIndex+2] = _position.z;
-        }
+        _calcPosition();
     }
 
     function staticSolve(){
         solved = false;
-        if (globals.get("dampingType") == "kinetic") {
+        //if (globals.get("dampingType") == "kinetic") {
             while (solved == false) {
                 _stepKE();
             }
-        } else {
-
-        }
+        //} else {
+        //    //todo do this
+        //}
         render();
     }
 
     function start(){
         globals.set("isAnimating", true);
+        var numSteps = globals.get("numStepsPerFrame");
         if (globals.get("dampingType") == "kinetic"){
-            globals.threeView.startAnimation(stepKE);
+            globals.threeView.startAnimation(function(){
+                for (var i=0;i<numSteps;i++){
+                    _stepKE()
+                }
+                render();
+            });
         } else {
-
+            globals.threeView.startAnimation(function(){
+                for (var i=0;i<numSteps;i++){
+                    _stepViscous();
+                }
+                render();
+            });
         }
 
     }

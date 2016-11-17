@@ -99,6 +99,7 @@ SimEdge.prototype.setSimIndex = function(index){
     }
 };
 
+
 SimEdge.prototype.destroy = function(){
     this.destroyElements();
     this.elements = null;

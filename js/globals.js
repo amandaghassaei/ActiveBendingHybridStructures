@@ -22,6 +22,7 @@ function initGlobals(){
             simNeedsReset: false,
             dampingType: "kinetic",
             kineticDampingTolerance: 0.0001,
+            numStepsPerFrame: 5,
 
             //simulation params
             segmentLength: 2,

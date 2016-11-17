@@ -29,9 +29,6 @@ function initBeamEditingView(globals){
             _.bindAll(this, "snapToVertexChanged");
 
             setCheckbox("#snapToVertex", globals.get("snapToVertex"), this.snapToVertexChanged);
-            setInput("#kineticDampingTolerance", globals.get("kineticDampingTolerance"), function(val){
-                globals.set("kineticDampingTolerance", val);
-            }, 0);
 
             this.listenTo(this.model, "change:beams", this.updateNumBeams);
             this.updateNumBeams();

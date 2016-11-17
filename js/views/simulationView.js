@@ -26,6 +26,12 @@ function initSimulationView(globals){
             setRadio("dampingType", globals.get("dampingType"), function(val){
                 globals.set("dampingType", val);
             });
+            setInput("#kineticDampingTolerance", globals.get("kineticDampingTolerance"), function(val){
+                globals.set("kineticDampingTolerance", val);
+            }, 0);
+            setInput("#numStepsPerFrame", globals.get("numStepsPerFrame"), function(val){
+                globals.set("numStepsPerFrame", val);
+            }, 1);
 
             this.setButtonVis();
             this.setResetVis();

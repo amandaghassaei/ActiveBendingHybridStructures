@@ -25,6 +25,11 @@ SimBeamEl.prototype.getSimLength = function(){
     return this.parentEdge.getSimLength();
 };
 
+SimBeamEl.prototype.getDampingConstant = function(EA, EI){
+    if (EA<EI) return 2*Math.sqrt(EA/this.getSimLength());
+    return 2*Math.sqrt(EI/this.getSimLength());
+};
+
 SimBeamEl.prototype.destroy = function(){
     this.parent = null;
     this.parentEdge = null;
