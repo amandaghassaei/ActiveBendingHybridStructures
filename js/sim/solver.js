@@ -14,8 +14,8 @@ function initSolver(globals){
 
     var structure = globals.structure;
 
-    var allNodes, numNodes, allEdges;
-    var position, edgeLengths, moment, velocity, externalForces, neighborIndices, meta, damping;
+    var allNodes, numNodes, allEdges, numConnections;
+    var position, edgeLengths, moment, momentMeta, velocity, externalForces, neighborIndices, meta, damping;
     var lastKineticEnergy, solved;
     var dt = 0.1;
     var E = 1;
@@ -49,17 +49,18 @@ function initSolver(globals){
         allEdges = _allEdges;
 
         position = new Float32Array(numNodes*4);
-
-        moment = new Float32Array(numNodes*4);
         velocity = new Float32Array(numNodes*4);
         externalForces = new Float32Array(numNodes*4);
-        meta = new Uint8Array(numNodes*4);//fixed, numNeighbors/2, neighborStartIndex
+        meta = new Uint8Array(numNodes*4);//fixed, numNeighbors/2, neighborStartIndex, momentIndex
+        for (var i=0;i<numNodes;i++){
+            meta[i*4] = 1;//set all fixed by default
+        }
 
         for (var i=0;i<beams.length;i++){
             beams[i].setSimIndex(i);
         }
 
-        var numConnections = 0;
+        var _numConnections = 0;
         var orderedEdges = [];
         for (var i=0;i<numNodes;i++) {
 
@@ -95,20 +96,41 @@ function initSolver(globals){
                 }
             }
             orderedEdges.push(nodeEdgesOrdered);
-            numConnections += nodeEdgesOrdered.length;
+            _numConnections += nodeEdgesOrdered.length;
         }
 
+        numConnections = _numConnections;
+
+        //numConnections/2 * 4
+        moment = new Float32Array(numConnections*2);
+        momentMeta = new Float32Array(numConnections*2);
+
+
         neighborIndices = new Int16Array(numConnections);
+        for (var i=0;i<neighborIndices.length;i++){
+            neighborIndices[i] = -1;//set all -1 by default
+        }
         edgeLengths = new Float32Array(numConnections);
         damping = new Float32Array(numConnections);
 
         var edgeIndex = 0;
+        var momentMetaIndex = 0;
         for (var i=0;i<numNodes;i++) {
 
             var rgbaIndex = i * 4;
             var node = allNodes[i];
             if (node === null) continue;
             var nodeEdgesOrdered = orderedEdges[i];
+
+            for (var j=0;j<nodeEdgesOrdered.length/2;j++){
+                momentMeta[momentMetaIndex + 4*j] = node.getSimIndex();//middle node
+                var edge1 = nodeEdgesOrdered[2*j];
+                if (edge1 == null) momentMeta[momentMetaIndex+4*j+1] = -1;
+                else momentMeta[momentMetaIndex+4*j+2] = edge1.getOtherNode(node).getSimIndex();
+                var edge2 = nodeEdgesOrdered[2*j+1];
+                if (edge2 == null) momentMeta[momentMetaIndex+4*j+1] = -1;
+                else momentMeta[momentMetaIndex+4*j+2] = edge2.getOtherNode(node).getSimIndex();
+            }
 
             for (var j=0;j<nodeEdgesOrdered.length;j++) {
                 var edge = nodeEdgesOrdered[j];
@@ -122,7 +144,9 @@ function initSolver(globals){
             }
             meta[rgbaIndex + 1] = nodeEdgesOrdered.length/2;//num beams
             meta[rgbaIndex + 2] = edgeIndex;//start index
+            meta[rgbaIndex + 3] = momentMetaIndex;//moment meta start index
             edgeIndex += nodeEdgesOrdered.length;
+            momentMetaIndex += nodeEdgesOrdered.length/2*4;
         }
         render();
     }
