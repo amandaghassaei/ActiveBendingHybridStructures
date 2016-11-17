@@ -84,7 +84,7 @@ function initSolver(globals){
             });
 
             for (var j=0;j<nodeEdgesOrdered.length/2;j++) {
-                if (nodeEdgesOrdered.length-2<j || (nodeEdgesOrdered[2*j].getSimIndex() != nodeEdgesOrdered[2*j+1].getSimIndex())) {
+                if (nodeEdgesOrdered.length-2<2*j || (nodeEdgesOrdered[2*j].getSimIndex() != nodeEdgesOrdered[2*j+1].getSimIndex())) {
                     if (nodeEdgesOrdered.length>2*j+1) nodeEdgesOrdered.splice(2 * j + 1, 0, null);
                     else nodeEdgesOrdered.push(null);
                 }
