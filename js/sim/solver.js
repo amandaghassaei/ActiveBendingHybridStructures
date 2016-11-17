@@ -43,7 +43,7 @@ function initSolver(globals){
         }
         numNodes = _allNodes.length;
         for (var i=0;i<numNodes;i++){
-            _allNodes[i].setSimIndex(i);
+            if (_allNodes[i]) _allNodes[i].setSimIndex(i);
         }
         allNodes = _allNodes;
         allEdges = _allEdges;
@@ -62,6 +62,11 @@ function initSolver(globals){
         var numConnections = 0;
         var orderedEdges = [];
         for (var i=0;i<numNodes;i++) {
+
+            if (allNodes[i] === null){
+                orderedEdges.push([]);
+                continue;
+            }
 
             var node = allNodes[i];
             var nodePosition = node.getOriginalPosition();
@@ -102,6 +107,7 @@ function initSolver(globals){
 
             var rgbaIndex = i * 4;
             var node = allNodes[i];
+            if (node === null) continue;
             var nodeEdgesOrdered = orderedEdges[i];
 
             for (var j=0;j<nodeEdgesOrdered.length;j++) {
@@ -392,6 +398,7 @@ function initSolver(globals){
 
     function render(){
         for (var i=0;i<numNodes;i++){
+            if (allNodes[i] === null) continue;
             var rgbaIndex = i*4;
             allNodes[i].setBendingForce((new THREE.Vector3(moment[rgbaIndex], moment[rgbaIndex+1], moment[rgbaIndex+2])).multiplyScalar(10));
             allNodes[i].move(new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]));

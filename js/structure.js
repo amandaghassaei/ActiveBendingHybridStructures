@@ -501,7 +501,7 @@ function initStructure(globals){
             }
             var numFixed = 0;
             for (var i=0;i<this.simNodes.length;i++){
-                if (this.simNodes[i].fixed) numFixed++;
+                if (this.simNodes[i] && this.simNodes[i].fixed) numFixed++;
             }
             this.set("numFixed", numFixed);
             globals.set("meshingChanged", true);
