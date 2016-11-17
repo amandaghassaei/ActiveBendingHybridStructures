@@ -18,6 +18,9 @@ function initGlobals(){
             boundaryEditingMode: "fixed",
             constantNumElements: true,
 
+            isAnimating: false,
+            simNeedsReset: false,
+            dampingType: "kinetic",
             kineticDampingTolerance: 0.0001,
 
             //simulation params

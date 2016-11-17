@@ -26,6 +26,8 @@ function initSolver(globals){
 
     function reset(){
 
+        globals.set("simNeedsReset", false);
+
         lastKineticEnergy = -1;
         solved = false;
 
@@ -276,10 +278,12 @@ function initSolver(globals){
     }
 
     function start(){
+        globals.set("isAnimating", true);
         globals.threeView.startAnimation(step);
     }
     function pause(){
         globals.threeView.stopAnimation();
+        globals.set("isAnimating", false);
     }
 
     function render(){

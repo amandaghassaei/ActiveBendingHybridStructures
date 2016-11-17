@@ -19,20 +19,54 @@ function initSimulationView(globals){
         },
 
         initialize: function(){
+
+            this.listenTo(globals, "change:isAnimating", this.setButtonVis);
+            this.listenTo(globals, "change:simNeedsReset", this.setResetVis);
+
+            setRadio("dampingType", globals.get("dampingType"), function(val){
+                globals.set("dampingType", val);
+            });
+
+            this.setButtonVis();
+            this.setResetVis();
+        },
+
+        setButtonVis: function(){
+            var state = globals.get("isAnimating");
+            if (state){
+                $("#startSim").hide();
+                $("#pauseSim").show();
+            } else {
+                $("#startSim").show();
+                $("#pauseSim").hide();
+            }
+        },
+
+        setResetVis: function(){
+            var state = globals.get("simNeedsReset");
+            if (state){
+                $("#resetSim").show();
+            } else {
+                $("#resetSim").hide();
+            }
         },
 
         reset: function(e){
             e.preventDefault();
+            globals.solver.pause();
             globals.solver.reset();
         },
 
         start: function(e){
             e.preventDefault();
+            globals.set("simNeedsReset", true);
             globals.solver.start();
         },
 
         staticSolve: function(e){
             e.preventDefault();
+            globals.set("simNeedsReset", true);
+            globals.solver.pause();
             globals.solver.staticSolve();
         },
 
@@ -43,6 +77,8 @@ function initSimulationView(globals){
 
         stepForward: function(e){
             e.preventDefault();
+            globals.set("simNeedsReset", true);
+            globals.solver.pause();
             globals.solver.step();
         }
 
