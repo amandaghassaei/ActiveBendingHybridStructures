@@ -63,20 +63,40 @@ function initStructure(globals){
             });
             this.updateForMode();
 
-            var node1 = this.newNode(new THREE.Vector3());
-            var node2 = this.newNode(new THREE.Vector3(10,0,0));
-            var node3 = this.newNode(new THREE.Vector3(2,10,0));
-            this.addNodeToBeam(node1);
+            //var node1 = this.newNode(new THREE.Vector3());
+            //var node2 = this.newNode(new THREE.Vector3(10,0,0));
+            //var node3 = this.newNode(new THREE.Vector3(2,10,0));
+            //this.addNodeToBeam(node1);
+            //this.addNodeToBeam(node2);
+            //this.addNodeToBeam(node3);
+            //this.addNodeToBeam(node1);
+            //var beam = this.currentEditingBeam;
+            //this.selectedEdges = beam.getEdges();
+            //this.newMembrane();
+            //this.syncSim();
+            //this.simNodes[0].setFixed(true);
+            //this.simNodes[1].setFixed(true);
+            //this.set("numFixed", 2);
+
+            var node1 = this.newNode(new THREE.Vector3(0,10,0));
+            var node2 = this.newNode(new THREE.Vector3(10,0,10));
+            var node3 = this.newNode(new THREE.Vector3(10,0,-10));
+            var node4 = this.newNode(new THREE.Vector3(-10,0,10));
+            var node5 = this.newNode(new THREE.Vector3(-10,0,-10));
             this.addNodeToBeam(node2);
-            this.addNodeToBeam(node3);
             this.addNodeToBeam(node1);
-            var beam = this.currentEditingBeam;
-            this.selectedEdges = beam.getEdges();
-            this.newMembrane();
+            this.addNodeToBeam(node3);
+            this.currentEditingBeam = null;
+            this.addNodeToBeam(node4);
+            this.addNodeToBeam(node1);
+            this.addNodeToBeam(node5);
+            this.currentEditingBeam = null;
             this.syncSim();
-            this.simNodes[0].setFixed(true);
             this.simNodes[1].setFixed(true);
-            this.set("numFixed", 2);
+            this.simNodes[2].setFixed(true);
+            this.simNodes[3].setFixed(true);
+            this.simNodes[4].setFixed(true);
+            this.set("numFixed", 4);
         },
 
         updateForMode: function(){
