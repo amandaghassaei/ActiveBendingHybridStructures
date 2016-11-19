@@ -281,8 +281,9 @@ function initSolver(globals){
             var velDiff = node1Velocity.sub(node2Velocity);
             var dist = posDiff.length();
 
-            var edgeForce = posDiff.normalize().multiplyScalar(EA*(dist-_edgeMeta2[0])/dist);
-            edgeForce.add(node2Moment.clone().sub(node1Moment).multiplyScalar(1/_edgeMeta2[0]));//todo is this right?
+            //todo is this right?
+            var edgeForce = posDiff.normalize().multiplyScalar(EA/dist*(dist-_edgeMeta2[0])/_edgeMeta2[0]);
+            edgeForce.add(node2Moment.clone().sub(node1Moment).multiplyScalar(1/dist));
             edgeForce.add(velDiff.multiplyScalar(_edgeMeta2[1]));
 
             edgeForces[rgbaIndex] = edgeForce.x;
@@ -309,11 +310,12 @@ function initSolver(globals){
             var node2MomentIndex = _edgeMeta[3]*4;
             var node2Moment = new THREE.Vector3(moment[node2MomentIndex], moment[node2MomentIndex+1], moment[node2MomentIndex+2]);
 
-            var vector = node1Position.sub(node2Position);
-            var dist = vector.length();
+            var posDiff = node1Position.sub(node2Position);
+            var dist = posDiff.length();
 
-            var edgeForce = vector.normalize().multiplyScalar(EA*(dist-_edgeMeta2[0])/dist);
-            edgeForce.add(node2Moment.clone().sub(node1Moment).multiplyScalar(1/_edgeMeta2[0]));//todo is this right?
+            //todo is this right?
+            var edgeForce = posDiff.normalize().multiplyScalar(EA/dist*(dist-_edgeMeta2[0])/_edgeMeta2[0]);
+            edgeForce.add(node2Moment.clone().sub(node1Moment).multiplyScalar(1/dist));
 
             edgeForces[rgbaIndex] = edgeForce.x;
             edgeForces[rgbaIndex+1] = edgeForce.y;
