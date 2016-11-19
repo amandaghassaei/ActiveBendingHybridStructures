@@ -229,6 +229,35 @@ function initSolver(globals){
         }
     }
 
+    function _calcForcesKE(){
+        for (var i=0;i<numConnections;i++) {
+
+            var rgbaIndex = i * 4;
+            var _edgeMeta = [edgeMeta[rgbaIndex], edgeMeta[rgbaIndex+1], edgeMeta[rgbaIndex+2], edgeMeta[rgbaIndex+3]];
+            var _edgeMeta2 = [edgeMeta2[rgbaIndex], edgeMeta2[rgbaIndex+1], edgeMeta2[rgbaIndex+2], edgeMeta2[rgbaIndex+3]];
+
+            var node1Index = _edgeMeta[0]*4;
+            var node1Position = [position[node1Index], position[node1Index+1], position[node1Index+2]];
+            var node1MomentIndex = _edgeMeta[3]*4;
+            var node1Moment = [moment[node1MomentIndex], moment[node1MomentIndex+1], moment[node1MomentIndex+2]];
+
+            var node2Index = _edgeMeta[1]*4;
+            var node2Position = [position[node2Index], position[node2Index+1], position[node2Index+2]];
+            var node2MomentIndex = _edgeMeta[4]*4;
+            var node2Moment = [moment[node2MomentIndex], moment[node2MomentIndex+1], moment[node2MomentIndex+2]];
+
+            var vector = node1Position.sub(node2Position);
+            var dist = vector.length();
+
+            var edgeForce = vector.normalize().multiplyScalar(EA*(dist-_edgeMeta2[0])/dist);
+            edgeForce.add(node2Moment.clone().sub(node1Moment).multiplyScalar(1/_edgeMeta2[0]));
+
+            edgeForces[rgbaIndex] = edgeForce.x;
+            edgeForces[rgbaIndex+1] = edgeForce.y;
+            edgeForces[rgbaIndex+2] = edgeForce.z;
+        }
+    }
+
     function _calcPosition(){
         for (var i=0;i<numNodes;i++) {
 
