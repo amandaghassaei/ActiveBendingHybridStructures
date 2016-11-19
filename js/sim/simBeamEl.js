@@ -13,10 +13,17 @@ function SimBeamEl(nodes, parent, parentEdge){
 }
 SimBeamEl.prototype = Object.create(Edge.prototype);
 
+SimBeamEl.prototype.setSimBeamIndex = function(index){
+    this.simBeamIndex = index;
+};
+
+SimBeamEl.prototype.getBeamSimIndex = function(){
+    return this.simBeamIndex;
+};
+
 SimBeamEl.prototype.setSimIndex = function(index){
     this.simIndex = index;
 };
-
 SimBeamEl.prototype.getSimIndex = function(){
     return this.simIndex;
 };

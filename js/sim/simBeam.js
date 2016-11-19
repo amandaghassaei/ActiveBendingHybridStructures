@@ -60,7 +60,7 @@ SimBeam.prototype.reset = function(){
 
 SimBeam.prototype.setSimIndex = function(index){
     for (var i=0;i<this.edges.length;i++){
-        this.edges[i].setSimIndex(index);
+        this.edges[i].setSimBeamIndex(index);
     }
 };
 

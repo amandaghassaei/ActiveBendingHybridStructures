@@ -93,9 +93,9 @@ SimEdge.prototype.getSimLength = function(){
     return this.length/this.elements.length;
 };
 
-SimEdge.prototype.setSimIndex = function(index){
+SimEdge.prototype.setSimBeamIndex = function(index){
     for (var i=0;i<this.elements.length;i++){
-        this.elements[i].setSimIndex(index);
+        this.elements[i].setSimBeamIndex(index);
     }
 };
 
