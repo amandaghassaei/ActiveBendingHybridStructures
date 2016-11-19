@@ -63,7 +63,7 @@ function initSolver(globals){
         position = new Float32Array(numNodes*4);
         velocity = new Float32Array(numNodes*4);
         externalForces = new Float32Array(numNodes*4);
-        nodeMeta = new Uint16Array(numNodes*4);//nodeMeta = {fixed, numEdges/2, edgesMappingStart, momentStart}
+        nodeMeta = new Uint16Array(numNodes*4);//nodeMeta = {fixed, numEdges/2, momentStart, edgesMappingStart}
         for (var i=0;i<numNodes;i++){
             nodeMeta[i*4] = 1;//set all fixed by default
         }
@@ -184,12 +184,21 @@ function initSolver(globals){
             var node = allNodes[i];
             if (node === null) continue;
 
+            nodeMeta[rgbaIndex+3] = edgeMappingIndex;
+
             var nodeEdgesOrdered = orderedEdges[i];
-            for (var j=0;j<nodeEdgesOrdered.length/2;j++){
+            var index = 0;
+            for (var j=0;j<nodeEdgesOrdered.length;j++){
+                var edge = nodeEdgesOrdered[j];
+                if (edge === null) continue;
 
+                edgeMapping[edgeMappingIndex*4 + index*2] = edge.getSimIndex();
+                var sign = edge.nodes[0] == node ? 1 : -1;
+                edgeMapping[edgeMappingIndex*4 + index*2 + 1] = sign;
+                index++;
             }
+            edgeMappingIndex += Math.ceil(index*2/4);
         }
-
         render();
     }
 
@@ -316,9 +325,13 @@ function initSolver(globals){
             }
 
             var forceSum = new THREE.Vector3(externalForces[rgbaIndex], externalForces[rgbaIndex+1], externalForces[rgbaIndex+2]);
-            for (var j=0;j<_nodeMeta[1];j++){
-                //contribution form each beam el
-
+            var edgeStartIndex = _nodeMeta[3];
+            for (var j=0;j<_nodeMeta[1]*2;j++){
+                //contribution from each beam el
+                var edgeIndex = edgeMapping[edgeStartIndex*4 + 2*j];
+                var edgeSign = edgeMapping[edgeStartIndex*4 + 2*j + 1];
+                var edgeForce = new THREE.Vector3(edgeForces[edgeIndex*4], edgeForces[edgeIndex*4+2], edgeForces[edgeIndex*4+3]);
+                forceSum.add(edgeForce.multiplyScalar(edgeSign));
             }
 
             var lastVelocity = new THREE.Vector3(velocity[rgbaIndex], velocity[rgbaIndex+1], velocity[rgbaIndex+2]);
