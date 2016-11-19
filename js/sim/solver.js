@@ -15,7 +15,12 @@ function initSolver(globals){
     var structure = globals.structure;
 
     var allNodes, numNodes, allEdges, numConnections;
-    var position, edgeLengths, moment, momentMeta, momentNeighbors, velocity, externalForces, neighborIndices, meta, damping;
+
+    var position, velocity, externalForces, nodeMeta;//numNodes - nodeMeta = {fixed, numEdges/2, edgesMappingStart, momentStart}
+    var moment, momentMeta;//numConnections/2 - momentMeta = {nodeIndex, neighb1index, neighb2index}
+    var internalForces, edgeMeta, edgeMeta2;//numConnections - edgeMeta = {node1index, node2index, moment1index, moment2index}, edgeMeta2 = {edgeLength, damping}
+    var nodeEdgeMapping;//???
+
     var lastKineticEnergy, solved;
     var dt = 0.1;
     var E = 1;
@@ -51,20 +56,20 @@ function initSolver(globals){
         position = new Float32Array(numNodes*4);
         velocity = new Float32Array(numNodes*4);
         externalForces = new Float32Array(numNodes*4);
-        meta = new Uint8Array(numNodes*4);//fixed, numNeighbors/2, neighborStartIndex, momentIndex
+        nodeMeta = new Uint8Array(numNodes*4);//nodeMeta = {fixed, numEdges/2, edgesMappingStart, momentStart}
         for (var i=0;i<numNodes;i++){
-            meta[i*4] = 1;//set all fixed by default
+            nodeMeta[i*4] = 1;//set all fixed by default
         }
 
         for (var i=0;i<beams.length;i++){
-            beams[i].setSimIndex(i);
+            beams[i].setSimIndex(i);//all edges in beam know they are connected through node
         }
 
         var _numConnections = 0;
         var orderedEdges = [];
         for (var i=0;i<numNodes;i++) {
 
-            if (allNodes[i] === null){
+            if (allNodes[i] === null){//free nodes not connected to anything
                 orderedEdges.push([]);
                 continue;
             }
@@ -75,7 +80,8 @@ function initSolver(globals){
             position[rgbaIndex] = nodePosition.x;
             position[rgbaIndex + 1] = nodePosition.y;
             position[rgbaIndex + 2] = nodePosition.z;
-            meta[rgbaIndex] = node.fixed ? 1 : 0;
+            //todo init externalForces
+            nodeMeta[rgbaIndex] = node.fixed ? 1 : 0;
 
             var nodeEdges = node.getEdges();
             var nodeEdgesOrdered = [];
@@ -96,6 +102,7 @@ function initSolver(globals){
                 }
             }
             orderedEdges.push(nodeEdgesOrdered);
+            nodeMeta[rgbaIndex+1] = nodeEdgesOrdered.length/2;
             _numConnections += nodeEdgesOrdered.length;
         }
 
@@ -103,24 +110,16 @@ function initSolver(globals){
 
         //numConnections/2 * 4
         moment = new Float32Array(numConnections*2);
-        momentMeta = new Int16Array(numConnections*2);//index node, index neighbor1, index neighbor2 in positions array
+        momentMeta = new Int16Array(numConnections*2);// momentMeta = {nodeIndex, neighb1index, neighb2index}
 
-        neighborIndices = new Int16Array(numConnections);
-        for (var i=0;i<neighborIndices.length;i++){
-            neighborIndices[i] = -1;//set all -1 by default
-        }
-        edgeLengths = new Float32Array(numConnections);
-        damping = new Float32Array(numConnections);
-
-        var edgeIndex = 0;
         var momentMetaIndex = 0;
-        for (var i=0;i<numNodes;i++) {
+        for (var i=0;i<numNodes;i++){
 
             var rgbaIndex = i * 4;
             var node = allNodes[i];
             if (node === null) continue;
-            var nodeEdgesOrdered = orderedEdges[i];
 
+            var nodeEdgesOrdered = orderedEdges[i];
             for (var j=0;j<nodeEdgesOrdered.length/2;j++){
                 momentMeta[4*(momentMetaIndex+j)] = node.getSimIndex();//middle node
                 var edge1 = nodeEdgesOrdered[2*j];
@@ -130,61 +129,78 @@ function initSolver(globals){
                 if (edge2 == null) momentMeta[4*(momentMetaIndex+j)+2] = -1;
                 else momentMeta[4*(momentMetaIndex+j)+2] = edge2.getOtherNode(node).getSimIndex();
             }
-
-            for (var j=0;j<nodeEdgesOrdered.length;j++) {
-                var edge = nodeEdgesOrdered[j];
-                if (edge === null){
-                    neighborIndices[edgeIndex+j] = -1;
-                } else {
-                    edgeLengths[edgeIndex+j] = edge.getSimLength();
-                    neighborIndices[edgeIndex+j] = edge.getOtherNode(node).getSimIndex();
-                    damping[edgeIndex+j] = edge.getDampingConstant(EA, EI);
-                }
-            }
-            meta[rgbaIndex + 1] = nodeEdgesOrdered.length/2;//num beams
-            meta[rgbaIndex + 2] = edgeIndex;//start index
-            meta[rgbaIndex + 3] = momentMetaIndex;//moment meta start index
-            edgeIndex += nodeEdgesOrdered.length;
             momentMetaIndex += nodeEdgesOrdered.length/2;
         }
 
-        momentNeighbors = new Int16Array(numConnections*2);//neighbor 1, neighbor 2 position in moment array
-        for (var i=0;i<numNodes;i++){
+        //neighborIndices = new Int16Array(numConnections);
+        //for (var i=0;i<neighborIndices.length;i++){
+        //    neighborIndices[i] = -1;//set all -1 by default
+        //}
+        //edgeLengths = new Float32Array(numConnections);
+        //damping = new Float32Array(numConnections);
 
-            var rgbaIndex = i * 4;
-            var node = allNodes[i];
-            if (node === null) continue;
-            var nodeEdgesOrdered = orderedEdges[i];
+        //var edgeIndex = 0;
+        //var momentMetaIndex = 0;
+        //for (var i=0;i<numNodes;i++) {
+        //
+        //    var rgbaIndex = i * 4;
+        //    var node = allNodes[i];
+        //    if (node === null) continue;
+        //    var nodeEdgesOrdered = orderedEdges[i];
+        //
+        //    for (var j=0;j<nodeEdgesOrdered.length;j++) {
+        //        var edge = nodeEdgesOrdered[j];
+        //        if (edge === null){
+        //            neighborIndices[edgeIndex+j] = -1;
+        //        } else {
+        //            edgeLengths[edgeIndex+j] = edge.getSimLength();
+        //            neighborIndices[edgeIndex+j] = edge.getOtherNode(node).getSimIndex();
+        //            damping[edgeIndex+j] = edge.getDampingConstant(EA, EI);
+        //        }
+        //    }
+        //    meta[rgbaIndex + 1] = nodeEdgesOrdered.length/2;//num beams
+        //    meta[rgbaIndex + 2] = edgeIndex;//start index
+        //    meta[rgbaIndex + 3] = momentMetaIndex;//moment meta start index
+        //    edgeIndex += nodeEdgesOrdered.length;
+        //    momentMetaIndex += nodeEdgesOrdered.length/2;
+        //}
 
-            momentMetaIndex = meta[rgbaIndex + 3];//moment meta start index
-
-            for (var j=0;j<nodeEdgesOrdered.length/2;j++){
-                var edge1 = nodeEdgesOrdered[2*j];
-                if (edge1 == null) momentNeighbors[4*(momentMetaIndex+j)] = -1;
-                else {
-                    var node1Index = edge1.getOtherNode(node).getSimIndex();
-                    var node1MomentMetaStart = meta[node1Index*4+3];
-                    var node1MomentOffset = 0;
-                    for (var k=0;k<orderedEdges[node1Index].length;k++){
-                        if (orderedEdges[node1Index][k] == edge1) node1MomentOffset = k;
-                    }
-                    momentNeighbors[4*(momentMetaIndex+j)] = node1MomentMetaStart+node1MomentOffset;
-                }
-                var edge2 = nodeEdgesOrdered[2*j+1];
-                if (edge2 == null) momentMeta[4*(momentMetaIndex+j)+1] = -1;
-                else {
-                    var node2Index = edge2.getOtherNode(node).getSimIndex();
-                    var node2MomentMetaStart = meta[node2Index*4+3];
-                    var node2MomentOffset = 0;
-                    for (var k=0;k<orderedEdges[node2Index].length;k++){
-                        if (orderedEdges[node2Index][k] == edge2) node2MomentOffset = k;
-                    }
-                    momentNeighbors[4*(momentMetaIndex+j)+1] = node2MomentMetaStart+node2MomentOffset;
-                }
-            }
-        }
+        //momentNeighbors = new Int16Array(numConnections*2);//neighbor 1, neighbor 2 position in moment array
+        //for (var i=0;i<numNodes;i++){
+        //
+        //    var rgbaIndex = i * 4;
+        //    var node = allNodes[i];
+        //    if (node === null) continue;
+        //    var nodeEdgesOrdered = orderedEdges[i];
+        //
+        //    momentMetaIndex = meta[rgbaIndex + 3];//moment meta start index
+        //
+        //    for (var j=0;j<nodeEdgesOrdered.length/2;j++){
+        //        var edge1 = nodeEdgesOrdered[2*j];
+        //        if (edge1 == null) momentNeighbors[4*(momentMetaIndex+j)] = -1;
+        //        else {
+        //            var node1Index = edge1.getOtherNode(node).getSimIndex();
+        //            var node1MomentMetaStart = meta[node1Index*4+3];
+        //            var node1MomentOffset = 0;
+        //            for (var k=0;k<orderedEdges[node1Index].length;k++){
+        //                if (orderedEdges[node1Index][k] == edge1) node1MomentOffset = k;
+        //            }
+        //            momentNeighbors[4*(momentMetaIndex+j)] = node1MomentMetaStart+node1MomentOffset;
+        //        }
+        //        var edge2 = nodeEdgesOrdered[2*j+1];
+        //        if (edge2 == null) momentMeta[4*(momentMetaIndex+j)+1] = -1;
+        //        else {
+        //            var node2Index = edge2.getOtherNode(node).getSimIndex();
+        //            var node2MomentMetaStart = meta[node2Index*4+3];
+        //            var node2MomentOffset = 0;
+        //            for (var k=0;k<orderedEdges[node2Index].length;k++){
+        //                if (orderedEdges[node2Index][k] == edge2) node2MomentOffset = k;
+        //            }
+        //            momentNeighbors[4*(momentMetaIndex+j)+1] = node2MomentMetaStart+node2MomentOffset;
+        //        }
+        //    }
+        //}
         console.log(momentMeta);
-        console.log(momentNeighbors);
         render();
     }
 
@@ -216,8 +232,6 @@ function initSolver(globals){
             var neighbor1Index = _momentMeta[1]*4;
             var neighbor2Index = _momentMeta[2]*4;
 
-            var nodePosition = new THREE.Vector3(position[nodeIndex], position[nodeIndex+1], position[nodeIndex+2]);
-
             //only one connection
             if (neighbor1Index<0 || neighbor2Index<0){
                 moment[rgbaIndex] = 0;
@@ -226,10 +240,12 @@ function initSolver(globals){
                 continue;
             }
 
-            var neighbor1 = new THREE.Vector3(position[neighbor1Index], position[neighbor1Index+1], position[neighbor1Index+2]);
-            var neighbor2 = new THREE.Vector3(position[neighbor2Index], position[neighbor2Index+1], position[neighbor2Index+2]);
-            var aVect = neighbor1.clone().sub(nodePosition);
-            var bVect = neighbor2.clone().sub(nodePosition);
+            var nodePosition = new THREE.Vector3(position[nodeIndex], position[nodeIndex+1], position[nodeIndex+2]);
+
+            var neighbor1Position = new THREE.Vector3(position[neighbor1Index], position[neighbor1Index+1], position[neighbor1Index+2]);
+            var neighbor2Position = new THREE.Vector3(position[neighbor2Index], position[neighbor2Index+1], position[neighbor2Index+2]);
+            var aVect = neighbor1Position.sub(nodePosition);
+            var bVect = neighbor2Position.sub(nodePosition);
 
             var aSq = aVect.lengthSq();
             var bSq = bVect.lengthSq();
@@ -267,154 +283,13 @@ function initSolver(globals){
         }
     }
 
-    function _stepViscous(){
-        _calcMoment();
+    function _calcVelocity(){
 
-        //calc velocity
-        for (var i=0;i<numNodes;i++) {
-
-            var rgbaIndex = i * 4;
-
-            var nodeMeta = [meta[rgbaIndex], meta[rgbaIndex+1], meta[rgbaIndex+2]];
-            if (nodeMeta[0] == 1) {//fixed
-                velocity[rgbaIndex] = 0;
-                velocity[rgbaIndex+1] = 0;
-                velocity[rgbaIndex+2] = 0;
-                velocity[rgbaIndex+3] = 0;
-                continue;
-            }
-
-            var nodeMoment = new THREE.Vector3(moment[rgbaIndex], moment[rgbaIndex+1], moment[rgbaIndex+2]);
-            var nodePosition = new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]);
-            var lastVelocity = new THREE.Vector3(velocity[rgbaIndex], velocity[rgbaIndex+1], velocity[rgbaIndex+2]);
-
-            var forceSum = new THREE.Vector3(externalForces[rgbaIndex], externalForces[rgbaIndex+1], externalForces[rgbaIndex+2]);
-            var neighborMappingIndex = nodeMeta[2];
-            for (var j=0;j<nodeMeta[1];j++){
-
-                var neighbor1Index = 4*neighborIndices[neighborMappingIndex+2*j];
-                var neighbor2Index = 4*neighborIndices[neighborMappingIndex+2*j+1];
-
-                if (neighbor1Index>=0){
-                    var neighbor1moment = new THREE.Vector3(moment[neighbor1Index], moment[neighbor1Index+1], moment[neighbor1Index+2]);
-                    var neighbor1position = new THREE.Vector3(position[neighbor1Index], position[neighbor1Index+1], position[neighbor1Index+2]);
-                    var neighbor1velocity = new THREE.Vector3(velocity[neighbor1Index], velocity[neighbor1Index+1], velocity[neighbor1Index+2]);
-                    var length1 = edgeLengths[neighborMappingIndex+2*j];
-                    var dist1 = neighbor1position.clone().sub(nodePosition);
-                    var dVel1 = neighbor1velocity.sub(lastVelocity);
-                    var dist1Length = dist1.length();
-                    var damping1 = damping[neighborMappingIndex+2*j];
-
-                    forceSum.add(dist1.normalize().multiplyScalar(EA*(dist1Length-length1)/dist1Length));
-                    forceSum.add(nodeMoment.clone().sub(neighbor1moment).multiplyScalar(1/length1));
-                    forceSum.add(dVel1.multiplyScalar(damping1));
-                }
-                if (neighbor2Index>=0){
-                    var neighbor2moment = new THREE.Vector3(moment[neighbor2Index], moment[neighbor2Index+1], moment[neighbor2Index+2]);
-                    var neighbor2position = new THREE.Vector3(position[neighbor2Index], position[neighbor2Index+1], position[neighbor2Index+2]);
-                    var neighbor2velocity = new THREE.Vector3(velocity[neighbor2Index], velocity[neighbor2Index+1], velocity[neighbor2Index+2]);
-                    var length2 = edgeLengths[neighborMappingIndex+2*j+1];
-                    var dist2 = neighbor2position.clone().sub(nodePosition);
-                    var dVel2 = neighbor2velocity.sub(lastVelocity);
-                    var dist2Length = dist2.length();
-                    var damping2 = damping[neighborMappingIndex+2*j+1];
-
-                    forceSum.add(dist2.normalize().multiplyScalar(EA*(dist2Length-length2)/dist2Length));
-                    forceSum.add(nodeMoment.clone().sub(neighbor2moment).multiplyScalar(1/length2));
-                    forceSum.add(dVel2.multiplyScalar(damping2));
-                }
-            }
-
-            var _velocity = forceSum.multiplyScalar(dt).add(lastVelocity);
-            velocity[rgbaIndex] = _velocity.x;
-            velocity[rgbaIndex+1] = _velocity.y;
-            velocity[rgbaIndex+2] = _velocity.z;
-            var velocityMag = _velocity.length();
-            velocity[rgbaIndex+3] = velocityMag*velocityMag;
-
-        }
-        _calcPosition();
     }
 
     function _stepKE(){
         _calcMoment();
-        //kinetic damping
-        var kineticEnergy = 0;
-        for (var i=0;i<numNodes;i++) {
-            var rgbaIndex = i * 4;
-            kineticEnergy += velocity[rgbaIndex+3];
-        }
-        if (kineticEnergy<lastKineticEnergy){
-            if (kineticEnergy < globals.get("kineticDampingTolerance")) solved = true;
-            //reset velocity
-            for (var i=0;i<numNodes;i++) {
-                var rgbaIndex = i * 4;
-                velocity[rgbaIndex] = 0;
-                velocity[rgbaIndex+1] = 0;
-                velocity[rgbaIndex+2] = 0;
-                velocity[rgbaIndex+3] = 0;
-            }
-            kineticEnergy = -1;
-        }
-        lastKineticEnergy = kineticEnergy;
-
-        //calc velocity
-        for (var i=0;i<numNodes;i++) {
-
-            var rgbaIndex = i * 4;
-
-            var nodeMeta = [meta[rgbaIndex], meta[rgbaIndex+1], meta[rgbaIndex+2], meta[rgbaIndex+3]];//fixed, numBeams, neighborStartIndex, momentStartIndex
-            if (nodeMeta[0] == 1) {//fixed
-                velocity[rgbaIndex] = 0;
-                velocity[rgbaIndex+1] = 0;
-                velocity[rgbaIndex+2] = 0;
-                velocity[rgbaIndex+3] = 0;
-                continue;
-            }
-
-            var nodePosition = new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]);
-
-            var forceSum = new THREE.Vector3(externalForces[rgbaIndex], externalForces[rgbaIndex+1], externalForces[rgbaIndex+2]);
-            var neighborMappingIndex = nodeMeta[2];
-            for (var j=0;j<nodeMeta[1];j++){
-
-                var nodeMoment = new THREE.Vector3(moment[4*(nodeMeta[3]+j)], moment[4*(nodeMeta[3]+j)+1], moment[4*(nodeMeta[3]+j)+2]);
-
-                var neighbor1Index = 4*neighborIndices[neighborMappingIndex+2*j];
-                var neighbor2Index = 4*neighborIndices[neighborMappingIndex+2*j+1];
-
-                if (neighbor1Index>=0){
-                    var neighbor1moment = new THREE.Vector3(moment[neighbor1Index], moment[neighbor1Index+1], moment[neighbor1Index+2]);
-                    var neighbor1position = new THREE.Vector3(position[neighbor1Index], position[neighbor1Index+1], position[neighbor1Index+2]);
-                    var length1 = edgeLengths[neighborMappingIndex+2*j];
-                    var dist1 = neighbor1position.clone().sub(nodePosition);
-                    var dist1Length = dist1.length();
-
-                    forceSum.add(dist1.normalize().multiplyScalar(EA*(dist1Length-length1)/dist1Length));
-                    forceSum.add(nodeMoment.clone().sub(neighbor1moment).multiplyScalar(1/length1));
-                }
-                if (neighbor2Index>=0){
-                    var neighbor2moment = new THREE.Vector3(moment[neighbor2Index], moment[neighbor2Index+1], moment[neighbor2Index+2]);
-                    var neighbor2position = new THREE.Vector3(position[neighbor2Index], position[neighbor2Index+1], position[neighbor2Index+2]);
-                    var length2 = edgeLengths[neighborMappingIndex+2*j+1];
-                    var dist2 = neighbor2position.clone().sub(nodePosition);
-                    var dist2Length = dist2.length();
-
-                    forceSum.add(dist2.normalize().multiplyScalar(EA*(dist2Length-length2)/dist2Length));
-                    forceSum.add(nodeMoment.clone().sub(neighbor2moment).multiplyScalar(1/length2));
-                }
-            }
-
-            var lastVelocity = new THREE.Vector3(velocity[rgbaIndex], velocity[rgbaIndex+1], velocity[rgbaIndex+2]);
-            var _velocity = forceSum.multiplyScalar(dt).add(lastVelocity);
-            velocity[rgbaIndex] = _velocity.x;
-            velocity[rgbaIndex+1] = _velocity.y;
-            velocity[rgbaIndex+2] = _velocity.z;
-            var velocityMag = _velocity.length();
-            velocity[rgbaIndex+3] = velocityMag*velocityMag;
-
-        }
-        _calcPosition();
+        solved = true;
     }
 
     function staticSolve(){
@@ -451,12 +326,24 @@ function initSolver(globals){
     }
 
     function render(){
+
+        var momentIndex = 0;
         for (var i=0;i<numNodes;i++){
-            if (allNodes[i] === null) continue;
-            var rgbaIndex = i*4;
-            allNodes[i].setBendingForce((new THREE.Vector3(moment[rgbaIndex], moment[rgbaIndex+1], moment[rgbaIndex+2])).multiplyScalar(10));
+
+            var rgbaIndex = i * 4;
+            var node = allNodes[i];
+            if (node === null) continue;
+
+            var numBeams = nodeMeta[rgbaIndex+1];
+            for (var j=0;j<numBeams;j++){
+                var index = 4*(momentIndex+j);
+                var nodeMoment = new THREE.Vector3(moment[index], moment[index+1], moment[index+2]);
+                allNodes[i].setBendingForce(nodeMoment.multiplyScalar(10), j);
+            }
             allNodes[i].move(new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]));
+            momentIndex += numBeams;
         }
+
         for (var i=0;i<allEdges.length;i++){
             allEdges[i].update();
         }

@@ -38,16 +38,21 @@ SimNode.prototype.removeElements = function(){
     this.edges = [];
 };
 
-SimNode.prototype.setBendingForce = function(vect){
-    if (!this.bendingForce){
-        this.bendingForce = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(), 1, 0xb67df0, 0.5, 0.5);
-        this.bendingForce.line.material.linewidth = 4;
-        this.object3D.add(this.bendingForce);
+SimNode.prototype.setBendingForce = function(vect, index){
+    if (!this.bendingForce) {
+        this.bendingForce = [];
+    }
+    if (this.bendingForce.length-1<index) {
+        for (var i=this.bendingForce.length;i<index+1;i++){
+            this.bendingForce.push(new THREE.ArrowHelper(new THREE.Vector3(1,0,0), new THREE.Vector3(), 1, 0xb67df0, 0.5, 0.5));
+            this.bendingForce[i].line.material.linewidth = 4;
+            this.object3D.add(this.bendingForce[i]);
+        }
     }
     var length = vect.length();
-    this.bendingForce.setLength(length, 0.5, 0.5);
-    this.bendingForce.setDirection(vect.normalize());
-    this.bendingForce.visible = length > 0.5;
+    this.bendingForce[index].setLength(length, 0.5, 0.5);
+    this.bendingForce[index].setDirection(vect.normalize());
+    this.bendingForce[index].visible = length > 0.5;
 };
 
 

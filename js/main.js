@@ -4,7 +4,5 @@
 
 
 $(function() {
-
-    var globals = initGlobals();
-
+    initGlobals();
 });
