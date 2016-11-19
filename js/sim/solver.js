@@ -237,14 +237,14 @@ function initSolver(globals){
             var _edgeMeta2 = [edgeMeta2[rgbaIndex], edgeMeta2[rgbaIndex+1], edgeMeta2[rgbaIndex+2], edgeMeta2[rgbaIndex+3]];
 
             var node1Index = _edgeMeta[0]*4;
-            var node1Position = [position[node1Index], position[node1Index+1], position[node1Index+2]];
+            var node1Position = new THREE.Vector3(position[node1Index], position[node1Index+1], position[node1Index+2]);
             var node1MomentIndex = _edgeMeta[3]*4;
-            var node1Moment = [moment[node1MomentIndex], moment[node1MomentIndex+1], moment[node1MomentIndex+2]];
+            var node1Moment = new THREE.Vector3(moment[node1MomentIndex], moment[node1MomentIndex+1], moment[node1MomentIndex+2]);
 
             var node2Index = _edgeMeta[1]*4;
-            var node2Position = [position[node2Index], position[node2Index+1], position[node2Index+2]];
+            var node2Position = new THREE.Vector3(position[node2Index], position[node2Index+1], position[node2Index+2]);
             var node2MomentIndex = _edgeMeta[4]*4;
-            var node2Moment = [moment[node2MomentIndex], moment[node2MomentIndex+1], moment[node2MomentIndex+2]];
+            var node2Moment = new THREE.Vector3(moment[node2MomentIndex], moment[node2MomentIndex+1], moment[node2MomentIndex+2]);
 
             var vector = node1Position.sub(node2Position);
             var dist = vector.length();
@@ -264,8 +264,8 @@ function initSolver(globals){
             var rgbaIndex = i * 4;
 
             var nodePosition = new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]);
-            var nodeMeta = [nodeMeta[rgbaIndex], nodeMeta[rgbaIndex+1], nodeMeta[rgbaIndex+2], nodeMeta[rgbaIndex+3]];//fixed, numBeams, neighborStartIndex, momentStartIndex
-            if (nodeMeta[0] == 1) {//fixed
+            var _nodeMeta = [nodeMeta[rgbaIndex], nodeMeta[rgbaIndex+1], nodeMeta[rgbaIndex+2], nodeMeta[rgbaIndex+3]];//fixed, numBeams, neighborStartIndex, momentStartIndex
+            if (_nodeMeta[0] == 1) {//fixed
                 position[rgbaIndex] = nodePosition.x;
                 position[rgbaIndex+1] = nodePosition.y;
                 position[rgbaIndex+2] = nodePosition.z;
@@ -286,8 +286,8 @@ function initSolver(globals){
 
             var rgbaIndex = i*4;
 
-            var nodeMeta = [nodeMeta[rgbaIndex], nodeMeta[rgbaIndex+1], nodeMeta[rgbaIndex+2], nodeMeta[rgbaIndex+3]];
-            if (nodeMeta[0] == 1) {//fixed
+            var _nodeMeta = [nodeMeta[rgbaIndex], nodeMeta[rgbaIndex+1], nodeMeta[rgbaIndex+2], nodeMeta[rgbaIndex+3]];
+            if (_nodeMeta[0] == 1) {//fixed
                 velocity[rgbaIndex] = 0;
                 velocity[rgbaIndex+1] = 0;
                 velocity[rgbaIndex+2] = 0;
@@ -296,7 +296,7 @@ function initSolver(globals){
             }
 
             var forceSum = new THREE.Vector3(externalForces[rgbaIndex], externalForces[rgbaIndex+1], externalForces[rgbaIndex+2]);
-            for (var j=0;j<nodeMeta[1];j++){
+            for (var j=0;j<_nodeMeta[1];j++){
                 //contribution form each beam el
 
             }
