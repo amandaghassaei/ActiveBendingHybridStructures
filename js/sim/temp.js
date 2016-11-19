@@ -75,24 +75,7 @@
 
 
 //kinetic damping
-        var kineticEnergy = 0;
-        for (var i=0;i<numNodes;i++) {
-            var rgbaIndex = i * 4;
-            kineticEnergy += velocity[rgbaIndex+3];
-        }
-        if (kineticEnergy<lastKineticEnergy){
-            if (kineticEnergy < globals.get("kineticDampingTolerance")) solved = true;
-            //reset velocity
-            for (var i=0;i<numNodes;i++) {
-                var rgbaIndex = i * 4;
-                velocity[rgbaIndex] = 0;
-                velocity[rgbaIndex+1] = 0;
-                velocity[rgbaIndex+2] = 0;
-                velocity[rgbaIndex+3] = 0;
-            }
-            kineticEnergy = -1;
-        }
-        lastKineticEnergy = kineticEnergy;
+
 
         return;
         //calc velocity
