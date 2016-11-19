@@ -193,7 +193,7 @@ function initSolver(globals){
                 if (edge === null) continue;
 
                 edgeMapping[edgeMappingIndex*4 + index*2] = edge.getSimIndex();
-                var sign = edge.nodes[0] == node ? 1 : -1;
+                var sign = edge.nodes[0] == node ? -1 : 1;
                 edgeMapping[edgeMappingIndex*4 + index*2 + 1] = sign;
                 index++;
             }
@@ -259,7 +259,7 @@ function initSolver(globals){
     }
 
     function _calcForcesKE(){
-        for (var i=0;i<numConnections;i++) {
+        for (var i=0;i<allEdges.length;i++) {
 
             var rgbaIndex = i * 4;
             var _edgeMeta = [edgeMeta[rgbaIndex], edgeMeta[rgbaIndex+1], edgeMeta[rgbaIndex+2], edgeMeta[rgbaIndex+3]];
@@ -267,23 +267,24 @@ function initSolver(globals){
 
             var node1Index = _edgeMeta[0]*4;
             var node1Position = new THREE.Vector3(position[node1Index], position[node1Index+1], position[node1Index+2]);
-            var node1MomentIndex = _edgeMeta[3]*4;
+            var node1MomentIndex = _edgeMeta[2]*4;
             var node1Moment = new THREE.Vector3(moment[node1MomentIndex], moment[node1MomentIndex+1], moment[node1MomentIndex+2]);
 
             var node2Index = _edgeMeta[1]*4;
             var node2Position = new THREE.Vector3(position[node2Index], position[node2Index+1], position[node2Index+2]);
-            var node2MomentIndex = _edgeMeta[4]*4;
+            var node2MomentIndex = _edgeMeta[3]*4;
             var node2Moment = new THREE.Vector3(moment[node2MomentIndex], moment[node2MomentIndex+1], moment[node2MomentIndex+2]);
 
             var vector = node1Position.sub(node2Position);
             var dist = vector.length();
 
             var edgeForce = vector.normalize().multiplyScalar(EA*(dist-_edgeMeta2[0])/dist);
-            edgeForce.add(node2Moment.clone().sub(node1Moment).multiplyScalar(1/_edgeMeta2[0]));
+            edgeForce.add(node2Moment.clone().sub(node1Moment).multiplyScalar(1/_edgeMeta2[0]));//todo is this right?
 
             edgeForces[rgbaIndex] = edgeForce.x;
             edgeForces[rgbaIndex+1] = edgeForce.y;
             edgeForces[rgbaIndex+2] = edgeForce.z;
+            edgeForces[rgbaIndex+3] = ((dist-_edgeMeta2[0])/dist);
         }
     }
 
@@ -330,7 +331,7 @@ function initSolver(globals){
                 //contribution from each beam el
                 var edgeIndex = edgeMapping[edgeStartIndex*4 + 2*j];
                 var edgeSign = edgeMapping[edgeStartIndex*4 + 2*j + 1];
-                var edgeForce = new THREE.Vector3(edgeForces[edgeIndex*4], edgeForces[edgeIndex*4+2], edgeForces[edgeIndex*4+3]);
+                var edgeForce = new THREE.Vector3(edgeForces[edgeIndex*4], edgeForces[edgeIndex*4+1], edgeForces[edgeIndex*4+2]);
                 forceSum.add(edgeForce.multiplyScalar(edgeSign));
             }
 
@@ -368,6 +369,7 @@ function initSolver(globals){
         lastKineticEnergy = kineticEnergy;
 
         _calcForcesKE();
+        //console.log(edgeForces);
         _calcVelocity();
         _calcPosition();
     }
@@ -423,7 +425,15 @@ function initSolver(globals){
             allNodes[i].move(new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]));
         }
 
+        var data = [];
         for (var i=0;i<allEdges.length;i++){
+            data.push(edgeForces[i*4+3]);
+        }
+        var max = _.max(data);
+        var min = _.min(data);
+
+        for (var i=0;i<allEdges.length;i++){
+            allEdges[i].setHSLColor(data[i], max, min);
             allEdges[i].update();
         }
         globals.threeView.render();

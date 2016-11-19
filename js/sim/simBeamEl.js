@@ -7,7 +7,7 @@
 
 function SimBeamEl(nodes, parent, parentEdge){
     Edge.call(this, nodes, parent);
-    this.object3D.material = edgeMaterialGrey;
+    this.object3D.material = edgeMaterialGrey.clone();
     this.type = "beamElement";
     this.parentEdge = parentEdge;
 }
@@ -26,6 +26,17 @@ SimBeamEl.prototype.setSimIndex = function(index){
 };
 SimBeamEl.prototype.getSimIndex = function(){
     return this.simIndex;
+};
+
+SimBeamEl.prototype.setHSLColor = function(val, max, min){
+    if (val === null){
+        this.object3D.material.color.setHex(0x000000);
+        return;
+    }
+    var scaledVal = (val - min)/(max - min) * 0.7;
+    var color = new THREE.Color();
+    color.setHSL(scaledVal, 1, 0.5);
+    this.object3D.material.color.set(color);
 };
 
 SimBeamEl.prototype.getSimLength = function(){
