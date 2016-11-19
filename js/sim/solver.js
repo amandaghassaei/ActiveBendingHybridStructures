@@ -19,7 +19,7 @@ function initSolver(globals){
     var position, velocity, externalForces, nodeMeta;//numNodes - nodeMeta = {fixed, numEdges/2, edgesMappingStart, momentStart}
     var moment, momentMeta;//numConnections/2 - momentMeta = {nodeIndex, neighb1index, neighb2index}
     var edgeForces, edgeMeta, edgeMeta2;//numConnections - edgeMeta = {node1index, node2index, moment1index, moment2index}, edgeMeta2 = {edgeLength, damping}
-    var nodeEdgeMapping;//???  groups of four
+    var edgeMapping;//groups of two, {pointer to edges array, sign}
 
     var lastKineticEnergy, solved;
     var dt = 0.1;
@@ -73,6 +73,8 @@ function initSolver(globals){
         }
 
         var _numConnections = 0;
+        var _numEdgeMappingGroups = 0;
+        var _momentIndex = 0;
         var orderedEdges = [];
         for (var i=0;i<numNodes;i++) {
 
@@ -100,6 +102,7 @@ function initSolver(globals){
             _.sortBy(nodeEdgesOrdered, function (edge) {
                 return edge.getBeamSimIndex();
             });
+            _numEdgeMappingGroups += Math.ceil((nodeEdgesOrdered.length*2)/4);
 
             for (var j=0;j<nodeEdgesOrdered.length/2;j++) {
                 if (nodeEdgesOrdered.length-2<2*j || (nodeEdgesOrdered[2*j].getBeamSimIndex() != nodeEdgesOrdered[2*j+1].getBeamSimIndex())) {
@@ -109,6 +112,8 @@ function initSolver(globals){
             }
             orderedEdges.push(nodeEdgesOrdered);
             nodeMeta[rgbaIndex+1] = nodeEdgesOrdered.length/2;
+            nodeMeta[rgbaIndex+2] = _momentIndex;
+            _momentIndex += nodeEdgesOrdered.length/2;
             _numConnections += nodeEdgesOrdered.length;
         }
         setExternalForces();
@@ -138,7 +143,6 @@ function initSolver(globals){
         var momentMetaIndex = 0;
         for (var i=0;i<numNodes;i++){
 
-            var rgbaIndex = i * 4;
             var node = allNodes[i];
             if (node === null) continue;
 
@@ -170,6 +174,22 @@ function initSolver(globals){
             }
             momentMetaIndex += nodeEdgesOrdered.length/2;
         }
+
+        edgeMapping = new Int16Array(_numEdgeMappingGroups*4); // {edgeIndex, sign}
+
+        var edgeMappingIndex = 0;
+        for (var i=0;i<numNodes;i++){
+
+            var rgbaIndex = i * 4;
+            var node = allNodes[i];
+            if (node === null) continue;
+
+            var nodeEdgesOrdered = orderedEdges[i];
+            for (var j=0;j<nodeEdgesOrdered.length/2;j++){
+
+            }
+        }
+
         render();
     }
 
@@ -374,7 +394,6 @@ function initSolver(globals){
 
     function render(){
 
-        var momentIndex = 0;
         for (var i=0;i<numNodes;i++){
 
             var rgbaIndex = i * 4;
@@ -382,13 +401,13 @@ function initSolver(globals){
             if (node === null) continue;
 
             var numBeams = nodeMeta[rgbaIndex+1];
+            var momentIndex = nodeMeta[rgbaIndex+2];
             for (var j=0;j<numBeams;j++){
                 var index = 4*(momentIndex+j);
                 var nodeMoment = new THREE.Vector3(moment[index], moment[index+1], moment[index+2]);
                 allNodes[i].setBendingForce(nodeMoment.multiplyScalar(10), j);
             }
             allNodes[i].move(new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]));
-            momentIndex += numBeams;
         }
 
         for (var i=0;i<allEdges.length;i++){
