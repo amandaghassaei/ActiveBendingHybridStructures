@@ -21,7 +21,7 @@ function initGlobals(){
             isAnimating: false,
             simNeedsReset: false,
             dampingType: "kinetic",
-            kineticDampingTolerance: 0.0001,
+            kineticDampingTolerance: 0.00001,
             numStepsPerFrame: 20,
             simE: 1,
             simA: 1,

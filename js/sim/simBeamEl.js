@@ -7,7 +7,7 @@
 
 function SimBeamEl(nodes, parent, parentEdge){
     Edge.call(this, nodes, parent);
-    this.object3D.material = edgeMaterialGrey.clone();
+    this.object3D.material = edgeMaterialGrey;//.clone();
     this.type = "beamElement";
     this.parentEdge = parentEdge;
 }

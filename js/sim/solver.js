@@ -258,6 +258,40 @@ function initSolver(globals){
         }
     }
 
+    function _calcForcesViscous(){
+        for (var i=0;i<allEdges.length;i++) {
+
+            var rgbaIndex = i * 4;
+            var _edgeMeta = [edgeMeta[rgbaIndex], edgeMeta[rgbaIndex+1], edgeMeta[rgbaIndex+2], edgeMeta[rgbaIndex+3]];
+            var _edgeMeta2 = [edgeMeta2[rgbaIndex], edgeMeta2[rgbaIndex+1], edgeMeta2[rgbaIndex+2], edgeMeta2[rgbaIndex+3]];
+
+            var node1Index = _edgeMeta[0]*4;
+            var node1Position = new THREE.Vector3(position[node1Index], position[node1Index+1], position[node1Index+2]);
+            var node1Velocity = new THREE.Vector3(velocity[node1Index], velocity[node1Index+1], velocity[node1Index+2]);
+            var node1MomentIndex = _edgeMeta[2]*4;
+            var node1Moment = new THREE.Vector3(moment[node1MomentIndex], moment[node1MomentIndex+1], moment[node1MomentIndex+2]);
+
+            var node2Index = _edgeMeta[1]*4;
+            var node2Position = new THREE.Vector3(position[node2Index], position[node2Index+1], position[node2Index+2]);
+            var node2Velocity = new THREE.Vector3(velocity[node2Index], velocity[node2Index+1], velocity[node2Index+2]);
+            var node2MomentIndex = _edgeMeta[3]*4;
+            var node2Moment = new THREE.Vector3(moment[node2MomentIndex], moment[node2MomentIndex+1], moment[node2MomentIndex+2]);
+
+            var posDiff = node1Position.sub(node2Position);
+            var velDiff = node1Velocity.sub(node2Velocity);
+            var dist = posDiff.length();
+
+            var edgeForce = posDiff.normalize().multiplyScalar(EA*(dist-_edgeMeta2[0])/dist);
+            edgeForce.add(node2Moment.clone().sub(node1Moment).multiplyScalar(1/_edgeMeta2[0]));//todo is this right?
+            edgeForce.add(velDiff.multiplyScalar(_edgeMeta2[1]));
+
+            edgeForces[rgbaIndex] = edgeForce.x;
+            edgeForces[rgbaIndex+1] = edgeForce.y;
+            edgeForces[rgbaIndex+2] = edgeForce.z;
+            //edgeForces[rgbaIndex+3] = ((dist-_edgeMeta2[0])/dist);
+        }
+    }
+
     function _calcForcesKE(){
         for (var i=0;i<allEdges.length;i++) {
 
@@ -284,7 +318,7 @@ function initSolver(globals){
             edgeForces[rgbaIndex] = edgeForce.x;
             edgeForces[rgbaIndex+1] = edgeForce.y;
             edgeForces[rgbaIndex+2] = edgeForce.z;
-            edgeForces[rgbaIndex+3] = ((dist-_edgeMeta2[0])/dist);
+            //edgeForces[rgbaIndex+3] = ((dist-_edgeMeta2[0])/dist);
         }
     }
 
@@ -345,6 +379,13 @@ function initSolver(globals){
         }
     }
 
+    function _stepViscous(){
+        _calcMoment();
+        _calcForcesViscous();
+        _calcVelocity();
+        _calcPosition();
+    }
+
     function _stepKE(){
 
         _calcMoment();
@@ -369,7 +410,6 @@ function initSolver(globals){
         lastKineticEnergy = kineticEnergy;
 
         _calcForcesKE();
-        //console.log(edgeForces);
         _calcVelocity();
         _calcPosition();
     }
@@ -425,15 +465,15 @@ function initSolver(globals){
             allNodes[i].move(new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]));
         }
 
-        var data = [];
-        for (var i=0;i<allEdges.length;i++){
-            data.push(edgeForces[i*4+3]);
-        }
-        var max = _.max(data);
-        var min = _.min(data);
+        //var data = [];
+        //for (var i=0;i<allEdges.length;i++){
+        //    data.push(edgeForces[i*4+3]);
+        //}
+        //var max = _.max(data);
+        //var min = _.min(data);
 
         for (var i=0;i<allEdges.length;i++){
-            allEdges[i].setHSLColor(data[i], max, min);
+            //allEdges[i].setHSLColor(data[i], max, min);
             allEdges[i].update();
         }
         globals.threeView.render();
