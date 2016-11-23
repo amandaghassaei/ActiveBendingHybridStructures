@@ -42,7 +42,6 @@ Node.prototype.setFixed = function(fixed){
         if (fixed) this.externalForce.hide();
         else this.externalForce.show();
     }
-    return fixed
 };
 
 

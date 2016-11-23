@@ -35,8 +35,7 @@ function initStructure(globals){
             this.object3D.add(this.edgesContainer);
             this.membraneContainer = new THREE.Object3D();
             this.object3D.add(this.membraneContainer);
-            //this.simContainer = new THREE.Object3D();
-            //this.object3D.add(this.simContainer);
+
             this.simNodesContainer = new THREE.Object3D();
             this.object3D.add(this.simNodesContainer);
             this.simEdgesContainer = new THREE.Object3D();
@@ -93,9 +92,13 @@ function initStructure(globals){
             this.currentEditingBeam = null;
             this.syncSim();
             this.simNodes[1].setFixed(true);
+            this.nodes[1].setFixed(true);
             this.simNodes[2].setFixed(true);
+            this.nodes[2].setFixed(true);
             this.simNodes[3].setFixed(true);
+            this.nodes[3].setFixed(true);
             this.simNodes[4].setFixed(true);
+            this.nodes[4].setFixed(true);
             this.set("numFixed", 4);
         },
 
@@ -129,6 +132,7 @@ function initStructure(globals){
                 if (globals.get("needsRemesh")) this.syncSim();
                 this.boundaryEditingModeChanged();
             } else if (mode === "simulation"){
+                if (globals.get("needsRemesh")) this.syncSim();
                 _.each(this.simMembranes, function(membrane){
                     membrane.setEdgeMaterial(edgeMaterialLightGray);
                     membrane.hideNodes();
@@ -425,7 +429,9 @@ function initStructure(globals){
                     continue;
                 }
                 var simNode = new SimNode(nodes[i].getPosition(), this.simNodesContainer);
+                if (nodes[i].fixed) simNode.setFixed(true);
                 simNode.setIsBeamNode(true);
+                simNode.setNodesIndex(i);
                 this.simNodes.push(simNode);
             }
             var allEdges = [];

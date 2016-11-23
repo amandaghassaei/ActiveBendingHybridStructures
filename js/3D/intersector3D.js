@@ -130,7 +130,11 @@ function initIntersector3D(globals, structure){
                         globals.threeView.render();
                     } else if (mode === "boundaryEditing"){
                         if (highlightedObj && highlightedObj.type == "node") {
-                            var state = highlightedObj.setFixed(!highlightedObj.fixed);
+                            var state = !highlightedObj.fixed;
+                            highlightedObj.setFixed(state);
+                            if (highlightedObj.isBeamNode && highlightedObj.getNodesIndex() !== undefined){
+                                globals.structure.nodes[highlightedObj.getNodesIndex()].setFixed(state);
+                            }
                             var numFixed = structure.get("numFixed");
                             if (state) numFixed++;
                             else numFixed--;

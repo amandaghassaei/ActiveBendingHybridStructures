@@ -14,6 +14,13 @@ SimNode.prototype.setIsBeamNode = function(state){
     this.isBeamNode = state;
 };
 
+SimNode.prototype.setNodesIndex = function(index){
+    this.nodesIndex = index;
+};
+SimNode.prototype.getNodesIndex = function(){
+    return this.nodesIndex;
+};
+
 SimNode.prototype.setMaterial = function(material){
     this.object3D.material = material;
 };
