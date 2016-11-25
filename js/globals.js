@@ -19,13 +19,15 @@ function initGlobals(){
             constantNumElements: true,
 
             isAnimating: false,
-            simNeedsReset: false,
+            simNeedsReset: true,
+            simNeedsSetup: true,
             dampingType: "kinetic",
             kineticDampingTolerance: 0.00001,
             numStepsPerFrame: 20,
             simE: 1,
             simA: 1,
             simI: 1,
+            simMembraneFD: 2,
 
             //simulation params
             segmentLength: 2,

@@ -138,6 +138,7 @@ function initIntersector3D(globals, structure){
                             var numFixed = structure.get("numFixed");
                             if (state) numFixed++;
                             else numFixed--;
+                            globals.set("simNeedsSetup", true);
                             structure.set("numFixed", numFixed);
                         }
                         globals.threeView.render();

@@ -42,6 +42,10 @@ function initSimulationView(globals){
                 globals.set("simI", val);
             }, 0);
 
+            setSliderInput("#simMembraneFD", globals.get("simMembraneFD"), 0.5, 20, 0.1, function(val){
+                globals.set("simMembraneFD", val);
+            });
+
             this.listenTo(globals, "change:mode", function(){
                 if (globals.get("mode") != "simulation"){
                     globals.solver.pause();

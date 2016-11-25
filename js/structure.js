@@ -150,7 +150,7 @@ function initStructure(globals){
             }
             this.simNodesContainer.visible = mode === "meshing" || mode === "boundaryEditing" || mode === "simulation";
             this.simEdgesContainer.visible = this.simNodesContainer.visible;
-            this.simMembraneContainer.visible = mode === "meshing" || mode === "boundaryEditing";
+            this.simMembraneContainer.visible = this.simNodesContainer.visible;
             this.nodesContainer.visible = mode === "beamEditing" || mode === "membraneEditing";
             this.beamsContainer.visible =  this.nodesContainer.visible;
             this.edgesContainer.visible =  this.nodesContainer.visible;
@@ -488,6 +488,7 @@ function initStructure(globals){
         },
 
         mesh: function(){
+            globals.set("simNeedsSetup", true);
             for (var i=0;i<this.simNodes.length;i++){
                 if (this.simNodes[i]) this.simNodes[i].removeElements();
             }
@@ -572,19 +573,6 @@ function initStructure(globals){
             }
             console.warn("couldn't find next edge");
             return null;
-        },
-
-        resetSim: function(){
-            for (var i=0;i<this.simNodes.length;i++){
-                this.simNodes[i].reset();
-            }
-            for (var i=0;i<this.simBeams.length;i++){
-                this.simBeams[i].reset();
-            }
-            for (var i=0;i<this.simMembranes.length;i++){
-                this.simMembranes[i].updateBoundaries();
-                this.simMembranes[i].solve();//todo may need to update something here
-            }
         },
 
         reset: function(){

@@ -7,8 +7,8 @@ function initSolver(globals){
     var listener = _.extend({}, Backbone.Events);
     listener.listenTo(globals, "change:mode", function(){
         var mode = globals.get("mode");
-        if (mode === "simulation"){
-            reset();
+        if (mode === "simulation" && globals.get("simNeedsSetup")){
+            setup();
         }
     });
 
@@ -16,7 +16,7 @@ function initSolver(globals){
 
     var allNodes, numNodes, allEdges, numConnections;
 
-    var position, velocity, externalForces, nodeMeta;//numNodes - nodeMeta = {fixed, numEdges/2, edgesMappingStart, momentStart}
+    var position, velocity, externalForces, membraneForces, nodeMeta;//numNodes - nodeMeta = {fixed, numEdges/2, edgesMappingStart, momentStart}
     var moment, momentMeta;//numConnections/2 - momentMeta = {nodeIndex, neighb1index, neighb2index}
     var edgeForces, edgeMeta, edgeMeta2;//numConnections - edgeMeta = {node1index, node2index, moment1index, moment2index}, edgeMeta2 = {edgeLength, damping}
     var edgeMapping;//groups of two, {pointer to edges array, sign}
@@ -33,9 +33,10 @@ function initSolver(globals){
 
     }
 
-    function reset(){
+    function setup(){
 
         globals.set("simNeedsReset", false);
+        globals.set("simNeedsSetup", false);
 
         lastKineticEnergy = -1;
         solved = false;
@@ -63,6 +64,7 @@ function initSolver(globals){
         position = new Float32Array(numNodes*4);
         velocity = new Float32Array(numNodes*4);
         externalForces = new Float32Array(numNodes*4);
+        membraneForces = new Float32Array(numNodes*4);
         nodeMeta = new Uint16Array(numNodes*4);//nodeMeta = {fixed, numEdges/2, momentStart, edgesMappingStart}
         for (var i=0;i<numNodes;i++){
             nodeMeta[i*4] = 1;//set all fixed by default
@@ -199,6 +201,36 @@ function initSolver(globals){
             }
             edgeMappingIndex += Math.ceil(index*2/4);
         }
+
+        render();
+    }
+
+    function reset(){
+
+        globals.set("simNeedsReset", false);
+
+        position = new Float32Array(numNodes*4);
+        velocity = new Float32Array(numNodes*4);
+        membraneForces = new Float32Array(numNodes*4);
+
+        edgeForces = new Float32Array(allEdges.length*4);
+        moment = new Float32Array(numConnections*2);
+
+        for (var i=0;i<numNodes;i++) {
+            var node = allNodes[i];
+            var nodePosition = node.getOriginalPosition();
+            var rgbaIndex = i * 4;
+            position[rgbaIndex] = nodePosition.x;
+            position[rgbaIndex + 1] = nodePosition.y;
+            position[rgbaIndex + 2] = nodePosition.z;
+        }
+
+        //reset membranes
+        _updateMembranes();
+
+        solved = false;
+        lastKineticEnergy = -1;
+
         render();
     }
 
@@ -362,6 +394,7 @@ function initSolver(globals){
             }
 
             var forceSum = new THREE.Vector3(externalForces[rgbaIndex], externalForces[rgbaIndex+1], externalForces[rgbaIndex+2]);
+            forceSum.add(new THREE.Vector3(membraneForces[rgbaIndex], membraneForces[rgbaIndex+1], membraneForces[rgbaIndex+2]));
             var edgeStartIndex = _nodeMeta[3];
             for (var j=0;j<_nodeMeta[1]*2;j++){
                 //contribution from each beam el
@@ -381,11 +414,16 @@ function initSolver(globals){
         }
     }
 
+    function _updateMembranes(){
+
+    }
+
     function _stepViscous(){
         _calcMoment();
         _calcForcesViscous();
         _calcVelocity();
         _calcPosition();
+        _updateMembranes();
     }
 
     function _stepKE(){
@@ -414,6 +452,7 @@ function initSolver(globals){
         _calcForcesKE();
         _calcVelocity();
         _calcPosition();
+        _updateMembranes();
     }
 
     function staticSolve(){
