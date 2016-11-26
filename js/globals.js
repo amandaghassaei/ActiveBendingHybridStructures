@@ -24,9 +24,9 @@ function initGlobals(){
             dampingType: "kinetic",
             kineticDampingTolerance: 0.00001,
             numStepsPerFrame: 20,
-            simE: 1,
+            simE: 10000,
             simA: 1,
-            simI: 1,
+            simI: 0.05,
             simDt: 0.01,
             simMembraneFD: 2,
 
