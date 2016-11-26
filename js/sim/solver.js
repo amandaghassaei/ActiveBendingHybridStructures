@@ -7,8 +7,14 @@ function initSolver(globals){
     var listener = _.extend({}, Backbone.Events);
     listener.listenTo(globals, "change:mode", function(){
         var mode = globals.get("mode");
+        if (mode != "simulation"){
+            pause();
+        }
         if (mode === "simulation" && globals.get("simNeedsSetup")){
             setup();
+        } else if (mode == "meshing"){
+            reset();
+            globals.threeView.render();
         }
     });
 
@@ -272,7 +278,7 @@ function initSolver(globals){
         }
 
         _updateMembranes();
-        
+
         solved = false;
         lastKineticEnergy = -1;
 

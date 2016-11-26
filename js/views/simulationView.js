@@ -46,12 +46,6 @@ function initSimulationView(globals){
                 globals.set("simMembraneFD", val);
             });
 
-            this.listenTo(globals, "change:mode", function(){
-                if (globals.get("mode") != "simulation"){
-                    globals.solver.pause();
-                }
-            });
-
             this.setButtonVis();
             this.setResetVis();
         },
