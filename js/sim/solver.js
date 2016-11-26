@@ -14,12 +14,16 @@ function initSolver(globals){
 
     var structure = globals.structure;
 
-    var allNodes, numNodes, allEdges, numConnections;
+    var allNodes, numNodes, allEdges, allMembranes, numConnections;
 
-    var position, velocity, externalForces, membraneForces, nodeMeta;//numNodes - nodeMeta = {fixed, numEdges/2, edgesMappingStart, momentStart}
+    var position, velocity, externalForces, nodeMeta;//numNodes - nodeMeta = {fixed, numEdges/2, edgesMappingStart, momentStart}
     var moment, momentMeta;//numConnections/2 - momentMeta = {nodeIndex, neighb1index, neighb2index}
     var edgeForces, edgeMeta, edgeMeta2;//numConnections - edgeMeta = {node1index, node2index, moment1index, moment2index}, edgeMeta2 = {edgeLength, damping}
     var edgeMapping;//groups of two, {pointer to edges array, sign}
+
+    var membraneForces;//numNodes
+    var membranePositions;//inner nodes, all membranes
+    var membraneSolveArray;//innerNodes x maxBoundaryNodes - static matrix val, pointer to nodes array - num edge membrane nodes
 
     var lastKineticEnergy, solved;
     var dt = 0.1;
@@ -43,7 +47,6 @@ function initSolver(globals){
 
         var nodes = structure.simNodes;
         var beams = structure.simBeams;
-        var membranes = structure.simMembranes;
 
         var _allNodes = nodes;
         var _allEdges = [];
@@ -60,6 +63,7 @@ function initSolver(globals){
         }
         allNodes = _allNodes;
         allEdges = _allEdges;
+        allMembranes = structure.simMembranes;
 
         position = new Float32Array(numNodes*4);
         velocity = new Float32Array(numNodes*4);
@@ -200,6 +204,25 @@ function initSolver(globals){
                 index++;
             }
             edgeMappingIndex += Math.ceil(index*2/4);
+        }
+
+        var maxMembraneBoundaryNodes = 0;
+        var numInnerNodes = 0;
+        for (var i=0;i<allMembranes.length;i++){
+            var membrane = allMembranes[i];
+            numInnerNodes += membrane.innerNodes.length;
+            if (membrane.borderNodes.length>maxMembraneBoundaryNodes) maxMembraneBoundaryNodes = membrane.borderNodes.length;
+        }
+        membranePositions = new Float32Array(numInnerNodes*4);
+        var rgbaIndex = 0;
+        for (var i=0;i<allMembranes.length;i++){
+            for (var j=0;j<allMembranes[i].innerNodes.length;j++){
+                var innerNodePosition = allMembranes[i].innerNodes[j].getPosition();
+                membranePositions[rgbaIndex] = innerNodePosition.x;
+                membranePositions[rgbaIndex+1] = innerNodePosition.y;
+                membranePositions[rgbaIndex+2] = innerNodePosition.z;
+                rgbaIndex += 4;
+            }
         }
 
         render();
@@ -415,7 +438,12 @@ function initSolver(globals){
     }
 
     function _updateMembranes(){
-
+        for (var i=0;i<allMembranes.length;i++){
+            //position, membraneBoundaryMapping
+            var boundary = [];
+            allMembranes[i].solveForBoundary(boundary);
+            //set membrane forces
+        }
     }
 
     function _stepViscous(){
@@ -517,6 +545,18 @@ function initSolver(globals){
             //allEdges[i].setHSLColor(data[i], max, min);
             allEdges[i].update();
         }
+        var rgbaIndex = 0;
+        for (var j=0;j<allMembranes.length;j++){
+            for (var i=0;i<allMembranes[j].innerNodes.length;i++){
+                var nodePosition = new THREE.Vector3(membranePositions[rgbaIndex], membranePositions[rgbaIndex+1], membranePositions[rgbaIndex+2]);
+                allMembranes[j].innerNodes[i].move(nodePosition);
+                rgbaIndex += 4;
+            }
+            for (var i=0;i<allMembranes[j].innerEdges.length;i++){
+                allMembranes[j].innerEdges[i].update();
+            }
+        }
+
         globals.threeView.render();
     }
 

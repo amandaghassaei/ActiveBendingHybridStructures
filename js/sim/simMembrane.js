@@ -151,33 +151,35 @@ SimMembrane.prototype.setupStaticMatrices = function(){
     this.Ctrans_Q_Cf = numeric.dot(Ctrans_Q, this.Cf);
     var Ctrans_Q_Cf_Xf = numeric.dot(this.Ctrans_Q_Cf, this.Xf);
 
+    this.inv_Ctrans_Q_C_Ctrans_Q_Cf = numeric.dot(this.inv_Ctrans_Q_C, this.Ctrans_Q_Cf);
+
     this.solve(Ctrans_Q_Cf_Xf);
 };
 
 SimMembrane.prototype.updateQs = function(){
-    for (var i=0;i<this.innerEdges.length;i++){
-        this.Q[i][i] = this.innerEdges[i].getForceDensity();
-    }
-    var Ctrans_Q = numeric.dot(this.Ctranspose, this.Q);
-    var Ctrans_Q_C = numeric.dot(Ctrans_Q, this.C);
-    this.inv_Ctrans_Q_C = numeric.inv(Ctrans_Q_C);
-    this.Ctrans_Q_Cf = numeric.dot(Ctrans_Q, this.Cf);
-    var Ctrans_Q_Cf_Xf = numeric.dot(this.Ctrans_Q_Cf, this.Xf);
-
-    this.solve(Ctrans_Q_Cf_Xf);
-};
-
-SimMembrane.prototype.updateBoundaries = function(){
-    for (var i=0;i<this.Xf.length;i++){
-        var position = this.borderNodes[i].getPosition();
-        this.Xf[i] = [-position.x, -position.y, -position.z];
-    }
-    var Ctrans_Q_Cf_Xf = numeric.dot(this.Ctrans_Q_Cf, this.Xf);
-    this.solve(Ctrans_Q_Cf_Xf);
+    // for (var i=0;i<this.innerEdges.length;i++){
+    //     this.Q[i][i] = this.innerEdges[i].getForceDensity();
+    // }
+    // var Ctrans_Q = numeric.dot(this.Ctranspose, this.Q);
+    // var Ctrans_Q_C = numeric.dot(Ctrans_Q, this.C);
+    // this.inv_Ctrans_Q_C = numeric.inv(Ctrans_Q_C);
+    // this.Ctrans_Q_Cf = numeric.dot(Ctrans_Q, this.Cf);
+    // var Ctrans_Q_Cf_Xf = numeric.dot(this.Ctrans_Q_Cf, this.Xf);
+    //
+    // this.solve(Ctrans_Q_Cf_Xf);
 };
 
 SimMembrane.prototype.solve = function(Ctrans_Q_Cf_Xf){
     var X = numeric.dot(this.inv_Ctrans_Q_C, Ctrans_Q_Cf_Xf);
+    this.render(X);
+};
+
+SimMembrane.prototype.solveForBoundary = function(){
+    for (var i=0;i<this.Xf.length;i++){
+        var position = this.borderNodes[i].getPosition();
+        this.Xf[i] = [-position.x, -position.y, -position.z];
+    }
+    var X = numeric.dot(this.inv_Ctrans_Q_C_Ctrans_Q_Cf, this.Xf);
     this.render(X);
 };
 
