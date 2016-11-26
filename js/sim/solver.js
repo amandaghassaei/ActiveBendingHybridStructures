@@ -22,18 +22,39 @@ function initSolver(globals){
         var E = globals.get("simE");
         EI = E*I;
         EA = E*A;
+        calcDT();
     });
     listener.listenTo(globals, "change:simI", function(){
         var I = globals.get("simI");
         EI = E*I;
+        calcDT();
     });
     listener.listenTo(globals, "change:simA", function(){
         var A = globals.get("simA");
         EA = E*A;
+        calcDT();
     });
     listener.listenTo(globals, "change:simDt", function(){
         dt = globals.get("simDt");
     });
+
+    function calcDT(){
+        if (!allEdges) {
+            dt = globals.get("simDt");
+            return;
+        }
+        var _dt = 1/(2*Math.PI*Math.sqrt(globals.get("simMembraneFD")));
+        var edgeDt;
+        for (var i=0;i<allEdges.length;i++){
+            var length = edgeMeta2[i*4];
+            if (EA>EI) edgeDt = 1/(2*Math.PI*Math.sqrt(EA/length));
+            else edgeDt = 1/(2*Math.PI*Math.sqrt(EI/length));
+            if (edgeDt<_dt) _dt = edgeDt;
+        }
+        dt = _dt/2;
+        globals.set("simDt", dt, {silent:true});
+        $("#simDt").val(dt.toFixed(6));
+    }
 
     var E = globals.get("simE");
     var I = globals.get("simI");
@@ -41,6 +62,7 @@ function initSolver(globals){
     var EI = E*I;
     var EA = E*A;
     var dt = globals.get("simDt");
+    calcDT();
 
     var structure = globals.structure;
 
@@ -326,6 +348,7 @@ function initSolver(globals){
         }
 
         render();
+        calcDT();
     }
 
     function reset(noRender){
