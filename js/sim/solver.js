@@ -9,35 +9,54 @@ function initSolver(globals){
         var mode = globals.get("mode");
         if (mode != "simulation"){
             pause();
+            if (allNodes){//if we've inited at least once
+                reset(globals.previous("mode") !== "simulation");
+                globals.threeView.render();
+            }
         }
         if (mode === "simulation" && globals.get("simNeedsSetup")){
             setup();
-        } else if (mode == "meshing"){
-            reset();
-            globals.threeView.render();
         }
     });
+    listener.listenTo(globals, "change:simE", function(){
+        var E = globals.get("simE");
+        EI = E*I;
+        EA = E*A;
+    });
+    listener.listenTo(globals, "change:simI", function(){
+        var I = globals.get("simI");
+        EI = E*I;
+    });
+    listener.listenTo(globals, "change:simA", function(){
+        var A = globals.get("simA");
+        EA = E*A;
+    });
+    listener.listenTo(globals, "change:simDt", function(){
+        dt = globals.get("simDt");
+    });
+
+    var E = globals.get("simE");
+    var I = globals.get("simI");
+    var A = globals.get("simA");
+    var EI = E*I;
+    var EA = E*A;
+    var dt = globals.get("simDt");
 
     var structure = globals.structure;
 
     var allNodes, numNodes, allEdges, allMembranes, numConnections, numInnerNodes, maxMembraneBoundaryNodes;
 
-    var position, velocity, externalForces, nodeMeta;//numNodes - nodeMeta = {fixed, numEdges/2, edgesMappingStart, momentStart}
+    var position, velocity, membraneForces, externalForces, nodeMeta;//numNodes - nodeMeta = {fixed, numEdges/2, edgesMappingStart, momentStart}
     var moment, momentMeta;//numConnections/2 - momentMeta = {nodeIndex, neighb1index, neighb2index}
     var edgeForces, edgeMeta, edgeMeta2;//numConnections - edgeMeta = {node1index, node2index, moment1index, moment2index}, edgeMeta2 = {edgeLength, damping}
     var edgeMapping;//groups of two, {pointer to edges array, sign}
 
-    var membraneForces;//numNodes
+    var membraneForcesMeta;//numNodes = {startIndex, num}
+    var membraneMapping;//numEdgeNodes * numMembrane
     var membranePositions;//inner nodes, all membranes
     var membraneMetaArray, membraneSolveArray;//innerNodes x maxBoundaryNodes - static matrix val, pointer to nodes array - num edge membrane nodes
 
     var lastKineticEnergy, solved;
-    var dt = 0.1;
-    var E = 1;
-    var I = 1;
-    var A = 1;
-    var EI = E*I;
-    var EA = E*A;
 
     function setExternalForces(){
 
@@ -212,16 +231,69 @@ function initSolver(globals){
             edgeMappingIndex += Math.ceil(index*2/4);
         }
 
+        membraneForcesMeta = new Int16Array(numNodes*4);
+        var allMembraneConnections = {};
+        for (var i=0;i<numNodes;i++){
+            membraneForcesMeta[i*4] = -1;//no membrane by default
+        }
         var _maxMembraneBoundaryNodes = 0;
         var _numInnerNodes = 0;
+        var allInnerNodes = [];
         for (var i=0;i<allMembranes.length;i++){
             var membrane = allMembranes[i];
             _numInnerNodes += membrane.innerNodes.length;
+            allInnerNodes = allInnerNodes.concat(membrane.innerNodes);
             if (membrane.borderNodes.length>_maxMembraneBoundaryNodes) _maxMembraneBoundaryNodes = membrane.borderNodes.length;
+        }
+        for (var i=0;i<allMembranes.length;i++){
+            var membrane = allMembranes[i];
+            for (var j=0;j<membrane.borderNodes.length;j++){
+                var borderNode = membrane.borderNodes[j];
+                var nodesIndex = allNodes.indexOf(borderNode);
+                if (nodesIndex<0){
+                    console.warn("not found in nodes array");
+                }
+                if (allMembraneConnections[nodesIndex]) continue;
+                allMembraneConnections[nodesIndex] = [];
+                //connecting node index in membranePositions array
+                for (var k=0;k<borderNode.edges.length;k++){
+                    if (borderNode.edges[k].type == "tensionEdge"){
+                        var otherNode = borderNode.edges[k].getOtherNode(borderNode);
+                        var otherNodeIndex = allInnerNodes.indexOf(otherNode);
+                        if (otherNodeIndex<0){
+                            console.warn("not found in nodes array");
+                        }
+                        allMembraneConnections[nodesIndex].push(otherNodeIndex);
+                    }
+                }
+
+            }
         }
         numInnerNodes = _numInnerNodes;
         maxMembraneBoundaryNodes = _maxMembraneBoundaryNodes;
-        
+
+        var allMembraneConnectionsLength = 0;
+        _.each(allMembraneConnections, function(data){
+            allMembraneConnectionsLength += Math.ceil(data.length/4);
+        });
+        membraneMapping = new Int16Array(allMembraneConnectionsLength*4);
+        for (var i=0;i<allMembraneConnectionsLength*4;i++){
+            membraneMapping[i] = -1;
+        }
+
+        var allMembraneConnectionsKeys = _.keys(allMembraneConnections);
+        var membraneMappingIndex = 0;
+        for (var i=0;i<allMembraneConnectionsKeys.length;i++){
+            var key = allMembraneConnectionsKeys[i];
+            var data = allMembraneConnections[key];
+            for (var j=0;j<data.length;j++){
+                membraneMapping[membraneMappingIndex*4 + j] = data[j];
+            }
+            membraneForcesMeta[key*4] = membraneMappingIndex;
+            membraneForcesMeta[key*4+1] = data.length;
+            membraneMappingIndex += Math.ceil(data.length/4);
+        }
+
         membranePositions = new Float32Array(numInnerNodes*4);
         membraneMetaArray = new Float32Array(numInnerNodes*maxMembraneBoundaryNodes*4);
         membraneSolveArray = new Float32Array(numInnerNodes*maxMembraneBoundaryNodes*4);
@@ -256,7 +328,7 @@ function initSolver(globals){
         render();
     }
 
-    function reset(){
+    function reset(noRender){
 
         globals.set("simNeedsReset", false);
 
@@ -282,7 +354,7 @@ function initSolver(globals){
         solved = false;
         lastKineticEnergy = -1;
 
-        render();
+        if (!noRender || noRender === undefined) render();
     }
 
     function singleStep(){
@@ -492,6 +564,28 @@ function initSolver(globals){
             membranePositions[4*i+1] = val.y;
             membranePositions[4*i+2] = val.z;
         }
+
+        var forceDensity = globals.get("simMembraneFD");
+        for (var i=0;i<numNodes;i++){
+            var rgbaIndex = i*4;
+            var forcesLookup = [membraneForcesMeta[rgbaIndex], membraneForcesMeta[rgbaIndex+1]];//start, length
+            if (forcesLookup[0]<0) {
+                membraneForces[rgbaIndex] = 0;
+                membraneForces[rgbaIndex+1] = 0;
+                membraneForces[rgbaIndex+2] = 0;
+                continue;
+            }
+            var force = new THREE.Vector3(0,0,0);
+            var nodePosition = new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]);
+            for (var j=0;j<forcesLookup[1];j++){
+                var membNodeIndex = 4*membraneMapping[forcesLookup[0]*4 + j];
+                var membNodePosition = new THREE.Vector3(membranePositions[membNodeIndex], membranePositions[membNodeIndex+1], membranePositions[membNodeIndex+2]);
+                force.add(membNodePosition.sub(nodePosition).multiplyScalar(forceDensity));
+            }
+            membraneForces[rgbaIndex] = force.x;
+            membraneForces[rgbaIndex+1] = force.y;
+            membraneForces[rgbaIndex+2] = force.z;
+        }
     }
 
     function _stepViscous(){
@@ -577,7 +671,7 @@ function initSolver(globals){
             for (var j=0;j<numBeams;j++){
                 var index = 4*(momentIndex+j);
                 var nodeMoment = new THREE.Vector3(moment[index], moment[index+1], moment[index+2]);
-                allNodes[i].setBendingForce(nodeMoment.multiplyScalar(10), j);
+                allNodes[i].setBendingForce(nodeMoment.multiplyScalar(10/EI), j);
             }
             allNodes[i].move(new THREE.Vector3(position[rgbaIndex], position[rgbaIndex+1], position[rgbaIndex+2]));
         }

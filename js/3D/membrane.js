@@ -2,8 +2,8 @@
  * Created by ghassaei on 11/3/16.
  */
 
-var membraneMaterialHighlight = new THREE.MeshBasicMaterial({color: 0xb67df0, side: THREE.DoubleSide});
-var membraneMaterial = new THREE.MeshBasicMaterial({color: 0x777777, side: THREE.DoubleSide});
+var membraneMaterialHighlight = new THREE.MeshBasicMaterial({color: 0xb67df0, side: THREE.DoubleSide, transparent:true, opacity:0.4});
+var membraneMaterial = new THREE.MeshBasicMaterial({color: 0x777777, side: THREE.DoubleSide, transparent:true, opacity:0.4});
 
 function Membrane(edges, parent){
 

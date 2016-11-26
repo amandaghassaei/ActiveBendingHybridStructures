@@ -41,6 +41,9 @@ function initSimulationView(globals){
             setInput("#simI", globals.get("simI"), function(val){
                 globals.set("simI", val);
             }, 0);
+            setInput("#simDt", globals.get("simDt"), function(val){
+                globals.set("simDt", val);
+            }, 0);
 
             setSliderInput("#simMembraneFD", globals.get("simMembraneFD"), 0.5, 20, 0.1, function(val){
                 globals.set("simMembraneFD", val);

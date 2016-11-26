@@ -27,6 +27,7 @@ function initGlobals(){
             simE: 1,
             simA: 1,
             simI: 1,
+            simDt: 0.01,
             simMembraneFD: 2,
 
             //simulation params
