@@ -148,7 +148,7 @@ function initStructure(globals){
                     membrane.hideNodes();
                 });
             }
-            this.simNodesContainer.visible = mode === "meshing" || mode === "boundaryEditing" || mode === "simulation";
+            this.simNodesContainer.visible = mode === "meshing" || mode === "boundaryEditing" || mode === "simulation" || mode === "optSetup";
             this.simEdgesContainer.visible = this.simNodesContainer.visible;
             this.simMembraneContainer.visible = this.simNodesContainer.visible;
             this.nodesContainer.visible = mode === "beamEditing" || mode === "membraneEditing";

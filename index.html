@@ -46,6 +46,7 @@
     <script type="text/javascript" src="js/views/meshingView.js"></script>
     <script type="text/javascript" src="js/views/boundaryEditingView.js"></script>
     <script type="text/javascript" src="js/views/simulationView.js"></script>
+    <script type="text/javascript" src="js/views/optSetupView.js"></script>
     <script type="text/javascript" src="js/views/view.js"></script>
     <script type="text/javascript" src="js/structure.js"></script>
     <script type="text/javascript" src="js/3D/intersector3D.js"></script>
@@ -172,11 +173,34 @@
         </div><br/>
         <div class="floatRight"><a href="#" id="staticSolve" class="btn btn-lg btn-success">Static Solve</a> Tolerance: &nbsp;&nbsp;<input id="kineticDampingTolerance" value="" placeholder="" class="form-control" type="text"></div><br/><br/>
         <br/>
-        <a href="#" id="startSim" class="floatRight btn btn-lg btn-success">Start Animation</a>
-        <a href="#" id="pauseSim" class="floatRight btn btn-lg btn-warning">Pause Animation</a>
-        <a href="#" id="resetSim" class="floatRight btn btn-lg btn-default">Reset</a><br/><br/>
+        <a href="#" class="startSim floatRight btn btn-lg btn-success">Start Animation</a>
+        <a href="#" class="pauseSim floatRight btn btn-lg btn-warning">Pause Animation</a>
+        <a href="#" class="resetSim floatRight btn btn-lg btn-default">Reset</a><br/><br/>
         <div class="floatRight">Num Steps Per Frame: &nbsp;&nbsp;<input id="numStepsPerFrame" value="" placeholder="" class="form-control" type="text"></div><br/><br/>
         <a href="#" id="stepForward" class="floatRight btn btn-lg btn-default">Step Forward</a><br/><br/>
+    </div>
+</div>
+<div class="controls" id="optSetupControls">
+    <div>
+        <a href="#" class="startSim floatRight btn btn-lg btn-success">Start Simulation</a>
+        <a href="#" class="pauseSim floatRight btn btn-lg btn-warning">Pause Simulation</a>
+        <a href="#" class="resetSim floatRight btn btn-lg btn-default">Reset</a><br/><br/>
+        Optimization Variables:
+        <div class="indent">
+            <label class="checkbox" for="includeBeams">
+                <input id="includeBeams" data-toggle="checkbox" class="custom-checkbox layersSelector" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                Include Beams
+            </label>
+            <label class="checkbox" for="includeMembranes">
+                <input id="includeMembranes" data-toggle="checkbox" class="custom-checkbox layersSelector" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                Include Membranes
+            </label>
+            <label class="checkbox" for="includeForces">
+                <input id="includeForces" data-toggle="checkbox" class="custom-checkbox layersSelector" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                Include External Forces
+            </label>
+        </div>
+        <!--select forces to include-->
     </div>
 </div>
 <div class="controls" id="optimizationControls">
@@ -233,22 +257,26 @@
                 Simulation
             </label>
             <label class="radio">
+                <input name="mode" value="optSetup" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                Optimization Setup
+            </label>
+            <label class="radio">
                 <input name="mode" value="optimization" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
                 Optimization
             </label>
         </div>
     </div>
 </div>
-<div id="meshOptions">
-    <label class="checkbox" for="showMesh">
-        <input id="showMesh" data-toggle="checkbox" class="custom-checkbox layersSelector" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
-        Show Mesh
-    </label>
-    <div class="sliderInput" id="meshOpacity">
-        <span class="label-slider floatLeft">Opacity: <br/></span><div class="widerSlider flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
-        <input value="" placeholder="" class="form-control int" type="text">
-    </div>
-</div>
+<!--<div id="meshOptions">-->
+    <!--<label class="checkbox" for="showMesh">-->
+        <!--<input id="showMesh" data-toggle="checkbox" class="custom-checkbox layersSelector" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>-->
+        <!--Show Mesh-->
+    <!--</label>-->
+    <!--<div class="sliderInput" id="meshOpacity">-->
+        <!--<span class="label-slider floatLeft">Opacity: <br/></span><div class="widerSlider flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>-->
+        <!--<input value="" placeholder="" class="form-control int" type="text">-->
+    <!--</div>-->
+<!--</div>-->
 <input type="file" id="fileInput">
 
 <div id="scaleBars"></div>

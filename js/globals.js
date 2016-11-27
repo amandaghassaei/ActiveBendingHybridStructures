@@ -51,6 +51,7 @@ function initGlobals(){
             initMeshingView(this);
             initBoundaryEditingView(this);
             initSimulationView(this);
+            initOptSetupView(this);
 
             var self = this;
             $(window).bind('keyup', function(e) {

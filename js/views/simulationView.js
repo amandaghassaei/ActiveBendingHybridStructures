@@ -12,9 +12,9 @@ function initSimulationView(globals){
 
         events: {
             "click #stepForward": "stepForward",
-            "click #resetSim": "reset",
-            "click #startSim": "start",
-            "click #pauseSim": "pause",
+            "click .resetSim": "reset",
+            "click .startSim": "start",
+            "click .pauseSim": "pause",
             "click #staticSolve": "staticSolve"
         },
 
@@ -56,20 +56,20 @@ function initSimulationView(globals){
         setButtonVis: function(){
             var state = globals.get("isAnimating");
             if (state){
-                $("#startSim").hide();
-                $("#pauseSim").show();
+                $(".startSim").hide();
+                $(".pauseSim").show();
             } else {
-                $("#startSim").show();
-                $("#pauseSim").hide();
+                $(".startSim").show();
+                $(".pauseSim").hide();
             }
         },
 
         setResetVis: function(){
             var state = globals.get("simNeedsReset");
             if (state){
-                $("#resetSim").show();
+                $(".resetSim").show();
             } else {
-                $("#resetSim").hide();
+                $(".resetSim").hide();
             }
         },
 

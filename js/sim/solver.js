@@ -14,7 +14,7 @@ function initSolver(globals){
                 globals.threeView.render();
             }
         }
-        if (mode === "simulation" && globals.get("simNeedsSetup")){
+        if ((mode === "simulation" || mode == "optSetup" || mode == "optimization") && globals.get("simNeedsSetup")){
             setup();
         }
     });

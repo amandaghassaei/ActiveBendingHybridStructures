@@ -48,7 +48,6 @@ function setLogSliderInput(id, val, min, max, incr, callback){
         $input.val(val.toFixed(4));
         callback(val, id);
     });
-
 }
 
 function setSliderInput(id, val, min, max, incr, callback){
