@@ -53,7 +53,7 @@ function initSolver(globals){
         }
         dt = _dt/2;
         globals.set("simDt", dt, {silent:true});
-        $("#simDt").val(dt.toFixed(6));
+        $("#simDt").val(dt.toFixed(10));
     }
 
     var E = globals.get("simE");

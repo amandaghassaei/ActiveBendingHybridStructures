@@ -45,7 +45,7 @@ function initSimulationView(globals){
                 globals.set("simDt", val);
             }, 0);
 
-            setSliderInput("#simMembraneFD", globals.get("simMembraneFD"), 0.5, 20, 0.1, function(val){
+            setSliderInput("#simMembraneFD", globals.get("simMembraneFD"), 0.01, 20, 0.01, function(val){
                 globals.set("simMembraneFD", val);
             });
 
