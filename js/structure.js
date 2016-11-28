@@ -113,7 +113,7 @@ function initStructure(globals){
         },
 
         updateForMode: function(){
-            this.currentEditingBeam = null;
+            this.stopEditingBeam();
             for (var i=0;i<this.selectedEdges.length;i++){
                 this.selectedEdges[i].selected = false;
             }
