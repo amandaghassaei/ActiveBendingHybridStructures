@@ -18,6 +18,20 @@ function initGlobals(){
             boundaryEditingMode: "fixed",
             constantNumElements: true,
 
+            //opt params
+            optIncludeBeams: true,
+            optIncludeMembranes: false,
+            optIncludeForces: false,
+
+            //meshing  params
+            segmentLength: 2,
+            radialMembraneLayers: 1,
+            numEdgeElements: 4,
+            needsRemesh: false,
+            meshingChanged: true,
+            numFixedChanged: true,
+
+            //simulation params
             isAnimating: false,
             simNeedsReset: true,
             simNeedsSetup: true,
@@ -28,15 +42,7 @@ function initGlobals(){
             simA: 1,
             simI: 0.05,
             simDt: 0.01,
-            simMembraneFD: 2,
-
-            //simulation params
-            segmentLength: 2,
-            radialMembraneLayers: 1,
-            numEdgeElements: 4,
-            needsRemesh: false,
-            meshingChanged: true,
-            numFixedChanged: true
+            simMembraneFD: 0.05
         },
 
         initialize: function(){
@@ -45,6 +51,7 @@ function initGlobals(){
             this.structure = initStructure(this);
             this.view = initView(this);
             this.solver = initSolver(this);
+            this.optimization = initOptimization(this);
             initMeshEditingView(this);
             initBeamEditingView(this);
             initMembraneEditingView(this);

@@ -333,7 +333,6 @@ span.modal-close{
     color: #a21717;
     display: inline-block;
     margin-left:8px;
-    line-height: 1;
 }
 .deleteBeam:hover, .deleteMembrane:hover{
     color: #a21717;
@@ -374,4 +373,10 @@ span.modal-close{
 
 #simDt{
     width: 150px!important;
+}
+
+.edgeEntry{
+    font-size: 14px;
+    margin-bottom: 3px;
+    margin-top: 2px;
 }
