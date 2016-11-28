@@ -11,10 +11,11 @@ function initOptSetupView(globals) {
                     '<% if (edgeNumIndex>0){ %>, <% } %>' +
                     '<%=edgeNum%>' +
                 '<% }); %>' +
-                '<span> Length (m): &nbsp;&nbsp;<input placeholder="Length" class="form-control" type="text" value="<%= variable.length.toFixed(2) %>"></span>' +
-                '<label class="checkbox" for="edgeEntryCheck<%= index%>">' +
-                    '<input id="edgeEntryCheck<%= index%>" data-toggle="checkbox" class="custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
-                '</label>' +
+                '<span class="floatRight"> Length (m): &nbsp;&nbsp;<input placeholder="Length" class="form-control" type="text" value="<%= variable.length.toFixed(2) %>">' +
+                    '<label class="checkbox" for="edgeEntryCheck<%= index%>">' +
+                        '<input id="edgeEntryCheck<%= index%>" <% if(variable.active){ %>checked="checked" <% } %>data-toggle="checkbox" class="custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
+                    '</label>' +
+                '</span>' +
             '</div>' +
             "<% });%>");
 
@@ -45,9 +46,13 @@ function initOptSetupView(globals) {
                 var mode = globals.get("mode");
                 if (mode == "optSetup"){
                     globals.optimization.refreshEdges();
-                    $("#optBeams").html(edgeVariableTemplate(globals.optimization.getEdgeVariableData()));
+                    this.setEdgeEntries();
                 }
             });
+        },
+
+        setEdgeEntries: function(){
+            $("#optBeams").html(edgeVariableTemplate(globals.optimization.getEdgeVariableData()));
         },
 
         reset: function (e) {

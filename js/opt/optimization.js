@@ -16,7 +16,10 @@ function initOptimization(globals){
         }
         var _edgeVariables = [];
         for (var i=0;i<_allEdges.length;i++){
-            _edgeVariables.push([_allEdges[i]]);
+            _edgeVariables.push({
+                edges: [_allEdges[i]],
+                active: true
+            });
         }
         edgeVariables = _edgeVariables;
         allEdges = _allEdges;
@@ -29,7 +32,10 @@ function initOptimization(globals){
         }
         var _edgeVariables = [];
         for (var i=0;i<_allEdges.length;i++){
-            _edgeVariables.push([_allEdges[i]]);
+            _edgeVariables.push({
+                edges: [_allEdges[i]],
+                active: true
+            });
         }
         edgeVariables = _edgeVariables;
         allEdges = _allEdges;
@@ -40,9 +46,10 @@ function initOptimization(globals){
         for (var i=0;i<edgeVariables.length;i++){
             var entry = {};
             entry.indices = [];
-            entry.length = edgeVariables[i][0].getLength();
-            for (var j=0;j<edgeVariables[i].length;j++){
-                var index = allEdges.indexOf(edgeVariables[i][j]);
+            entry.active = edgeVariables[i].active;
+            entry.length = edgeVariables[i].edges[0].getLength();
+            for (var j=0;j<edgeVariables[i].edges.length;j++){
+                var index = allEdges.indexOf(edgeVariables[i].edges[j]);
                 if (index<0){
                     console.warn("bad index");
                     continue;
