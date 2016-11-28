@@ -58,10 +58,7 @@ function initOptimization(globals){
             }
             data.push(entry);
         }
-        var json = {
-            edgeVariables: data
-        };
-        return json;
+        return data;
     }
 
     function linkEdges(){

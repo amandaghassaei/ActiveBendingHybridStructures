@@ -13,7 +13,7 @@ function initOptSetupView(globals) {
                 '<% }); %>' +
                 '<span class="floatRight"> Length (m): &nbsp;&nbsp;<input placeholder="Length" class="form-control" type="text" value="<%= variable.length.toFixed(2) %>">' +
                     '<label class="checkbox" for="edgeEntryCheck<%= index%>">' +
-                        '<input id="edgeEntryCheck<%= index%>" <% if(variable.active){ %>checked="checked" <% } %>data-toggle="checkbox" class="custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
+                        '<input id="edgeEntryCheck<%= index%>" <%if(!enabled){%> disabled="disabled"<% } %> <% if(variable.active){ %>checked="checked" <% } %>data-toggle="checkbox" class="custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
                     '</label>' +
                 '</span>' +
             '</div>' +
@@ -32,8 +32,10 @@ function initOptSetupView(globals) {
 
         initialize: function () {
 
+            var self = this;
             setCheckbox("#includeBeams", globals.get("optIncludeBeams"), function(state){
                 globals.set("optIncludeBeams", state);
+                self.setEdgeEntries();
             });
             setCheckbox("#includeMembranes", globals.get("optIncludeMembranes"), function(state){
                 globals.set("optIncludeMembranes", state);
@@ -52,7 +54,11 @@ function initOptSetupView(globals) {
         },
 
         setEdgeEntries: function(){
-            $("#optBeams").html(edgeVariableTemplate(globals.optimization.getEdgeVariableData()));
+            var json = {
+                edgeVariables: globals.optimization.getEdgeVariableData(),
+                enabled: globals.get("optIncludeBeams")
+            };
+            $("#optBeams").html(edgeVariableTemplate(json));
         },
 
         reset: function (e) {
