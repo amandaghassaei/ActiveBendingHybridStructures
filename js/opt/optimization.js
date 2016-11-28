@@ -20,7 +20,7 @@ function initOptimization(globals){
             _allSimEdges = _allSimEdges.concat(globals.structure.simBeams[i].getEdges());
         }
         var usedIndices = [];
-        for (var i=edgeVariables.length-1;i<=0;i--){
+        for (var i=edgeVariables.length-1;i>=0;i--){
             for (var j=edgeVariables[i].edges.length-1;j>=0;j--){
                 var index = _allEdges.indexOf(edgeVariables[i].edges[j]);
                 if (index<0){
@@ -35,7 +35,7 @@ function initOptimization(globals){
             }
         }
         for (var i=0;i<_allEdges.length;i++){
-            if (usedIndices.indexOf(i) >=  0){
+            if (usedIndices.indexOf(i) <  0){
                 edgeVariables.push({
                     edges: [_allEdges[i]],
                     active: true
