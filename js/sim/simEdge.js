@@ -89,6 +89,13 @@ SimEdge.prototype.reset = function(){
     }
 };
 
+SimEdge.prototype.getLength = function(){
+    return this.length;
+};
+SimEdge.prototype.setLength = function(length){
+    this.length = length;
+};
+
 SimEdge.prototype.getSimLength = function(){
     return this.length/this.elements.length;
 };

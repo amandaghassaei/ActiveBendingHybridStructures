@@ -147,6 +147,11 @@ function initStructure(globals){
                     membrane.setEdgeMaterial(edgeMaterialLightGray);
                     membrane.hideNodes();
                 });
+            } else if (mode === "optSetup"){
+                _.each(this.simMembranes, function(membrane){
+                    membrane.setEdgeMaterial(edgeMaterialLightGray);
+                    membrane.hideNodes();
+                });
             }
             this.simNodesContainer.visible = mode === "meshing" || mode === "boundaryEditing" || mode === "simulation" || mode === "optSetup";
             this.simEdgesContainer.visible = this.simNodesContainer.visible;

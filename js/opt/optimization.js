@@ -11,8 +11,8 @@ function initOptimization(globals){
 
     function refreshEdges(){
         var _allEdges = [];
-        for (var i=0;i<globals.structure.beams.length;i++){
-            _allEdges = _allEdges.concat(globals.structure.beams[i].getEdges());
+        for (var i=0;i<globals.structure.simBeams.length;i++){
+            _allEdges = _allEdges.concat(globals.structure.simBeams[i].getEdges());
         }
         var _edgeVariables = [];
         for (var i=0;i<_allEdges.length;i++){
@@ -27,8 +27,8 @@ function initOptimization(globals){
 
     function resetEdgeVariables(){
         var _allEdges = [];
-        for (var i=0;i<globals.structure.beams.length;i++){
-            _allEdges = _allEdges.concat(globals.structure.beams[i].getEdges());
+        for (var i=0;i<globals.structure.simBeams.length;i++){
+            _allEdges = _allEdges.concat(globals.structure.simBeams[i].getEdges());
         }
         var _edgeVariables = [];
         for (var i=0;i<_allEdges.length;i++){
@@ -54,7 +54,7 @@ function initOptimization(globals){
                     console.warn("bad index");
                     continue;
                 }
-                entry.indices.push(index);
+                entry.indices.push(index+1);
             }
             data.push(entry);
         }
@@ -67,9 +67,23 @@ function initOptimization(globals){
     function unlinkEdges(){
     }
 
+    function setEdgeLengthAtIndex(index, length){
+        if (edgeVariables.length<= index){
+            console.warn("inde out of range");
+            return;
+        }
+        var edges = edgeVariables[index].edges;
+        for (var i=0;i<edges.length;i++){
+            edges[i].setLength(length);
+        }
+        //update sim
+        globals.solver.updateBeamLengths();
+    }
+
     return {
         refreshEdges: refreshEdges,
         resetEdgeVariables: resetEdgeVariables,
-        getEdgeVariableData: getEdgeVariableData
+        getEdgeVariableData: getEdgeVariableData,
+        setEdgeLengthAtIndex: setEdgeLengthAtIndex
     }
 }

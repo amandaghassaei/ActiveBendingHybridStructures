@@ -36,6 +36,9 @@ SimBeam.prototype.getElements = function(){
     }
     return elements;
 };
+SimBeam.prototype.getEdges = function(){
+    return this.edges;
+};
 
 SimBeam.prototype.getNumElements = function(){
     var _numElements = 0;

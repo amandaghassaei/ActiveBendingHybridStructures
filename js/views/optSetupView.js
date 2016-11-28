@@ -11,7 +11,7 @@ function initOptSetupView(globals) {
                     '<% if (edgeNumIndex>0){ %>, <% } %>' +
                     '<%=edgeNum%>' +
                 '<% }); %>' +
-                '<span class="floatRight"> Length (m): &nbsp;&nbsp;<input placeholder="Length" class="form-control" type="text" value="<%= variable.length.toFixed(2) %>">' +
+                '<span class="floatRight"> Length (m): &nbsp;&nbsp;<input placeholder="Length" data-index="<%= index%>" class="form-control edgeLengthInput" type="text" value="<%= variable.length.toFixed(2) %>">' +
                     '<label class="checkbox" for="edgeEntryCheck<%= index%>">' +
                         '<input id="edgeEntryCheck<%= index%>" <%if(!enabled){%> disabled="disabled"<% } %> <% if(variable.active){ %>checked="checked" <% } %>data-toggle="checkbox" class="custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
                     '</label>' +
@@ -27,7 +27,8 @@ function initOptSetupView(globals) {
         events: {
             "click .resetSim": "reset",
             "click .startSim": "start",
-            "click .pauseSim": "pause"
+            "click .pauseSim": "pause",
+            "change .edgeLengthInput": "edgeLengthChanged"
         },
 
         initialize: function () {
@@ -59,6 +60,14 @@ function initOptSetupView(globals) {
                 enabled: globals.get("optIncludeBeams")
             };
             $("#optBeams").html(edgeVariableTemplate(json));
+        },
+
+        edgeLengthChanged: function(e){
+            var $target = $(e.target);
+            var val = parseFloat($target.val());
+            if (isNaN(val)) return;
+            var index = $target.data("index");
+            globals.optimization.setEdgeLengthAtIndex(index, val);
         },
 
         reset: function (e) {

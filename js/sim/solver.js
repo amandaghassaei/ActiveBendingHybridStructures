@@ -7,7 +7,7 @@ function initSolver(globals){
     var listener = _.extend({}, Backbone.Events);
     listener.listenTo(globals, "change:mode", function(){
         var mode = globals.get("mode");
-        if (mode != "simulation"){
+        if (mode != "simulation" && mode != "optSetup"){
             pause();
             if (allNodes){//if we've inited at least once
                 reset(globals.previous("mode") !== "simulation");
@@ -185,9 +185,10 @@ function initSolver(globals){
             edgeMeta[rgbaIndex+1] = edge.nodes[1].getSimIndex();
             edgeMeta[rgbaIndex+2] = -1;
             edgeMeta[rgbaIndex+3] = -1;
-            edgeMeta2[rgbaIndex] = edge.getSimLength();
+            // edgeMeta2[rgbaIndex] = edge.getSimLength();//updateBeamLengths
             edgeMeta2[rgbaIndex+1] = edge.getDampingConstant(EA, EI);
         }
+        updateBeamLengths();
 
         //numConnections/2 * 4
         moment = new Float32Array(numConnections*2);
@@ -349,6 +350,13 @@ function initSolver(globals){
 
         render();
         calcDT();
+    }
+
+    function updateBeamLengths(){
+        for (var i=0;i<allEdges.length;i++){
+            var rgbaIndex = i*4;
+            edgeMeta2[rgbaIndex] = allEdges[i].getSimLength();
+        }
     }
 
     function reset(noRender){
@@ -730,6 +738,7 @@ function initSolver(globals){
         reset: reset,
         start: start,
         pause: pause,
-        staticSolve: staticSolve
+        staticSolve: staticSolve,
+        updateBeamLengths:updateBeamLengths
     }
 }
