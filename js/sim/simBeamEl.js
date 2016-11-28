@@ -40,7 +40,7 @@ SimBeamEl.prototype.setHSLColor = function(val, max, min){
 };
 
 SimBeamEl.prototype.getSimLength = function(){
-    return this.parentEdge.getSimLength();
+    return this.parentEdge.getElLength();
 };
 
 SimBeamEl.prototype.getDampingConstant = function(EA, EI){

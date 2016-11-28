@@ -148,6 +148,7 @@ function initStructure(globals){
                     membrane.hideNodes();
                 });
             } else if (mode === "optSetup"){
+                if (globals.get("needsRemesh")) this.syncSim();
                 _.each(this.simMembranes, function(membrane){
                     membrane.setEdgeMaterial(edgeMaterialLightGray);
                     membrane.hideNodes();
@@ -459,7 +460,7 @@ function initStructure(globals){
                     var edgeNodes = edges[j].getNodes();
                     var index1 = nodes.indexOf(edgeNodes[0]);
                     var index2 = nodes.indexOf(edgeNodes[1]);
-                    var simEdge = new SimEdge([this.simNodes[index1], this.simNodes[index2]], this.simEdgesContainer);
+                    var simEdge = new SimEdge([this.simNodes[index1], this.simNodes[index2]], edges[j].simLength, this.simEdgesContainer);
                     allSimEdges.push(simEdge);
                     simEdges.push(simEdge);
                 }

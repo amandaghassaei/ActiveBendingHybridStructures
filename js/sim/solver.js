@@ -10,7 +10,7 @@ function initSolver(globals){
         if (mode != "simulation" && mode != "optSetup"){
             pause();
             if (allNodes){//if we've inited at least once
-                reset(globals.previous("mode") !== "simulation");
+                reset(globals.previous("mode") !== "simulation" && globals.previous("mode") !== "optSetup");
                 globals.threeView.render();
             }
         }

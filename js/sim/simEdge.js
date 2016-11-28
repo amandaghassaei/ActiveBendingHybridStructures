@@ -3,13 +3,13 @@
  */
 
 
-function SimEdge(nodes, parent){
+function SimEdge(nodes, length, parent){
     this.elements = [];
     this.innerNodes = [];
     this.nodes = nodes;
     this.parent = parent;
     this.object3D = new THREE.Object3D();
-    this.length = this.nodes[0].getOriginalPosition().sub(this.nodes[1].getOriginalPosition()).length();
+    this.length = length;
     parent.add(this.object3D);
 
 }
@@ -96,7 +96,7 @@ SimEdge.prototype.setLength = function(length){
     this.length = length;
 };
 
-SimEdge.prototype.getSimLength = function(){
+SimEdge.prototype.getElLength = function(){
     return this.length/this.elements.length;
 };
 

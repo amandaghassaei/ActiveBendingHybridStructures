@@ -16,6 +16,7 @@ function Edge(nodes, parent){
     nodes[1].addEdge(this);
     this.nodes = nodes;
     this.vertices = [nodes[0].getPosition(true), nodes[1].getPosition(true)];
+    this.setSimLength(this.getLength());
 
     var lineGeometry = new THREE.Geometry();
     lineGeometry.dynamic = true;
@@ -42,10 +43,16 @@ Edge.prototype.setMaterial = function(material){
 };
 
 Edge.prototype.getLength = function(){
-    //todo this is complicated
     var vertex1Pos = this.nodes[0].getPosition();
     var vertex2Pos = this.nodes[1].getPosition();
     return vertex1Pos.sub(vertex2Pos).length();
+};
+
+Edge.prototype.setSimLength = function(length){
+    this.simLength = length;
+};
+Edge.prototype.getSimLength = function(){
+    return this.simLength;
 };
 
 Edge.prototype.isFixed = function(){

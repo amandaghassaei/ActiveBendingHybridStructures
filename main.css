@@ -381,6 +381,7 @@ span.modal-close{
     margin-top: 2px;
     height: 35px;
     line-height: 35px;
+    padding-left: 10px;
 }
 .edgeEntry>span>input{
         height: 30px;
@@ -394,6 +395,9 @@ span.modal-close{
     margin-top: 5px;
     margin-bottom: 0;
     margin-left: 30px;
+}
+.edgeEntry.selected{
+    background-color: rgba(218,190,247,0.5);
 }
 #includeOptLabel{
         text-align: right;
