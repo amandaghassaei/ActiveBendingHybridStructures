@@ -13,7 +13,7 @@ function initOptSetupView(globals) {
                 '<% }); %>' +
                 '<span class="floatRight"> Length (m): &nbsp;&nbsp;<input placeholder="Length" data-index="<%= index%>" class="form-control edgeLengthInput" type="text" value="<%= variable.length.toFixed(2) %>">' +
                     '<label class="checkbox" for="edgeEntryCheck<%= index%>">' +
-                        '<input id="edgeEntryCheck<%= index%>" <%if(!enabled){%> disabled="disabled"<% } %> <% if(variable.active){ %>checked="checked" <% } %>data-toggle="checkbox" class="custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
+                        '<input data-index="<%= index%>" id="edgeEntryCheck<%= index%>" <%if(!enabled){%> disabled="disabled"<% } %> <% if(variable.active){ %>checked="checked" <% } %>data-toggle="checkbox" class="edgeEntryCheck custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
                     '</label>' +
                 '</span>' +
             '</div>' +
@@ -28,7 +28,8 @@ function initOptSetupView(globals) {
             "click .resetSim": "reset",
             "click .startSim": "start",
             "click .pauseSim": "pause",
-            "change .edgeLengthInput": "edgeLengthChanged"
+            "change .edgeLengthInput": "edgeLengthChanged",
+            "change .edgeEntryCheck": "edgeStatusChanged"
         },
 
         initialize: function () {
@@ -60,6 +61,13 @@ function initOptSetupView(globals) {
                 enabled: globals.get("optIncludeBeams")
             };
             $("#optBeams").html(edgeVariableTemplate(json));
+        },
+
+        edgeStatusChanged: function(e){
+            var $target = $(e.target);
+            var index = $target.data("index");
+            var state = $target.is(":checked");
+            globals.optimization.setEdgeStateAtIndex(index, state);
         },
 
         edgeLengthChanged: function(e){

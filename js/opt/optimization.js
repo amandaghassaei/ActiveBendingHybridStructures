@@ -14,14 +14,30 @@ function initOptimization(globals){
         for (var i=0;i<globals.structure.simBeams.length;i++){
             _allEdges = _allEdges.concat(globals.structure.simBeams[i].getEdges());
         }
-        var _edgeVariables = [];
-        for (var i=0;i<_allEdges.length;i++){
-            _edgeVariables.push({
-                edges: [_allEdges[i]],
-                active: true
-            });
+        var usedIndices = [];
+        for (var i=edgeVariables.length-1;i<=0;i--){
+            for (var j=edgeVariables[i].edges.length-1;j>=0;j--){
+                var index = _allEdges.indexOf(edgeVariables[i].edges[j]);
+                if (index<0){
+                    if (edgeVariables[i].edges.length == 1){//delete entry
+                        edgeVariables.splice(i, 1);
+                    } else {
+                        edgeVariables[i].edges.splice(index,1);
+                    }
+                } else {
+                    usedIndices.push(index);
+                }
+            }
         }
-        edgeVariables = _edgeVariables;
+        for (var i=0;i<_allEdges.length;i++){
+            if (usedIndices.indexOf(i) >=  0){
+                edgeVariables.push({
+                    edges: [_allEdges[i]],
+                    active: true
+                });
+            }
+        }
+
         allEdges = _allEdges;
     }
 
@@ -69,7 +85,7 @@ function initOptimization(globals){
 
     function setEdgeLengthAtIndex(index, length){
         if (edgeVariables.length<= index){
-            console.warn("inde out of range");
+            console.warn("index out of range");
             return;
         }
         var edges = edgeVariables[index].edges;
@@ -80,10 +96,19 @@ function initOptimization(globals){
         globals.solver.updateBeamLengths();
     }
 
+    function setEdgeStateAtIndex(index, state){
+        if (edgeVariables.length<= index){
+            console.warn("index out of range");
+            return;
+        }
+        edgeVariables[index].active = state;
+    }
+
     return {
         refreshEdges: refreshEdges,
         resetEdgeVariables: resetEdgeVariables,
         getEdgeVariableData: getEdgeVariableData,
-        setEdgeLengthAtIndex: setEdgeLengthAtIndex
+        setEdgeLengthAtIndex: setEdgeLengthAtIndex,
+        setEdgeStateAtIndex: setEdgeStateAtIndex
     }
 }
