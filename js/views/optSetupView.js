@@ -5,12 +5,16 @@
 
 function initOptSetupView(globals) {
 
-    var edgeVariableTemplate = _.template("<% _.each(edgeVariables, function(edges, index){ %>" +
-            '<div class="edgeEntry" id="<%= index%>">'+
-                'Edge<% if (edges.length>1){ %>s<% } %> <% _.each(edges, function(edgeNum, edgeNumIndex){ %>' +
+    var edgeVariableTemplate = _.template("<% _.each(edgeVariables, function(variable, index){ %>" +
+            '<div class="edgeEntry" id="edgeEntry<%= index%>">'+
+                'Edge<% if (variable.indices.length>1){ %>s<% } %> <% _.each(variable.indices, function(edgeNum, edgeNumIndex){ %>' +
                     '<% if (edgeNumIndex>0){ %>, <% } %>' +
                     '<%=edgeNum%>' +
                 '<% }); %>' +
+                '<span> Length (m): &nbsp;&nbsp;<input placeholder="Length" class="form-control" type="text" value="<%= variable.length.toFixed(2) %>"></span>' +
+                '<label class="checkbox" for="edgeEntryCheck<%= index%>">' +
+                    '<input id="edgeEntryCheck<%= index%>" data-toggle="checkbox" class="custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
+                '</label>' +
             '</div>' +
             "<% });%>");
 
@@ -41,13 +45,9 @@ function initOptSetupView(globals) {
                 var mode = globals.get("mode");
                 if (mode == "optSetup"){
                     globals.optimization.refreshEdges();
-                    this.setEdges(globals.optimization.getEdgeVariableData());
+                    $("#optBeams").html(edgeVariableTemplate(globals.optimization.getEdgeVariableData()));
                 }
             });
-        },
-
-        setEdges: function(data){
-            $("#optBeams").html(edgeVariableTemplate({edgeVariables: data}));
         },
 
         reset: function (e) {

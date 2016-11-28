@@ -38,21 +38,27 @@ function initOptimization(globals){
     function getEdgeVariableData(){//for ui
         var data = [];
         for (var i=0;i<edgeVariables.length;i++){
-            var entry = [];
+            var entry = {};
+            entry.indices = [];
+            entry.length = edgeVariables[i][0].getLength();
             for (var j=0;j<edgeVariables[i].length;j++){
                 var index = allEdges.indexOf(edgeVariables[i][j]);
                 if (index<0){
                     console.warn("bad index");
                     continue;
                 }
-                entry.push(index);
+                entry.indices.push(index);
             }
             data.push(entry);
         }
-        return data;
+        var json = {
+            edgeVariables: data
+        };
+        return json;
     }
 
     function linkEdges(){
+        //set length to avg
     }
     function unlinkEdges(){
     }

@@ -42,6 +42,7 @@ Edge.prototype.setMaterial = function(material){
 };
 
 Edge.prototype.getLength = function(){
+    //todo this is complicated
     var vertex1Pos = this.nodes[0].getPosition();
     var vertex2Pos = this.nodes[1].getPosition();
     return vertex1Pos.sub(vertex2Pos).length();
