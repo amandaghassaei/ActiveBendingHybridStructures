@@ -125,6 +125,9 @@ function initSolver(globals){
             beams[i].setSimIndex(i);//all edges in beam know they are connected through node
         }
 
+        updateNodePositions();
+        updateFixedNodes();
+
         var _numConnections = 0;
         var _numEdgeMappingGroups = 0;
         var _momentIndex = 0;
@@ -137,12 +140,7 @@ function initSolver(globals){
             }
 
             var node = allNodes[i];
-            var nodePosition = node.getOriginalPosition();
             var rgbaIndex = i * 4;
-            position[rgbaIndex] = nodePosition.x;
-            position[rgbaIndex + 1] = nodePosition.y;
-            position[rgbaIndex + 2] = nodePosition.z;
-            nodeMeta[rgbaIndex] = node.fixed ? 1 : 0;
 
             var nodeEdges = node.getEdges();
             var nodeEdgesOrdered = [];
@@ -350,6 +348,25 @@ function initSolver(globals){
 
         render();
         calcDT();
+    }
+
+    function updateNodePositions(){
+        for (var i=0;i<allNodes.length;i++){
+            var node = allNodes[i];
+            var nodePosition = node.getOriginalPosition();
+            var rgbaIndex = i * 4;
+            position[rgbaIndex] = nodePosition.x;
+            position[rgbaIndex + 1] = nodePosition.y;
+            position[rgbaIndex + 2] = nodePosition.z;
+        }
+    }
+
+    function updateFixedNodes(){
+        for (var i=0;i<allNodes.length;i++){
+            var node = allNodes[i];
+            var rgbaIndex = i * 4;
+            nodeMeta[rgbaIndex] = node.fixed ? 1 : 0;
+        }
     }
 
     function updateBeamLengths(){
@@ -739,6 +756,8 @@ function initSolver(globals){
         start: start,
         pause: pause,
         staticSolve: staticSolve,
-        updateBeamLengths:updateBeamLengths
+        updateBeamLengths:updateBeamLengths,
+        updateNodePositions: updateNodePositions,
+        updateFixedNodes: updateFixedNodes
     }
 }

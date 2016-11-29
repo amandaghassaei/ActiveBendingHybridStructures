@@ -326,7 +326,12 @@ function initStructure(globals){
 
         moveNode: function(node, val, axis){
             node.setPosition(val, axis);
-            globals.set("needsRemesh", true);//sync sim
+            globals.set("needsRemesh", true);
+            var index = this.nodes.indexOf(node);
+            if (index>=0 && !globals.get("simNeedsSetup")) {
+                this.simNodes[index].setOriginalPosition(val, axis);
+                globals.solver.updateNodePositions();
+            }
             globals.threeView.render();
         },
 
@@ -336,7 +341,7 @@ function initStructure(globals){
                 this.nodes[index].setPosition(val, axis);
             }
             node.setOriginalPosition(val, axis);
-            //update solver
+            globals.solver.updateNodePositions();
             globals.threeView.render();
         },
 
@@ -349,7 +354,9 @@ function initStructure(globals){
             var numFixed = this.get("numFixed");
             if (state) numFixed++;
             else numFixed--;
-            globals.set("simNeedsSetup", true);
+            if (!globals.get("simNeedsSetup")){
+                globals.solver.updateFixedNodes();
+            }
             this.set("numFixed", numFixed);
         },
 
