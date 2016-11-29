@@ -133,16 +133,7 @@ function initIntersector3D(globals, structure){
                         globals.threeView.render();
                     } else if (mode === "boundaryEditing"){
                         if (highlightedObj && highlightedObj.type == "node") {
-                            var state = !highlightedObj.fixed;
-                            highlightedObj.setFixed(state);
-                            if (highlightedObj.isBeamNode && highlightedObj.getNodesIndex() !== undefined){
-                                globals.structure.nodes[highlightedObj.getNodesIndex()].setFixed(state);
-                            }
-                            var numFixed = structure.get("numFixed");
-                            if (state) numFixed++;
-                            else numFixed--;
-                            globals.set("simNeedsSetup", true);
-                            structure.set("numFixed", numFixed);
+                            structure.toggleFixedState(highlightedObj);
                         }
                         globals.threeView.render();
                     }

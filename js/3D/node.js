@@ -146,7 +146,7 @@ Node.prototype.setPosition = function(val, axis) {
     _.each(this.edges, function (edge) {
         edge.update();
     });
-}
+};
 
 Node.prototype.toJSON = function(){
     var position = this.object3D.position;

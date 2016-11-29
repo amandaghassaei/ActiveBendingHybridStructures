@@ -62,6 +62,13 @@ SimNode.prototype.setBendingForce = function(vect, index){
     this.bendingForce[index].visible = length > 0.5;
 };
 
+SimNode.prototype.toJSON = function(){
+    var position = this.originalPosition;
+    return {
+        position: {x:position.x, y:position.y, z:position.z}
+    }
+};
+
 
 SimNode.prototype.destroy = function(){
     this.parent = null;

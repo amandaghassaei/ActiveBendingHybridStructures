@@ -296,6 +296,20 @@ function initStructure(globals){
             });
             return {nodes:nodesJSON};
         },
+        getFixedNodesJSON: function(){
+            var nodesJSON = [];
+            _.each(this.nodes, function(node){
+                if (node.fixed) nodesJSON.push(node.toJSON());
+            });
+            var innerNodes = [];
+            for (var i=0;i<this.simBeams.length;i++){
+                innerNodes = innerNodes.concat(this.simBeams[i].getInnerNodes());
+            }
+            for (var i=0;i<innerNodes.length;i++){
+                if (innerNodes[i].fixed) nodesJSON.push(innerNodes[i].toJSON());
+            }
+            return {nodes:nodesJSON};
+        },
         nodeAtPosition: function(position){
             for (var i=0;i<this.nodes.length;i++){
                 if (this.nodes[i].getPosition().equals(position)) return true;
@@ -309,6 +323,19 @@ function initStructure(globals){
             node.setPosition(val, axis);
             globals.set("needsRemesh", true);//sync sim
             globals.threeView.render();
+        },
+
+        toggleFixedState: function(node){
+            var state = !node.fixed;
+            node.setFixed(state);
+            if (node.isBeamNode && node.getNodesIndex() !== undefined){
+                globals.structure.nodes[node.getNodesIndex()].setFixed(state);//save fixed state to nodes
+            }
+            var numFixed = this.get("numFixed");
+            if (state) numFixed++;
+            else numFixed--;
+            globals.set("simNeedsSetup", true);
+            this.set("numFixed", numFixed);
         },
 
         newMembrane: function(){
