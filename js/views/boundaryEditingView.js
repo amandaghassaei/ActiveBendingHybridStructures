@@ -22,7 +22,8 @@ function initBoundaryEditingView(globals){
 
         events: {
             "click .deleteNode": "deleteFixed",
-            "change .nodePositionInput": "moveNode"
+            "change .nodePositionInput": "moveNode",
+            "mouseenter .nodeEntries": "highlightNode"
         },
 
         initialize: function(){
@@ -64,14 +65,30 @@ function initBoundaryEditingView(globals){
             globals.threeView.render();
         },
 
+        highlightNode: function(e){
+            var $target = $(e.target);
+            if (!$target.hasClass("nodeEntries")) $target = $target.parents(".nodeEntries");
+            $("#fixedMeta").children(".nodeEntries").removeClass("selectedEntry");
+            var index = $target.find("a").data("index");
+            if (index === undefined) return;
+            globals.intersector3D.setHighlightedObj(this.getNodeForIndex(index));
+         },
+
         moveNode: function(e){
             var $target = $(e.target);
             var index = $target.data("index");
             var val = parseFloat($target.val());
             if (isNaN(val)) return;
-            var node = globals.structure.getAllFixedNodes()[index];
+            var node = this.getNodeForIndex(index);
+            if (node === null) return;
             var axis = $target.data("axis");
             globals.structure.moveFixedNode(node, val, axis);
+        },
+
+        getNodeForIndex: function(index){
+            var allFixedNodes = globals.structure.getAllFixedNodes();
+            if (allFixedNodes.length <= index) return null;
+            return allFixedNodes[index];
         },
 
         boundaryEditingModeChanged: function(val){
