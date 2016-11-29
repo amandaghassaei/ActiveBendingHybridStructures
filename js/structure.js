@@ -278,6 +278,14 @@ function initStructure(globals){
             }
             console.warn("no edge removed");
         },
+        getBeamIndexForEdge: function(edge){
+            for (var i=0;i<this.beams.length;i++){
+                var index = this.beams[i].getEdges().indexOf(edge);
+                if (index>=0) return i;
+            }
+            return -1;
+        },
+
         getNumNodes: function(){
             return this.nodes.length;
         },

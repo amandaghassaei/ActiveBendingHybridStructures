@@ -97,8 +97,20 @@ function initBeamEditingView(globals){
             // this.model.highlightBeam(json.beams.length-1);
         },
 
+        setHighlightedBeam: function(index){
+            var $beamEntries = $("#beamMeta").children(".beamEntries");
+            $beamEntries.removeClass("selectedEntry");
+            if (index>=0){
+                $beamEntries.eq(index).addClass("selectedEntry");
+                this.model.highlightBeam(index);
+            } else {
+                this.model.highlightBeam(-1);
+            }
+        },
+
         highlightBeam: function(e){
             var $target = $(e.target);
+            $("#beamMeta").children(".beamEntries").removeClass("selectedEntry");
             if (!$target.hasClass("beamEntries")) $target = $target.parents(".beamEntries");
             var index = $target.find("a").data("index");
             if (index === undefined) return;
@@ -125,6 +137,7 @@ function initBeamEditingView(globals){
         highlightNode: function(e){
             var $target = $(e.target);
             if (!$target.hasClass("nodeEntries")) $target = $target.parents(".nodeEntries");
+            $("#nodesMeta").children(".nodeEntries").removeClass("selectedEntry");
             var index = $target.find("a").data("index");
             if (index === undefined) return;
             globals.intersector3D.setHighlightedObj(this.getNodeForIndex(index));
