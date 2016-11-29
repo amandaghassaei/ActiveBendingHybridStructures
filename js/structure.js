@@ -298,17 +298,24 @@ function initStructure(globals){
         },
         getFixedNodesJSON: function(){
             var nodesJSON = [];
-            _.each(this.nodes, function(node){
-                if (node.fixed) nodesJSON.push(node.toJSON());
-            });
-            var innerNodes = [];
-            for (var i=0;i<this.simBeams.length;i++){
-                innerNodes = innerNodes.concat(this.simBeams[i].getInnerNodes());
-            }
-            for (var i=0;i<innerNodes.length;i++){
-                if (innerNodes[i].fixed) nodesJSON.push(innerNodes[i].toJSON());
+            var allFixed = this.getAllFixedNodes();
+            for (var i=0;i<allFixed.length;i++){
+                nodesJSON.push(allFixed[i].toJSON());
             }
             return {nodes:nodesJSON};
+        },
+        getAllFixedNodes: function(){
+            var allFixedNodes = [];
+            for (var i=0;i<this.simNodes.length;i++){
+                if (this.simNodes[i].fixed) allFixedNodes.push(this.simNodes[i]);
+            }
+            for (var i=0;i<this.simBeams.length;i++){
+                var innerNodes = this.simBeams[i].getInnerNodes();
+                for (var j=0;j<innerNodes.length;j++){
+                    if (innerNodes[j].fixed) allFixedNodes.push(innerNodes[j]);
+                }
+            }
+            return allFixedNodes;
         },
         nodeAtPosition: function(position){
             for (var i=0;i<this.nodes.length;i++){
@@ -318,10 +325,18 @@ function initStructure(globals){
         },
 
         moveNode: function(node, val, axis){
-            var position = node.getPosition();
-            position[axis] = val;
             node.setPosition(val, axis);
             globals.set("needsRemesh", true);//sync sim
+            globals.threeView.render();
+        },
+
+        moveFixedNode: function(node, val, axis){
+            var index = this.simNodes.indexOf(node);
+            if (index>=0){
+                this.nodes[index].setPosition(val, axis);
+            }
+            node.setOriginalPosition(val, axis);
+            //update solver
             globals.threeView.render();
         },
 

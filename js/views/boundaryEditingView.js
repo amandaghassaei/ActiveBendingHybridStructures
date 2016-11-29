@@ -22,6 +22,7 @@ function initBoundaryEditingView(globals){
 
         events: {
             "click .deleteNode": "deleteFixed",
+            "change .nodePositionInput": "moveNode"
         },
 
         initialize: function(){
@@ -31,6 +32,12 @@ function initBoundaryEditingView(globals){
             this.listenTo(this.model, "change:numFixed", this.updateNumFixed);
             this.listenTo(this.model, "change:nodes", this.updateNodesMeta);
             this.updateNumFixed();
+
+            this.listenTo(globals, "change:mode", function(){
+                if (globals.get("mode") == "boundaryEditing"){
+                    this.updateNodesMeta();
+                }
+            });
         },
 
         updateNumFixed: function(){
@@ -52,8 +59,19 @@ function initBoundaryEditingView(globals){
             var index = parseInt($(e.target).parent().data("index"));
             if (isNaN(index)) return;
             globals.intersector3D.setHighlightedObj(null);
-            var node = null;
+            var node = globals.structure.getAllFixedNodes()[index];
             this.model.toggleFixedState(node);
+            globals.threeView.render();
+        },
+
+        moveNode: function(e){
+            var $target = $(e.target);
+            var index = $target.data("index");
+            var val = parseFloat($target.val());
+            if (isNaN(val)) return;
+            var node = globals.structure.getAllFixedNodes()[index];
+            var axis = $target.data("axis");
+            globals.structure.moveFixedNode(node, val, axis);
         },
 
         boundaryEditingModeChanged: function(val){

@@ -54,6 +54,13 @@ function initBeamEditingView(globals){
 
             this.updateNodesMeta();
             this.updateBeamsMeta();
+
+            this.listenTo(globals, "change:mode", function(){
+                if (globals.get("mode") == "beamEditing"){
+                    this.updateNodesMeta();
+                    this.updateBeamsMeta();
+                }
+            });
         },
 
         deleteBeam: function(e){

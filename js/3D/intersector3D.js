@@ -40,6 +40,7 @@ function initIntersector3D(globals, structure){
         globals.threeView.render();
     });
     listener.listenTo(globals, "change:mode", function(){
+        setHighlightedObj(null);
         var mode = globals.get("mode");
         if (mode === "beamEditing"){
             node.show();

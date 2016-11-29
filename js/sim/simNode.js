@@ -33,6 +33,11 @@ SimNode.prototype.getOriginalPosition = function(){
     return this.originalPosition.clone();
 };
 
+SimNode.prototype.setOriginalPosition = function(val, axis){
+    this.originalPosition[axis] = val;
+    this.setPosition(val, axis);
+};
+
 SimNode.prototype.setSimIndex = function(index){
     this.simIndex = index;
 };
