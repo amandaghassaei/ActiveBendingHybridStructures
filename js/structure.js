@@ -307,7 +307,7 @@ function initStructure(globals){
         getAllFixedNodes: function(){
             var allFixedNodes = [];
             for (var i=0;i<this.simNodes.length;i++){
-                if (this.simNodes[i].fixed) allFixedNodes.push(this.simNodes[i]);
+                if (this.simNodes[i] && this.simNodes[i].fixed) allFixedNodes.push(this.simNodes[i]);
             }
             for (var i=0;i<this.simBeams.length;i++){
                 var innerNodes = this.simBeams[i].getInnerNodes();

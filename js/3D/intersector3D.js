@@ -101,14 +101,14 @@ function initIntersector3D(globals, structure){
         mouseDown = false;
         if (!isDragging){
             var $target = $(e.target);
+            if ($target.hasClass("controls") || $target.parents().hasClass("controls")){
+                return;
+            }
             if ($target.is("span") || $target.hasClass("modal") || $target.hasClass("radio") || $target.hasClass("checkbox") || $target.is("a")) return;
             switch (e.which) {
                 case 1://left button
                     var mode = globals.get("mode");
                     if (mode === "beamEditing") {
-                        if ($target.hasClass("highlighter") || $target.parents().hasClass("highlighter")){
-                            return;
-                        }
                         if (globals.get("deleteNodeMode")){
                             if (highlightedObj && highlightedObj.type == "node") {
                                 var deleted = structure.removeNode(highlightedObj);
@@ -156,7 +156,8 @@ function initIntersector3D(globals, structure){
 
         e.preventDefault();
         var $target = $(e.target);
-        if ($target.hasClass("highlighter") || $target.parents().hasClass("highlighter")){
+        if ($target.hasClass("controls") || $target.parents().hasClass("controls")){
+            node.hide();
             return;
         }
 
@@ -248,11 +249,15 @@ function initIntersector3D(globals, structure){
                         node.hide();
                         setHighlightedObj(_highlightedObj);
                         if (_highlightedObj.fixed && _highlightedObj.type == "node") {
+                            globals.boundaryEditingView.setHighlightedNode(globals.structure.getAllFixedNodes().indexOf(_highlightedObj));
                             _highlightedObj.setDeleteMode();
                             globals.threeView.render();
+                        } else {
+                            globals.boundaryEditingView.setHighlightedNode(-1);
                         }
                         return;
                     }
+                    globals.boundaryEditingView.setHighlightedNode(-1);
                     setHighlightedObj(null);
 
                     var intersection = getIntersectionWithObjectPlane(new THREE.Vector3());

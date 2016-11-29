@@ -51,7 +51,7 @@ body{
     overflow: hidden;
     max-height: 100%;
     height:100%;
-    /*background: rgba(255,255,255,0.5);*/
+    background: rgba(255,255,255, 0.6);
 }
 .controls>div{
     height:100%;
@@ -399,6 +399,9 @@ span.modal-close{
 
 .selectedEntry{
     background-color: rgba(218,190,247,0.5);
+}
+.selectedEntryRed{
+    background-color: rgba(255,0,0,0.3);
 }
 
 #includeOptLabel{

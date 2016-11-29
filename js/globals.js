@@ -57,7 +57,7 @@ function initGlobals(){
             this.beamEditingView = initBeamEditingView(this);
             initMembraneEditingView(this);
             initMeshingView(this);
-            initBoundaryEditingView(this);
+            this.boundaryEditingView = initBoundaryEditingView(this);
             initSimulationView(this);
             initOptSetupView(this);
 

@@ -351,7 +351,7 @@ function initSolver(globals){
     }
 
     function updateNodePositions(){
-        for (var i=0;i<allNodes.length;i++){
+        for (var i=0;i<numNodes;i++){
             var node = allNodes[i];
             var nodePosition = node.getOriginalPosition();
             var rgbaIndex = i * 4;
@@ -362,7 +362,7 @@ function initSolver(globals){
     }
 
     function updateFixedNodes(){
-        for (var i=0;i<allNodes.length;i++){
+        for (var i=0;i<numNodes;i++){
             var node = allNodes[i];
             var rgbaIndex = i * 4;
             nodeMeta[rgbaIndex] = node.fixed ? 1 : 0;

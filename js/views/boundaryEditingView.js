@@ -65,10 +65,21 @@ function initBoundaryEditingView(globals){
             globals.threeView.render();
         },
 
+        setHighlightedNode: function(index){
+            var $nodeEntries = $("#fixedMeta").children(".nodeEntries");
+            $nodeEntries.removeClass("selectedEntry");
+            $nodeEntries.removeClass("selectedEntryRed");
+            if (index>=0){
+                $nodeEntries.eq(index).addClass("selectedEntryRed");
+            }
+        },
+
         highlightNode: function(e){
             var $target = $(e.target);
             if (!$target.hasClass("nodeEntries")) $target = $target.parents(".nodeEntries");
-            $("#fixedMeta").children(".nodeEntries").removeClass("selectedEntry");
+            var $nodeEntries = $("#fixedMeta").children(".nodeEntries");
+            $nodeEntries.removeClass("selectedEntry");
+            $nodeEntries.removeClass("selectedEntryRed");
             var index = $target.find("a").data("index");
             if (index === undefined) return;
             globals.intersector3D.setHighlightedObj(this.getNodeForIndex(index));
