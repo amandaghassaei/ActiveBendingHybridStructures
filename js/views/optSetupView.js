@@ -11,7 +11,7 @@ function initOptSetupView(globals) {
                     '<% if (edgeNumIndex>0){ %>, <% } %>' +
                     '<%=edgeNum%>' +
                 '<% }); %>' +
-                '<span class="floatRight"> Length (m): &nbsp;&nbsp;<input placeholder="Length" data-index="<%= index%>" class="form-control edgeLengthInput" type="text" value="<%= variable.length.toFixed(2) %>">' +
+                '<span class="floatRight"> Length (m): &nbsp;&nbsp;<input placeholder="Length" data-index="<%= index%>" class="form-control inlineInput edgeLengthInput" type="text" value="<%= variable.length.toFixed(2) %>">' +
                     '<label class="checkbox" for="edgeEntryCheck<%= index%>">' +
                         '<input data-index="<%= index%>" id="edgeEntryCheck<%= index%>" <%if(!enabled){%> disabled="disabled"<% } %> <% if(variable.active){ %>checked="checked" <% } %>data-toggle="checkbox" class="edgeEntryCheck custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
                     '</label>' +

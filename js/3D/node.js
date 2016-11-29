@@ -142,6 +142,13 @@ Node.prototype.getPosition = function(withRef){
 };
 
 
+Node.prototype.toJSON = function(){
+    var position = this.object3D.position;
+    return {
+        position: {x:position.x, y:position.y, z:position.z}
+    }
+};
+
 
 
 

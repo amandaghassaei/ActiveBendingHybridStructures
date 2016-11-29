@@ -179,6 +179,7 @@ function initIntersector3D(globals, structure){
                 _highlightedObj = checkForIntersections(e, structure.getNodesToIntersect());
                 if (_highlightedObj){
                     node.hide();
+                    globals.beamEditingView.setHighlightedNode(globals.structure.nodes.indexOf(_highlightedObj));
                     setHighlightedObj(_highlightedObj);
                     if (globals.get("deleteNodeMode") && _highlightedObj.type == "node") {
                         _highlightedObj.setDeleteMode();
@@ -186,6 +187,7 @@ function initIntersector3D(globals, structure){
                     }
                     return;
                 }
+                globals.beamEditingView.setHighlightedNode(-1);
                 setHighlightedObj(_highlightedObj);
 
                 if (structure.currentEditingBeam){

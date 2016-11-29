@@ -8,11 +8,21 @@ function initBeamEditingView(globals){
     var beamsMetaTemplate = _.template("<% _.each(beams, function(beam, index){ %>" +
             '<label class="radio">'+
                 '<input name="selectedBeam" value="<%= index %>" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>'+
-                'Beam <%= index + 1 %> :  <%= beam.numEdges %> edge<% if (beam.numEdges>1 || beam.numEdges==0){ %>s<% } %>, <%= beam.numNodes %> node<% if (beam.numNodes>1 || beam.numNodes==0){ %>s<% } %> <a href="#" data-index="<%=index%>" class="deleteBeam"><span class="fui-cross"></span></a>' +
+                'Beam <%= index + 1 %> :  <%= beam.numEdges %> edge<% if (beam.numEdges>1 || beam.numEdges==0){ %>s<% } %>, <%= beam.numNodes %> node<% if (beam.numNodes>1 || beam.numNodes==0){ %>s<% } %> ' +
+                '<a href="#" data-index="<%=index%>" class="deleteLink deleteBeam"><span class="fui-cross"></span></a>' +
             '</label>' +
             "<% });%>");
-    var defaultMessage = "<br/>Add nodes by mousing over the mesh and clicking.<br/><br/>" +
-        "Add beams by selecting a series of nodes.";
+    var nodesMetaTemplate = _.template("<% _.each(nodes, function(node, index){ %>" +
+            '<div class="divInlineInputs nodeEntries">'+
+                'Node <%= index + 1 %> : ' +
+                    '<input placeholder="X" data-index="<%= index%>" class="inlineInput form-control" type="text" value="<%= node.position.x.toFixed(2) %>">' +
+                    '<input placeholder="X" data-index="<%= index%>" class="inlineInput form-control" type="text" value="<%= node.position.y.toFixed(2) %>">' +
+                    '<input placeholder="X" data-index="<%= index%>" class="inlineInput form-control" type="text" value="<%= node.position.z.toFixed(2) %>">' +
+                    '<a href="#" data-index="<%=index%>" class="deleteNode deleteLink"><span class="fui-cross"></span></a>' +
+            '</div>' +
+            "<% });%>");
+    var defaultMessageNodes = "Add nodes by mousing over the mesh and clicking.";
+    var defaultMessageBeams = "Add beams by selecting a series of nodes.";
 
     return new (Backbone.View.extend({
 
@@ -21,7 +31,8 @@ function initBeamEditingView(globals){
         events: {
             "click #deleteNodeMode": "setDeleteNodeMode",
             "click .deleteBeam": "deleteBeam",
-            "click .clearAll": "clearAll"
+            "click .clearAll": "clearAll",
+            "change input[name=selectedBeam]": "selectBeam"
         },
 
         initialize: function(){
@@ -34,8 +45,10 @@ function initBeamEditingView(globals){
             this.updateNumBeams();
             this.listenTo(this.model, "change:beamsMeta change:beams", this.updateBeamsMeta);
             this.listenTo(this.model, "change:nodes", this.updateNumNodes);
+            this.listenTo(this.model, "change:nodes", this.updateNodesMeta);
             this.updateNumNodes();
 
+            this.updateNodesMeta();
             this.updateBeamsMeta();
         },
 
@@ -64,13 +77,36 @@ function initBeamEditingView(globals){
 
         updateBeamsMeta: function(){
             if (this.model.getNumBeams() == 0){
-                $("#beamMeta").html(defaultMessage);
+                $("#beamMeta").html(defaultMessageBeams);
                 return;
             }
             var json = this.model.getBeamsJSON();
             $("#beamMeta").html(beamsMetaTemplate(json));
-            setRadio("selectedBeam", json.beams.length-1, this.model.highlightBeam);
             this.model.highlightBeam(json.beams.length-1);
+            $(".radio>input[name=selectedBeam][value=" + (json.beams.length-1) + "]").prop("checked", true);
+        },
+
+        selectBeam: function(){
+            var state = $("input[name=selectedBeam]:checked").val();
+            this.model.highlightBeam(state);
+        },
+
+        setHighlightedNode: function(index){
+            var $nodeEntries = $("#nodesMeta").children(".nodeEntries");
+            $nodeEntries.removeClass("selectedEntry");
+            if (index>=0){
+                $nodeEntries.eq(index).addClass("selectedEntry");
+            }
+        },
+
+        updateNodesMeta: function(){
+            if (this.model.getNumNodes() == 0){
+                $("#nodesMeta").html(defaultMessageNodes);
+                return;
+            }
+            var json = this.model.getNodesJSON();
+            $("#nodesMeta").html(nodesMetaTemplate(json));
+
         },
 
         clearAll: function(e){

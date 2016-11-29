@@ -281,6 +281,13 @@ function initStructure(globals){
         getNumNodes: function(){
             return this.nodes.length;
         },
+        getNodesJSON: function(){
+            var nodesJSON = [];
+            _.each(this.nodes, function(node){
+                nodesJSON.push(node.toJSON());
+            });
+            return {nodes:nodesJSON};
+        },
         nodeAtPosition: function(position){
             for (var i=0;i<this.nodes.length;i++){
                 if (this.nodes[i].getPosition().equals(position)) return true;
