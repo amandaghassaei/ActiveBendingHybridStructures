@@ -141,6 +141,12 @@ Node.prototype.getPosition = function(withRef){
     return this.object3D.position.clone();
 };
 
+Node.prototype.setPosition = function(val, axis) {
+    this.object3D.position[axis] = val;
+    _.each(this.edges, function (edge) {
+        edge.update();
+    });
+}
 
 Node.prototype.toJSON = function(){
     var position = this.object3D.position;

@@ -295,6 +295,14 @@ function initStructure(globals){
             return false;
         },
 
+        moveNode: function(node, val, axis){
+            var position = node.getPosition();
+            position[axis] = val;
+            node.setPosition(val, axis);
+            globals.set("needsRemesh", true);//sync sim
+            globals.threeView.render();
+        },
+
         newMembrane: function(){
             //todo check if selected edges already form a membrane
             if (!this.selectedEdgesFormClosedLoop()) {

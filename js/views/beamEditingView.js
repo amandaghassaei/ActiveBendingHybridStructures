@@ -14,9 +14,9 @@ function initBeamEditingView(globals){
     var nodesMetaTemplate = _.template("<% _.each(nodes, function(node, index){ %>" +
             '<div class="divInlineInputs nodeEntries">'+
                 'Node <%= index + 1 %> : ' +
-                    '<input placeholder="X" data-index="<%= index%>" class="inlineInput form-control" type="text" value="<%= node.position.x.toFixed(2) %>">' +
-                    '<input placeholder="X" data-index="<%= index%>" class="inlineInput form-control" type="text" value="<%= node.position.y.toFixed(2) %>">' +
-                    '<input placeholder="X" data-index="<%= index%>" class="inlineInput form-control" type="text" value="<%= node.position.z.toFixed(2) %>">' +
+                    '<input placeholder="X" data-axis="x" data-index="<%= index%>" class="inlineInput nodePositionInput form-control" type="text" value="<%= node.position.x.toFixed(2) %>">' +
+                    '<input placeholder="Y" data-axis="y" data-index="<%= index%>" class="inlineInput nodePositionInput form-control" type="text" value="<%= node.position.y.toFixed(2) %>">' +
+                    '<input placeholder="Z" data-axis="z" data-index="<%= index%>" class="inlineInput nodePositionInput form-control" type="text" value="<%= node.position.z.toFixed(2) %>">' +
                     '<a href="#" data-index="<%=index%>" class="floatRight deleteNode deleteLink"><span class="fui-cross"></span></a>' +
             '</div>' +
             "<% });%>");
@@ -35,7 +35,8 @@ function initBeamEditingView(globals){
             "change input[name=selectedBeam]": "selectBeam",
             "mouseenter .nodeEntries": "highlightNode",
             "mouseenter .beamEntries": "highlightBeam",
-            "mouseout .beamEntries": "unhighlightBeam"
+            "mouseout .beamEntries": "unhighlightBeam",
+            "change .nodePositionInput": "moveNode"
         },
 
         initialize: function(){
@@ -98,6 +99,7 @@ function initBeamEditingView(globals){
 
         highlightBeam: function(e){
             var $target = $(e.target);
+            if (!$target.hasClass("beamEntries")) $target = $target.parents(".beamEntries");
             var index = $target.find("a").data("index");
             if (index === undefined) return;
             this.model.highlightBeam(index);
@@ -122,6 +124,7 @@ function initBeamEditingView(globals){
 
         highlightNode: function(e){
             var $target = $(e.target);
+            if (!$target.hasClass("nodeEntries")) $target = $target.parents(".nodeEntries");
             var index = $target.find("a").data("index");
             if (index === undefined) return;
             globals.intersector3D.setHighlightedObj(this.getNodeForIndex(index));
@@ -137,7 +140,19 @@ function initBeamEditingView(globals){
         },
 
         getNodeForIndex: function(index){
+            if (index < 0 || index >= globals.structure.nodes.length) return null;
             return globals.structure.nodes[index];
+        },
+
+        moveNode: function(e){
+            var $target = $(e.target);
+            var index = $target.data("index");
+            var val = parseFloat($target.val());
+            if (isNaN(val)) return;
+            var node = this.getNodeForIndex(index);
+            if (node === null) return;
+            var axis = $target.data("axis");
+            globals.structure.moveNode(node, val, axis);
         },
 
         clearAll: function(e){
