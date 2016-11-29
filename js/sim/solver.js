@@ -353,6 +353,7 @@ function initSolver(globals){
     function updateNodePositions(){
         for (var i=0;i<numNodes;i++){
             var node = allNodes[i];
+            if (node === null) continue;//free nodes not connected to anything
             var nodePosition = node.getOriginalPosition();
             var rgbaIndex = i * 4;
             position[rgbaIndex] = nodePosition.x;
@@ -364,6 +365,7 @@ function initSolver(globals){
     function updateFixedNodes(){
         for (var i=0;i<numNodes;i++){
             var node = allNodes[i];
+            if (node === null) continue;//free nodes not connected to anything
             var rgbaIndex = i * 4;
             nodeMeta[rgbaIndex] = node.fixed ? 1 : 0;
         }
@@ -390,6 +392,7 @@ function initSolver(globals){
 
         for (var i=0;i<numNodes;i++) {
             var node = allNodes[i];
+            if (node === null) continue;//free nodes not connected to anything
             var nodePosition = node.getOriginalPosition();
             var rgbaIndex = i * 4;
             position[rgbaIndex] = nodePosition.x;
