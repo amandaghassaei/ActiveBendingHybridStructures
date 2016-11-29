@@ -49,6 +49,7 @@ function initGlobals(){
             this.threeView = initThreeView(this);
             this.mesh = initMesh(this);
             this.structure = initStructure(this);
+            this.intersector3D = initIntersector3D(this, this.structure);
             this.view = initView(this);
             this.solver = initSolver(this);
             this.optimization = initOptimization(this);

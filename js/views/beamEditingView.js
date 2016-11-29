@@ -6,11 +6,10 @@
 function initBeamEditingView(globals){
 
     var beamsMetaTemplate = _.template("<% _.each(beams, function(beam, index){ %>" +
-            '<label class="radio">'+
-                '<input name="selectedBeam" value="<%= index %>" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>'+
+            '<div class="beamEntries">'+
                 'Beam <%= index + 1 %> :  <%= beam.numEdges %> edge<% if (beam.numEdges>1 || beam.numEdges==0){ %>s<% } %>, <%= beam.numNodes %> node<% if (beam.numNodes>1 || beam.numNodes==0){ %>s<% } %> ' +
-                '<a href="#" data-index="<%=index%>" class="deleteLink deleteBeam"><span class="fui-cross"></span></a>' +
-            '</label>' +
+                '<a href="#" data-index="<%=index%>" class="floatRight deleteLink deleteBeam"><span class="fui-cross"></span></a>' +
+            '</div>' +
             "<% });%>");
     var nodesMetaTemplate = _.template("<% _.each(nodes, function(node, index){ %>" +
             '<div class="divInlineInputs nodeEntries">'+
@@ -18,7 +17,7 @@ function initBeamEditingView(globals){
                     '<input placeholder="X" data-index="<%= index%>" class="inlineInput form-control" type="text" value="<%= node.position.x.toFixed(2) %>">' +
                     '<input placeholder="X" data-index="<%= index%>" class="inlineInput form-control" type="text" value="<%= node.position.y.toFixed(2) %>">' +
                     '<input placeholder="X" data-index="<%= index%>" class="inlineInput form-control" type="text" value="<%= node.position.z.toFixed(2) %>">' +
-                    '<a href="#" data-index="<%=index%>" class="deleteNode deleteLink"><span class="fui-cross"></span></a>' +
+                    '<a href="#" data-index="<%=index%>" class="floatRight deleteNode deleteLink"><span class="fui-cross"></span></a>' +
             '</div>' +
             "<% });%>");
     var defaultMessageNodes = "Add nodes by mousing over the mesh and clicking.";
@@ -31,8 +30,12 @@ function initBeamEditingView(globals){
         events: {
             "click #deleteNodeMode": "setDeleteNodeMode",
             "click .deleteBeam": "deleteBeam",
+            "click .deleteNode": "deleteNode",
             "click .clearAll": "clearAll",
-            "change input[name=selectedBeam]": "selectBeam"
+            "change input[name=selectedBeam]": "selectBeam",
+            "mouseenter .nodeEntries": "highlightNode",
+            "mouseenter .beamEntries": "highlightBeam",
+            "mouseout .beamEntries": "unhighlightBeam"
         },
 
         initialize: function(){
@@ -59,6 +62,14 @@ function initBeamEditingView(globals){
             this.model.removeBeamAtIndex(index)
         },
 
+        deleteNode: function(e){
+            e.preventDefault();
+            var index = parseInt($(e.target).parent().data("index"));
+            if (isNaN(index)) return;
+            globals.intersector3D.setHighlightedObj(null);
+            this.model.removeNodeAtIndex(index);
+        },
+
         setDeleteNodeMode: function(e){
             e.preventDefault();
             globals.set("deleteNodeMode", true);
@@ -82,8 +93,18 @@ function initBeamEditingView(globals){
             }
             var json = this.model.getBeamsJSON();
             $("#beamMeta").html(beamsMetaTemplate(json));
-            this.model.highlightBeam(json.beams.length-1);
-            $(".radio>input[name=selectedBeam][value=" + (json.beams.length-1) + "]").prop("checked", true);
+            // this.model.highlightBeam(json.beams.length-1);
+        },
+
+        highlightBeam: function(e){
+            var $target = $(e.target);
+            var index = $target.find("a").data("index");
+            if (index === undefined) return;
+            this.model.highlightBeam(index);
+        },
+
+        unhighlightBeam: function(){
+            this.model.unhighlightBeams();
         },
 
         selectBeam: function(){
@@ -99,6 +120,13 @@ function initBeamEditingView(globals){
             }
         },
 
+        highlightNode: function(e){
+            var $target = $(e.target);
+            var index = $target.find("a").data("index");
+            if (index === undefined) return;
+            globals.intersector3D.setHighlightedObj(this.getNodeForIndex(index));
+        },
+
         updateNodesMeta: function(){
             if (this.model.getNumNodes() == 0){
                 $("#nodesMeta").html(defaultMessageNodes);
@@ -106,7 +134,10 @@ function initBeamEditingView(globals){
             }
             var json = this.model.getNodesJSON();
             $("#nodesMeta").html(nodesMetaTemplate(json));
+        },
 
+        getNodeForIndex: function(index){
+            return globals.structure.nodes[index];
         },
 
         clearAll: function(e){

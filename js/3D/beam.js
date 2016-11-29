@@ -61,6 +61,7 @@ Beam.prototype.removeEdge = function(edge, node){
 
 Beam.prototype.stopEditing = function(){
     this.edgeInProgress.hide();
+    this.unhighlight();
 };
 
 Beam.prototype.setMaterial = function(material){

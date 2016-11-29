@@ -44,9 +44,6 @@ function initStructure(globals){
             this.object3D.add(this.simMembraneContainer);
             globals.threeView.sceneAdd(this.object3D);
 
-
-            initIntersector3D(globals, this);
-
             this.listenTo(globals, "change:mode", this.updateForMode);
             this.listenTo(globals, "change:radialMembraneLayers", this.radialMembraneLayersChanged);
             this.listenTo(globals, "change:segmentLength", this.mesh);
@@ -218,11 +215,14 @@ function initStructure(globals){
             return {beams:beamsJSON};
         },
         highlightBeam: function(index){
+            this.unhighlightBeams();
+            if (this.beams[index]) this.beams[index].highlight();
+            globals.threeView.render();
+        },
+        unhighlightBeams: function(){
             _.each(this.beams, function(beam){
                 beam.unhighlight();
             });
-            if (this.beams[index]) this.beams[index].highlight();
-            globals.threeView.render();
         },
 
         newNode: function(position){

@@ -105,6 +105,9 @@ function initIntersector3D(globals, structure){
                 case 1://left button
                     var mode = globals.get("mode");
                     if (mode === "beamEditing") {
+                        if ($target.hasClass("highlighter") || $target.parents().hasClass("highlighter")){
+                            return;
+                        }
                         if (globals.get("deleteNodeMode")){
                             if (highlightedObj && highlightedObj.type == "node") {
                                 var deleted = structure.removeNode(highlightedObj);
@@ -154,11 +157,17 @@ function initIntersector3D(globals, structure){
     }, false);
 
     document.addEventListener('mousemove', function mouseMove(e){
+
         if (mouseDown) {
             isDragging = true;
         }
 
         e.preventDefault();
+        var $target = $(e.target);
+        if ($target.hasClass("highlighter") || $target.parents().hasClass("highlighter")){
+            return;
+        }
+
         mouse.x = (e.clientX/window.innerWidth)*2-1;
         mouse.y = - (e.clientY/window.innerHeight)*2+1;
         raycaster.setFromCamera(mouse, globals.threeView.camera);
@@ -327,6 +336,6 @@ function initIntersector3D(globals, structure){
     }
 
     return {
-
+        setHighlightedObj: setHighlightedObj
     }
 }
