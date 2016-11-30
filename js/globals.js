@@ -22,6 +22,10 @@ function initGlobals(){
             optIncludeBeams: true,
             optIncludeMembranes: false,
             optIncludeForces: false,
+            optNeedsReset: false,
+            optimizationRunning: false,
+            fitnessTol: 1,
+            fitness: null,
 
             //meshing  params
             segmentLength: 2,
@@ -60,6 +64,7 @@ function initGlobals(){
             this.boundaryEditingView = initBoundaryEditingView(this);
             initSimulationView(this);
             this.optSetup = initOptSetupView(this);
+            initOptimizationView(this);
 
             var self = this;
             $(window).bind('keyup', function(e) {

@@ -354,7 +354,7 @@ span.modal-close{
     line-height: 42px;
 }
 
-.resetSim{
+.resetSim, .resetOpt{
     margin-right:20px;
 }
 
@@ -363,6 +363,7 @@ span.modal-close{
 }
 
 .marginTop{
+    display: inline-block;
     margin-top: 15px;
 }
 
