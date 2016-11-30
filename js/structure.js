@@ -358,6 +358,20 @@ function initStructure(globals){
             globals.threeView.render();
         },
 
+        removeAllFixed: function(){
+            var fixedNodes = this.getAllFixedNodes();
+            for (var i=0;i<fixedNodes.length;i++){
+                fixedNodes[i].setFixed(false);
+            }
+            for (var i=0;i<this.nodes.length;i++){
+                this.nodes[i].setFixed(false);
+            }
+            if (!globals.get("simNeedsSetup")){
+                globals.solver.updateFixedNodes();
+            }
+            this.set("numFixed", 0);
+        },
+
         toggleFixedState: function(node){
             var state = !node.fixed;
             node.setFixed(state);

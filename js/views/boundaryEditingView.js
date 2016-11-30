@@ -24,7 +24,8 @@ function initBoundaryEditingView(globals){
             "click .deleteNode": "deleteFixed",
             "change .nodePositionInput": "moveNode",
             "mouseenter .nodeEntries": "highlightNode",
-            "mouseout .nodeEntries": "unhighlightNode"
+            "mouseout .nodeEntries": "unhighlightNode",
+            "click .clearAll": "clearAll"
         },
 
         initialize: function(){
@@ -113,6 +114,14 @@ function initBoundaryEditingView(globals){
 
         boundaryEditingModeChanged: function(val){
             globals.set("boundaryEditingMode", val);
+        },
+
+        clearAll: function(e){
+            e.preventDefault();
+            globals.intersector3D.setHighlightedObj(null);
+            this.model.removeAllFixed();
+            $(e.target).blur();
+            globals.threeView.render();
         }
 
 
