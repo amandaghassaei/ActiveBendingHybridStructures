@@ -80,6 +80,10 @@ SimEdge.prototype.setMaterial = function(material){
     });
 };
 
+SimEdge.prototype.highlight = function(){
+    this.setMaterial(edgeMaterialPurple);
+};
+
 SimEdge.prototype.reset = function(){
     for (var i=0;i<this.innerNodes.length;i++){
         this.innerNodes[i].reset();

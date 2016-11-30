@@ -80,11 +80,15 @@ function initOptimization(globals){
                     console.warn("bad index");
                     continue;
                 }
-                entry.indices.push(index+1);
+                entry.indices.push(index);
             }
             data.push(entry);
         }
         return data;
+    }
+
+    function getEdgeVariables(){
+        return edgeVariables;
     }
 
     function linkEdges(){
@@ -121,6 +125,7 @@ function initOptimization(globals){
         refreshEdges: refreshEdges,
         resetEdgeVariables: resetEdgeVariables,
         getEdgeVariableData: getEdgeVariableData,
+        getEdgeVariables: getEdgeVariables,
         setEdgeLengthAtIndex: setEdgeLengthAtIndex,
         setEdgeStateAtIndex: setEdgeStateAtIndex
     }

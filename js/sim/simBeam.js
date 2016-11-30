@@ -48,6 +48,10 @@ SimBeam.prototype.getNumElements = function(){
     return _numElements;
 };
 
+SimBeam.prototype.unhighlight = function(){
+    this.setMaterial(edgeMaterialGrey);
+};
+
 
 SimBeam.prototype.setMaterial = function(material){
     _.each(this.edges, function(edge){

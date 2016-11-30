@@ -225,6 +225,31 @@ function initStructure(globals){
             });
             globals.threeView.render();
         },
+        unhighlightSimEdges: function(){
+            _.each(this.simBeams, function(beam){
+                beam.unhighlight();
+            });
+            globals.threeView.render();
+        },
+        getAllSimEdges: function(){
+            var simEdges = [];
+            for (var i=0;i<this.simBeams.length;i++){
+                simEdges = simEdges.concat(this.simBeams[i].getEdges());
+            }
+            return simEdges;
+        },
+        highlightSimEdges: function(indices) {
+            var simEdges = this.getAllSimEdges();
+            for (var i=0;i<indices.length;i++){
+                var index = indices[i];
+                if (index<0 || simEdges.length<=index) {
+                    console.warn("bad index, " + index);
+                    continue;
+                }
+                simEdges[index].highlight();
+            }
+            globals.threeView.render();
+        },
 
         newNode: function(position){
             if (this.nodeAtPosition(position)) return;

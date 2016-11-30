@@ -6,10 +6,10 @@
 function initOptSetupView(globals) {
 
     var edgeVariableTemplate = _.template("<% _.each(edgeVariables, function(variable, index){ %>" +
-            '<div class="edgeEntry" id="edgeEntry<%= index%>">'+
+            '<div class="edgeEntry" data-index="<%= index%>">'+
                 'Edge<% if (variable.indices.length>1){ %>s<% } %> <% _.each(variable.indices, function(edgeNum, edgeNumIndex){ %>' +
                     '<% if (edgeNumIndex>0){ %>, <% } %>' +
-                    '<%=edgeNum%>' +
+                    '<%= edgeNum +1 %>' +
                 '<% }); %>' +
                 '<span class="floatRight"> Length (m): &nbsp;&nbsp;<input placeholder="Length" data-index="<%= index%>" class="form-control inlineInput edgeLengthInput" type="text" value="<%= variable.length.toFixed(2) %>">' +
                     '<label class="checkbox" for="edgeEntryCheck<%= index%>">' +
@@ -29,7 +29,9 @@ function initOptSetupView(globals) {
             "click .startSim": "start",
             "click .pauseSim": "pause",
             "change .edgeLengthInput": "edgeLengthChanged",
-            "change .edgeEntryCheck": "edgeStatusChanged"
+            "change .edgeEntryCheck": "edgeStatusChanged",
+            "mouseenter .edgeEntry": "highlightEdge",
+            "mouseout .edgeEntry": "unhighlightEdge"
         },
 
         initialize: function () {
@@ -88,6 +90,25 @@ function initOptSetupView(globals) {
             e.preventDefault();
             globals.set("simNeedsReset", true);
             globals.solver.start();
+        },
+
+        highlightEdge: function(e){
+            var $target = $(e.target);
+            $("#beamMeta").children(".edgeEntry").removeClass("selectedEntry");
+            if (!$target.hasClass("edgeEntry")) $target = $target.parents(".edgeEntry");
+            var index = $target.data("index");
+            if (index === undefined) return;
+            var indices = globals.optimization.getEdgeVariableData()[index].indices;
+            this.model.unhighlightSimEdges();
+            globals.structure.highlightSimEdges(indices);
+        },
+
+        unhighlightEdge: function(e){
+            var $target = $(e.currentTarget);
+            if (!$target.hasClass("edgeEntry")) return;
+            $target = $(e.relatedTarget);
+            if ($target.parents(".edgeEntry").length > 0) return;
+            this.model.unhighlightSimEdges();
         },
 
         // staticSolve: function(e){
