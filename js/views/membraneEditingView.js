@@ -6,12 +6,11 @@
 function initMembraneEditingView(globals){
 
     var membranesMetaTemplate = _.template("<% _.each(membranes, function(membrane, index){ %>" +
-            '<label class="radio">'+
-                '<input name="selectedMembrane" value="<%= index %>" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>'+
+            '<div class="membraneEntries">'+
                 'Membrane <%= index + 1 %> :  <%= membrane.numEdges %> edges <a href="#" data-index="<%=index%>" class="deleteLink deleteMembrane"><span class="fui-cross"></span></a>' +
-            '</label>' +
+            '</div>' +
             "<% });%>");
-    var defaultMessage = "<br/>Select edges that form a closed loop and hit Enter to create a membrane.";
+    var defaultMessage = "Select edges that form a closed loop and hit Enter to create a membrane.";
 
     return new (Backbone.View.extend({
 
@@ -19,7 +18,9 @@ function initMembraneEditingView(globals){
 
         events: {
             "click .deleteMembrane": "deleteMembrane",
-            "click .clearAll": "clearAll"
+            "click .clearAll": "clearAll",
+            "mouseenter .membraneEntries": "highlightMembrane",
+            "mouseout .membraneEntries": "unhighlightMembrane"
         },
 
         initialize: function(){
@@ -41,8 +42,6 @@ function initMembraneEditingView(globals){
             }
             var json = this.model.getMembranesJSON();
             $("#membranesMeta").html(membranesMetaTemplate(json));
-            setRadio("selectedMembrane", json.membranes.length-1, this.model.highlightMembrane);
-            this.model.highlightMembrane(json.membranes.length-1);
         },
 
         deleteMembrane: function(e){
@@ -50,6 +49,19 @@ function initMembraneEditingView(globals){
             var index = parseInt($(e.target).parent().data("index"));
             if (isNaN(index)) return;
             this.model.removeMembraneAtIndex(index);
+        },
+
+        highlightMembrane: function(e){
+            var $target = $(e.target);
+            $("#membranesMeta").children(".membraneEntries").removeClass("selectedEntry");
+            if (!$target.hasClass("membraneEntries")) $target = $target.parents(".membraneEntries");
+            var index = $target.find("a").data("index");
+            if (index === undefined) return;
+            this.model.highlightMembrane(index);
+        },
+
+        unhighlightMembrane: function(){
+            this.model.unhighlightMembranes();
         },
 
         clearAll: function(e){

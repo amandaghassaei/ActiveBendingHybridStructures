@@ -430,8 +430,19 @@ span.modal-close{
 .beamEntries:hover{
     background-color: rgba(218,190,247,0.5);
 }
+.membraneEntries:hover{
+    background-color: rgba(218,190,247,0.5);
+}
 
 .beamEntries{
+    display: inline-block;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 0;
+    padding: 3px 10px 3px 10px;
+}
+
+.membraneEntries{
     display: inline-block;
     width: 100%;
     margin-top: 5px;

@@ -223,6 +223,7 @@ function initStructure(globals){
             _.each(this.beams, function(beam){
                 beam.unhighlight();
             });
+            globals.threeView.render();
         },
 
         newNode: function(position){
@@ -446,6 +447,12 @@ function initStructure(globals){
                 membrane.unhighlight();
             });
             if (this.membranes[index]) this.membranes[index].highlight();
+            globals.threeView.render();
+        },
+        unhighlightMembranes: function(){
+            _.each(this.membranes, function(membrane){
+                membrane.unhighlight();
+            });
             globals.threeView.render();
         },
 
