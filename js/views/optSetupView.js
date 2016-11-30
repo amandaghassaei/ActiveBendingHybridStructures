@@ -6,18 +6,18 @@
 function initOptSetupView(globals) {
 
     var edgeVariableTemplate = _.template("<% _.each(edgeVariables, function(variable, index){ %>" +
-            '<a href="#" class="edgeEntry" data-index="<%= index%>">'+
+            '<div  class="edgeEntry" data-index="<%= index%>"><a href="#" class="edgeEntryA">'+
                 '<% if (variable.indices.length>1){ %><span class="unlinkEdges fui-lock"></span><% } %>'+
-                'Edge<% if (variable.indices.length>1){ %>s<% } %> <% _.each(variable.indices, function(edgeNum, edgeNumIndex){ %>' +
+                '<span class="floatLeft">Edge<% if (variable.indices.length>1){ %>s<% } %> <% _.each(variable.indices, function(edgeNum, edgeNumIndex){ %>' +
                     '<% if (edgeNumIndex>0){ %>, <% } %>' +
                     '<%= edgeNum +1 %>' +
-                '<% }); %>' +
-                '<span class="floatRight"> Length (m): <input placeholder="Length" data-index="<%= index%>" class="form-control inlineInput edgeLengthInput" type="text" value="<%= variable.length.toFixed(2) %>">' +
-                    '<label class="checkbox" for="edgeEntryCheck<%= index%>">' +
-                        '<input data-index="<%= index%>" id="edgeEntryCheck<%= index%>" <%if(!enabled){%> disabled="disabled"<% } %> <% if(variable.active){ %>checked="checked" <% } %>data-toggle="checkbox" class="edgeEntryCheck custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
-                    '</label>' +
-                '</span>' +
-            '</a>' +
+                '<% }); %></span>' +
+                'Length (m): <input placeholder="Length" data-index="<%= index%>" class="form-control inlineInput edgeLengthInput" type="text" value="<%= variable.length.toFixed(2) %>">' +
+                '</a>' +
+                '<label class="checkbox floatRight" for="edgeEntryCheck<%= index%>">' +
+                    '<input data-index="<%= index%>" id="edgeEntryCheck<%= index%>" <%if(!enabled){%> disabled="disabled"<% } %> <% if(variable.active){ %>checked="checked" <% } %>data-toggle="checkbox" class="edgeEntryCheck custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
+                '</label>' +
+            '</div>' +
             "<% });%>");
 
 
@@ -33,7 +33,7 @@ function initOptSetupView(globals) {
             "change .edgeEntryCheck": "edgeStatusChanged",
             "mouseenter .edgeEntry": "highlightEdge",
             "mouseout .edgeEntry": "unhighlightEdge",
-            "click .edgeEntry": "selectEdgeVariable",
+            "click .edgeEntryA": "selectEdgeVariable",
             "click #restoreDefaults": "restoreDefaults",
             "click .unlinkEdges": "unlinkEdges"
         },
@@ -180,9 +180,9 @@ function initOptSetupView(globals) {
             if ($target.hasClass("unlinkEdges")) return;
             if ($target.hasClass("checkbox") || $target.parents(".checkbox").length>0) return;
             if ($target.is("input")) return;
+            $(".edgeEntryA").blur();
             if (!$target.hasClass("edgeEntry")) $target = $target.parents(".edgeEntry");
             var index = $target.data("index");
-            $target.blur();
             if ($target.hasClass("selectedEntry")) {
                 $target.removeClass("selectedEntry");
                 this.selected = _.without(this.selected, index);

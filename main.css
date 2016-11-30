@@ -274,6 +274,12 @@ span.modal-close{
 .checkbox input.custom-checkbox[type="checkbox"]:checked + .icons .icon-checked, .radio input.custom-checkbox[type="checkbox"]:checked + .icons .icon-checked, .checkbox input.custom-radio[type="radio"]:checked + .icons .icon-checked, .radio input.custom-radio[type="radio"]:checked + .icons .icon-checked {
     color: #666;
 }
+.icons .icon-checked:focus{
+    color: #666;
+}
+.icons .icon-unchecked:focus{
+    color: #666;
+}
 
 .radio .icon-checked{
     transition-duration: 0s;
@@ -380,13 +386,18 @@ span.modal-close{
     padding-left: 10px;
     display: inline-block;
     width: 100%;
-    color:#333;
+        text-align: right;
 }
 .edgeEntry:hover{
     background-color: rgba(218,190,247,0.5);
+}
+.edgeEntryA{
     color:#333;
 }
-.edgeEntry:focus{
+.edgeEntryA:hover{
+    color:#333;
+}
+.edgeEntryA:focus{
     color:#333;
 }
 .inlineInput{
