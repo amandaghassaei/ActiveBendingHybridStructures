@@ -62,6 +62,7 @@ function initOptimizationView(globals){
         reset: function(e){
             e.preventDefault();
             globals.set("optNeedsReset", false);
+            globals.set("optimizationRunning", false);
             globals.solver.pause();
             globals.solver.reset();
         },
