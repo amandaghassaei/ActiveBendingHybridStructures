@@ -54,6 +54,10 @@ Edge.prototype.setSimLength = function(length){
 Edge.prototype.getSimLength = function(){
     return this.simLength;
 };
+Edge.prototype.resetSimLength = function(){
+    this.simLength = this.getLength();
+    return this.simLength;
+};
 
 Edge.prototype.isFixed = function(){
     return this.nodes[0].fixed && this.nodes[1].fixed;

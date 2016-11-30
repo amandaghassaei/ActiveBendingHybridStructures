@@ -113,6 +113,21 @@ function initOptimization(globals){
         globals.solver.updateBeamLengths();
     }
 
+    function restoreEdgeLengthDefaults(){
+        resetEdgeVariables();
+        for (var j=0;j<edgeVariables.length;j++){
+            var edges = edgeVariables[j].edges;
+            for (var i=0;i<edges.length;i++){
+                var length = edges[i].resetSimLength();
+                var index = allEdges.indexOf(edges[i]);
+                if (index<0) console.warn("bad index");
+                else allSimEdges[index].setLength(length);
+            }
+        }
+        //update sim
+        globals.solver.updateBeamLengths();
+    }
+
     function setEdgeStateAtIndex(index, state){
         if (edgeVariables.length<= index){
             console.warn("index out of range");
@@ -127,6 +142,7 @@ function initOptimization(globals){
         getEdgeVariableData: getEdgeVariableData,
         getEdgeVariables: getEdgeVariables,
         setEdgeLengthAtIndex: setEdgeLengthAtIndex,
-        setEdgeStateAtIndex: setEdgeStateAtIndex
+        setEdgeStateAtIndex: setEdgeStateAtIndex,
+        restoreEdgeLengthDefaults: restoreEdgeLengthDefaults
     }
 }

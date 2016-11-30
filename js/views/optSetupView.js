@@ -6,7 +6,7 @@
 function initOptSetupView(globals) {
 
     var edgeVariableTemplate = _.template("<% _.each(edgeVariables, function(variable, index){ %>" +
-            '<div class="edgeEntry" data-index="<%= index%>">'+
+            '<a href="#" class="edgeEntry" data-index="<%= index%>">'+
                 'Edge<% if (variable.indices.length>1){ %>s<% } %> <% _.each(variable.indices, function(edgeNum, edgeNumIndex){ %>' +
                     '<% if (edgeNumIndex>0){ %>, <% } %>' +
                     '<%= edgeNum +1 %>' +
@@ -16,7 +16,7 @@ function initOptSetupView(globals) {
                         '<input data-index="<%= index%>" id="edgeEntryCheck<%= index%>" <%if(!enabled){%> disabled="disabled"<% } %> <% if(variable.active){ %>checked="checked" <% } %>data-toggle="checkbox" class="edgeEntryCheck custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
                     '</label>' +
                 '</span>' +
-            '</div>' +
+            '</a>' +
             "<% });%>");
 
 
@@ -32,10 +32,13 @@ function initOptSetupView(globals) {
             "change .edgeEntryCheck": "edgeStatusChanged",
             "mouseenter .edgeEntry": "highlightEdge",
             "mouseout .edgeEntry": "unhighlightEdge",
-            "click .edgeEntry": "selectEdgeVariable"
+            "click .edgeEntry": "selectEdgeVariable",
+            "click #restoreDefaults": "restoreDefaults"
         },
 
         initialize: function () {
+
+            this.selected = [];
 
             var self = this;
             setCheckbox("#includeBeams", globals.get("optIncludeBeams"), function(state){
@@ -51,9 +54,11 @@ function initOptSetupView(globals) {
 
             this.listenTo(globals, "change:mode", function(){
                 var mode = globals.get("mode");
+                this.model.unhighlightSimEdges();
                 if (mode == "optSetup"){
                     globals.optimization.refreshEdges();
                     this.setEdgeEntries();
+                    this.selected = [];
                 }
             });
         },
@@ -99,8 +104,15 @@ function initOptSetupView(globals) {
             if (!$target.hasClass("edgeEntry")) $target = $target.parents(".edgeEntry");
             var index = $target.data("index");
             if (index === undefined) return;
-            var indices = globals.optimization.getEdgeVariableData()[index].indices;
             this.model.unhighlightSimEdges();
+            for (var i=0;i<this.selected.length;i++){
+                this.highlightEdgesAtIndex(this.selected[i]);
+            }
+            this.highlightEdgesAtIndex(index);
+        },
+
+        highlightEdgesAtIndex: function(index){
+            var indices = globals.optimization.getEdgeVariableData()[index].indices;
             globals.structure.highlightSimEdges(indices);
         },
 
@@ -110,15 +122,32 @@ function initOptSetupView(globals) {
             $target = $(e.relatedTarget);
             if ($target.parents(".edgeEntry").length > 0) return;
             this.model.unhighlightSimEdges();
+            for (var i=0;i<this.selected.length;i++){
+                this.highlightEdgesAtIndex(this.selected[i]);
+            }
         },
 
         selectEdgeVariable: function(e){
+            e.preventDefault();
             var $target = $(e.target);
             if ($target.hasClass("checkbox") || $target.parents(".checkbox").length>0) return;
+            if ($target.is("input")) return;
             if (!$target.hasClass("edgeEntry")) $target = $target.parents(".edgeEntry");
             var index = $target.data("index");
-            if ($target.hasClass("selectedEntry")) $target.removeClass("selectedEntry");
-            else $target.addClass("selectedEntry");
+            if ($target.hasClass("selectedEntry")) {
+                $target.removeClass("selectedEntry");
+                this.selected = _.without(this.selected, index);
+            }
+            else {
+                this.selected.push(index);
+                $target.addClass("selectedEntry");
+            }
+        },
+
+        restoreDefaults: function(e){
+            e.preventDefault();
+            globals.optimization.restoreEdgeLengthDefaults();
+            this.setEdgeEntries();
         },
 
         // staticSolve: function(e){

@@ -377,10 +377,16 @@ span.modal-close{
     height: 35px;
     line-height: 35px;
     padding-left: 10px;
-    cursor: hand;
+    display: inline-block;
+    width: 100%;
+    color:#333;
 }
 .edgeEntry:hover{
     background-color: rgba(218,190,247,0.5);
+    color:#333;
+}
+.edgeEntry:focus{
+    color:#333;
 }
 .inlineInput{
     width: 75px!important;
