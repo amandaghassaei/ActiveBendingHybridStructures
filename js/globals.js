@@ -39,7 +39,7 @@ function initGlobals(){
             kineticDampingTolerance: 0.00001,
             numStepsPerFrame: 20,
             simE: 10000,
-            simA: 1,
+            simA: 0.1,
             simI: 0.05,
             simDt: 0.01,
             simMembraneFD: 0.05
