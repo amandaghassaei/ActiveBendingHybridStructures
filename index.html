@@ -62,20 +62,23 @@
         <label class="checkbox" for="autoDeleteGeo">
             <input id="autoDeleteGeo" data-toggle="checkbox" class="custom-checkbox layersSelector" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
             Automatically Delete Existing Topology on STL Load
-        </label>
-        Bounding Box: &nbsp;&nbsp;<span id="meshSize"></span><br/><br/>
-        <div class="sliderInput" id="meshScaleX">
-            <span class="label-slider">Scale X : </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
-            <input value="" placeholder="" class="form-control" type="text">
-        </div>
-        <div class="sliderInput" id="meshScaleY">
-            <span class="label-slider">Scale Y : </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
-            <input value="" placeholder="" class="form-control" type="text">
-        </div>
-        <div class="sliderInput" id="meshScaleZ">
-            <span class="label-slider">Scale Z : </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
-            <input value="" placeholder="" class="form-control" type="text">
-        </div>
+        </label><br/>
+        <b>Mesh Settings:</b><br/>
+        <div class="indent">
+            <div class="sliderInput" id="meshScaleX">
+                <span class="label-slider">Scale X : </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
+                <input value="" placeholder="" class="form-control" type="text">
+            </div>
+            <div class="sliderInput" id="meshScaleY">
+                <span class="label-slider">Scale Y : </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
+                <input value="" placeholder="" class="form-control" type="text">
+            </div>
+            <div class="sliderInput" id="meshScaleZ">
+                <span class="label-slider">Scale Z : </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
+                <input value="" placeholder="" class="form-control" type="text">
+            </div>
+            <span class="floatRight">Bounding Box: &nbsp;&nbsp;<span id="meshSize"></span></span><br/>
+         </div>
     </div>
 </div>
 <div class="controls" id="beamEditingControls">
@@ -85,9 +88,9 @@
             <input id="snapToVertex" data-toggle="checkbox" class="custom-checkbox layersSelector" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
             Snap Nodes To Mesh Vertices
         </label>
-        Num Beams: &nbsp;&nbsp;<span id="numBeams"></span><br/>
+        <b>Num Beams: &nbsp;&nbsp;<span id="numBeams"></span></b><br/>
         <div id="beamMeta" class="highlighter smallFont indent"></div><br/>
-        Num Nodes: &nbsp;&nbsp;<span id="numNodes"></span><br/>
+        <b>Num Nodes: &nbsp;&nbsp;<span id="numNodes"></span></b><br/>
         <div id="nodesMeta" class="highlighter smallFont indent"></div><br/>
         <!--<a href="#" id="deleteNodeMode" class="floatRight btn btn-lg btn-default">Delete Node Mode (D)</a>-->
     </div>
@@ -95,27 +98,30 @@
 <div class="controls" id="membraneEditingControls">
     <div>
         <a href="#" class="clearAll floatRight btn btn-lg btn-danger">Clear All</a>
-        Num Membranes: &nbsp;&nbsp;<span id="numMembranes"></span><br/>
+        <b>Num Membranes: &nbsp;&nbsp;<span id="numMembranes"></span></b><br/>
         <div id="membranesMeta" class="indent"></div>
     </div>
 </div>
 <div class="controls" id="meshingControls">
     <div>
-        <label class="radio">
-            <input name="meshingMode" value="radialMeshing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
-            Radial Meshing
-        </label>
+        <b>Meshing Type:</b><br/>
         <div class="indent">
-            <label class="checkbox" for="constantNumElements">
-                <input id="constantNumElements" data-toggle="checkbox" class="custom-checkbox layersSelector" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
-                Constant number of elements per edge
+            <label class="radio">
+                <input name="meshingMode" value="radialMeshing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                Radial Meshing
             </label>
-        </div>
-        <label class="radio">
-            <input name="meshingMode" value="parallelMeshing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
-            Parallel Meshing (only applies to membranes with exactly four edges)
-        </label><br/>
-        Parameters:<br/>
+            <div class="indent">
+                <label class="checkbox" for="constantNumElements">
+                    <input id="constantNumElements" data-toggle="checkbox" class="custom-checkbox layersSelector" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                    Constant number of elements per edge
+                </label>
+            </div>
+            <label class="radio">
+                <input name="meshingMode" value="parallelMeshing" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                Parallel Meshing (only applies to membranes with exactly four edges)
+            </label>
+        </div><br/>
+        <b>Meshing Parameters:</b><br/>
         <div class="indent">
             <div class="sliderInput" id="numEdgeElements">
                 <span class="label-slider floatLeft">Num Elements Per Edge: <br/></span><div class="widerSlider flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
@@ -138,7 +144,7 @@
             <!--<input name="boundaryEditingMode" value="fixed" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>-->
             <!--Add/Remove Fixed-->
         <!--</label>-->
-        Num Fixed Nodes: &nbsp;&nbsp;<span id="numFixed"></span>
+        <b>Num Fixed Nodes: &nbsp;&nbsp;<span id="numFixed"></span></b><br/>
         <div id="fixedMeta" class="highlighter smallFont indent"></div><br/>
         <!--<label class="radio">-->
             <!--<input name="boundaryEditingMode" value="forces" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>-->
@@ -151,36 +157,39 @@
 </div>
 <div class="controls" id="simulationControls">
     <div>
-        Beam Material Variables:<br/>
-        <div class="marginTop">
-            E: &nbsp;<input id="simE" value="" placeholder="E" class="form-control" type="text">&nbsp;&nbsp;
-            A: &nbsp;<input id="simA" value="" placeholder="A" class="form-control" type="text">&nbsp;&nbsp;
-            I: &nbsp;<input id="simI" value="" placeholder="I" class="form-control" type="text">
+        <b>Beam Material Variables:</b><br/>
+        <div class="marginTop indent">
+            E: &nbsp;<input id="simE" value="" placeholder="E" class="form-control" type="text"><br/>
+            A: &nbsp;<input id="simA" value="" placeholder="A" class="marginTop form-control" type="text">&nbsp;&nbsp;
+            I: &nbsp;<input id="simI" value="" placeholder="I" class="marginTop form-control" type="text">
         </div><br/>
-        Membrane Material Variables:<br/>
+        <div class="indent">
+            Damping:<br/>
+            <div class="doubleIndent">
+                <label class="radio">
+                    <input name="dampingType" value="kinetic" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                    Kinetic
+                </label>
+                <label class="radio">
+                    <input name="dampingType" value="viscous" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                    Viscous
+                </label>
+            </div>
+        </div><br/>
+        <b>Membrane Material Variables:</b><br/>
             <div class="sliderInput" id="simMembraneFD">
                 <span class="label-slider">Force/length: </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
                 <input value="" placeholder="" class="form-control" type="text">
-            </div><br/>
-        Time Step (sec): &nbsp;<input id="simDt" value="" placeholder="dt" class="form-control" type="text"><br/>
-        Damping:<br/>
-        <div class="indent">
-            <label class="radio">
-                <input name="dampingType" value="kinetic" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
-                Kinetic
-            </label>
-            <label class="radio">
-                <input name="dampingType" value="viscous" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
-                Viscous
-            </label>
-        </div><br/>
-        <div class="floatRight"><a href="#" id="staticSolve" class="btn btn-lg btn-success">Static Solve</a> Tolerance: &nbsp;&nbsp;<input id="kineticDampingTolerance" value="" placeholder="" class="form-control" type="text"></div><br/><br/>
-        <br/>
-        <a href="#" class="startSim floatRight btn btn-lg btn-success">Start Animation</a>
-        <a href="#" class="pauseSim floatRight btn btn-lg btn-warning">Pause Animation</a>
-        <a href="#" class="resetSim floatRight btn btn-lg btn-default">Reset</a><br/><br/>
-        <div class="floatRight">Num Steps Per Frame: &nbsp;&nbsp;<input id="numStepsPerFrame" value="" placeholder="" class="form-control" type="text"></div><br/><br/>
-        <a href="#" id="stepForward" class="floatRight btn btn-lg btn-default">Step Forward</a><br/><br/>
+            </div><br/><br/>
+        <b>Simulation Params:</b><br/>
+        <div class="floatRight marginTop">
+            <a href="#" id="staticSolve" class="btn btn-lg btn-success">Static Solve</a> Tolerance: &nbsp;&nbsp;<input id="kineticDampingTolerance" value="" placeholder="" class="form-control" type="text"></div>
+        <a href="#" class="startSim floatRight marginTop btn btn-lg btn-success">Start Animation</a>
+        <a href="#" class="pauseSim floatRight marginTop btn btn-lg btn-warning">Pause Animation</a>
+        <a href="#" class="resetSim floatRight marginTop btn btn-lg btn-default">Reset</a>
+        <span class="floatRight marginTop">Time Step (sec): &nbsp;<input id="simDt" value="" placeholder="dt" class="form-control" type="text"></span>
+        <div class="floatRight marginTop">Num Steps Per Frame: &nbsp;&nbsp;<input id="numStepsPerFrame" value="" placeholder="" class="form-control" type="text"></div>
+        <a href="#" id="stepForward" class="floatRight marginTop btn btn-lg btn-default">Step Forward</a><br/><br/>
     </div>
 </div>
 <div class="controls" id="optSetupControls">
