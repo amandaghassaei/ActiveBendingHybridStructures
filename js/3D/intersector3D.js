@@ -137,6 +137,8 @@ function initIntersector3D(globals, structure){
                             structure.toggleFixedState(highlightedObj);
                         }
                         globals.threeView.render();
+                    } else if (mode === "optSetup"){
+                        globals.optSetup.selectEdge();
                     }
                     break;
                 case 2://middle button
@@ -276,7 +278,14 @@ function initIntersector3D(globals, structure){
                 } else if (globals.get("boundaryEditingMode") === "force"){
 
                 }
-
+                break;
+            case "optSetup":
+                _highlightedObj = checkForEdgeIntersection(e, structure.getSimEdgesToIntersect(), true);
+                if (_highlightedObj && _highlightedObj.type == "beamElement"){
+                    globals.optSetup.setHighlightedEl(_highlightedObj);
+                } else {
+                    globals.optSetup.setHighlightedEl(null);
+                }
                 break;
         }
 
@@ -318,6 +327,22 @@ function initIntersector3D(globals, structure){
                 if (objectFound) return;
                 if (thing.object && thing.object._myNode && thing.object._myNode.type == "node"){
                     _highlightedObj = thing.object._myNode;
+                    objectFound = true;
+                }
+            });
+        }
+        return _highlightedObj;
+    }
+
+    function checkForEdgeIntersection(e, objects, recursive){
+        var _highlightedObj = null;
+        var intersections = raycaster.intersectObjects(objects, recursive);
+        if (intersections.length > 0) {
+            var objectFound = false;
+            _.each(intersections, function (thing) {
+                if (objectFound) return;
+                if (thing.object && thing.object._myEdge && thing.object._myEdge.type == "beamElement"){
+                    _highlightedObj = thing.object._myEdge;
                     objectFound = true;
                 }
             });

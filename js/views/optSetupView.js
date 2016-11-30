@@ -54,6 +54,8 @@ function initOptSetupView(globals) {
                 globals.set("optIncludeForces", state);
             });
 
+            this.highlightedIndex = null;
+
             this.listenTo(globals, "change:mode", function(){
                 var mode = globals.get("mode");
                 this.model.unhighlightSimEdges();
@@ -101,9 +103,51 @@ function initOptSetupView(globals) {
             globals.solver.start();
         },
 
+        setHighlightedEl: function(el){
+            var $edgeEntries = $("#optBeams").children(".edgeEntry");
+            this.model.unhighlightSimEdges();
+            $edgeEntries.removeClass("highlightedEntry");
+            for (var a=0;a<this.selected.length;a++){
+                this.highlightEdgesAtIndex(this.selected[a]);
+            }
+            this.highlightedIndex = null;
+            if (el === null){
+                return;
+            }
+            var allEdges = globals.structure.getAllSimEdges();
+            for (var i=0;i<allEdges.length;i++){
+                if (allEdges[i].elements.indexOf(el) >= 0){
+                    var edgeVariables = globals.optimization.getEdgeVariableData();
+                    for (var k=0;k<edgeVariables.length;k++){
+                        if (edgeVariables[k].indices.indexOf(i) >=0 ){
+                            this.highlightEdgesAtIndex(k);
+                            this.highlightedIndex = k;
+                            $edgeEntries.eq(k).addClass("highlightedEntry");
+                            return;
+                        }
+                    }
+                }
+            }
+        },
+
+        selectEdge: function(){
+            if (this.highlightedIndex !== null){
+                var $ui = $("#optBeams").children(".edgeEntry").eq(this.highlightedIndex).addClass("highlightedEntry");
+                if (this.selected.indexOf(this.highlightedIndex) >= 0){
+                    $ui.removeClass("selectedEntry");
+                    this.selected = _.without(this.selected, this.highlightedIndex);
+                } else {
+                    $ui.addClass("selectedEntry");
+                    this.selected.push(this.highlightedIndex);
+                }
+
+
+            }
+        },
+
         highlightEdge: function(e){
             var $target = $(e.target);
-            $("#beamMeta").children(".edgeEntry").removeClass("selectedEntry");
+            $("#optBeams").children(".edgeEntry").removeClass("highlightedEntry");
             if (!$target.hasClass("edgeEntry")) $target = $target.parents(".edgeEntry");
             var index = $target.data("index");
             if (index === undefined) return;
@@ -154,6 +198,7 @@ function initOptSetupView(globals) {
             globals.optimization.linkEdges(this.selected);
             this.selected = [];
             this.setEdgeEntries();
+            this.model.unhighlightSimEdges();
         },
 
         unlinkEdges: function(e){

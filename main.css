@@ -411,6 +411,9 @@ span.modal-close{
 .selectedEntry{
     background-color: rgba(218,190,247,0.5);
 }
+.highlightedEntry{
+    background-color: rgba(218,190,247,0.5);
+}
 .selectedEntryRed{
     background-color: rgba(255,0,0,0.3);
 }
