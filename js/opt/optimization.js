@@ -91,8 +91,26 @@ function initOptimization(globals){
         return edgeVariables;
     }
 
-    function linkEdges(){
+    function linkEdges(indices){
         //set length to avg
+        var avgLength = 0;
+        for (var i=0;i<indices.length;i++){
+            avgLength += edgeVariables[indices[i]].edges[0].getSimLength();
+        }
+        avgLength /= indices.length;
+        var edges = [];
+        for (var i=edgeVariables.length-1;i>=0;i--){
+            if (indices.indexOf(i) >= 0){
+                edges = edges.concat(edgeVariables[i].edges);
+                edgeVariables.splice(i, 1);
+            }
+        }
+        var entry = {};
+        entry.length = avgLength;
+        entry.edges = edges;
+        entry.active = true;
+        edgeVariables.push(entry);
+        setEdgeLengthAtIndex(edgeVariables.length-1, avgLength);
     }
     function unlinkEdges(){
     }
@@ -143,6 +161,8 @@ function initOptimization(globals){
         getEdgeVariables: getEdgeVariables,
         setEdgeLengthAtIndex: setEdgeLengthAtIndex,
         setEdgeStateAtIndex: setEdgeStateAtIndex,
-        restoreEdgeLengthDefaults: restoreEdgeLengthDefaults
+        restoreEdgeLengthDefaults: restoreEdgeLengthDefaults,
+        linkEdges: linkEdges,
+        unlinkEdges: unlinkEdges
     }
 }

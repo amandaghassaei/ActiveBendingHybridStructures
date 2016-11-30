@@ -134,6 +134,7 @@ function initOptSetupView(globals) {
             if ($target.is("input")) return;
             if (!$target.hasClass("edgeEntry")) $target = $target.parents(".edgeEntry");
             var index = $target.data("index");
+            $target.blur();
             if ($target.hasClass("selectedEntry")) {
                 $target.removeClass("selectedEntry");
                 this.selected = _.without(this.selected, index);
@@ -142,6 +143,13 @@ function initOptSetupView(globals) {
                 this.selected.push(index);
                 $target.addClass("selectedEntry");
             }
+        },
+
+        linkVariables: function(){
+            if (this.selected.length<2) return;
+            globals.optimization.linkEdges(this.selected);
+            this.selected = [];
+            this.setEdgeEntries();
         },
 
         restoreDefaults: function(e){

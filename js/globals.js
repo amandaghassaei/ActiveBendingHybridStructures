@@ -59,7 +59,7 @@ function initGlobals(){
             initMeshingView(this);
             this.boundaryEditingView = initBoundaryEditingView(this);
             initSimulationView(this);
-            initOptSetupView(this);
+            this.optSetup = initOptSetupView(this);
 
             var self = this;
             $(window).bind('keyup', function(e) {
@@ -71,6 +71,10 @@ function initGlobals(){
                 } else if (mode === "beamEditing"){
                     if (e.keyCode == 68){
                         self.set("deleteNodeMode", false);
+                    }
+                } else if (mode == "optSetup"){
+                    if (e.keyCode == 13){
+                        self.optSetup.linkVariables();
                     }
                 }
             });
