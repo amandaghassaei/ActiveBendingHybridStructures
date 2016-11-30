@@ -449,3 +449,7 @@ span.modal-close{
     margin-bottom: 0;
     padding: 3px 10px 3px 10px;
 }
+
+.checkbox[for="snapToVertex"]{
+    width: 230px;
+}

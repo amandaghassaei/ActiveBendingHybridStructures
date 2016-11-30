@@ -189,6 +189,7 @@ function initBeamEditingView(globals){
 
         clearAll: function(e){
             e.preventDefault();
+            globals.intersector3D.setHighlightedObj(null);
             this.model.reset();
             $(e.target).blur();
             globals.threeView.render();
