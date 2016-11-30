@@ -377,6 +377,7 @@ span.modal-close{
     height: 35px;
     line-height: 35px;
     padding-left: 10px;
+    cursor: hand;
 }
 .edgeEntry:hover{
     background-color: rgba(218,190,247,0.5);

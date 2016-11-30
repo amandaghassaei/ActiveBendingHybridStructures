@@ -31,7 +31,8 @@ function initOptSetupView(globals) {
             "change .edgeLengthInput": "edgeLengthChanged",
             "change .edgeEntryCheck": "edgeStatusChanged",
             "mouseenter .edgeEntry": "highlightEdge",
-            "mouseout .edgeEntry": "unhighlightEdge"
+            "mouseout .edgeEntry": "unhighlightEdge",
+            "click .edgeEntry": "selectEdgeVariable"
         },
 
         initialize: function () {
@@ -109,6 +110,15 @@ function initOptSetupView(globals) {
             $target = $(e.relatedTarget);
             if ($target.parents(".edgeEntry").length > 0) return;
             this.model.unhighlightSimEdges();
+        },
+
+        selectEdgeVariable: function(e){
+            var $target = $(e.target);
+            if ($target.hasClass("checkbox") || $target.parents(".checkbox").length>0) return;
+            if (!$target.hasClass("edgeEntry")) $target = $target.parents(".edgeEntry");
+            var index = $target.data("index");
+            if ($target.hasClass("selectedEntry")) $target.removeClass("selectedEntry");
+            else $target.addClass("selectedEntry");
         },
 
         // staticSolve: function(e){
