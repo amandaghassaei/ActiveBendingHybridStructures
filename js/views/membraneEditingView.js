@@ -51,6 +51,14 @@ function initMembraneEditingView(globals){
             this.model.removeMembraneAtIndex(index);
         },
 
+        setHighlightedMembrane: function(index){
+            var membraneEntries = $("#membranesMeta").children(".membraneEntries");
+            membraneEntries.removeClass("selectedEntry");
+            if (index>=0){
+                membraneEntries.eq(index).addClass("selectedEntry");
+            }
+        },
+
         highlightMembrane: function(e){
             var $target = $(e.target);
             $("#membranesMeta").children(".membraneEntries").removeClass("selectedEntry");

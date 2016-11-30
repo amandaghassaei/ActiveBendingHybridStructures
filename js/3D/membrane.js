@@ -7,6 +7,8 @@ var membraneMaterial = new THREE.MeshBasicMaterial({color: 0x777777, side: THREE
 
 function Membrane(edges, parent){
 
+    this.type = "membrane";
+
     var geometry = new THREE.Geometry();
     var averageVertex = new THREE.Vector3();
     geometry.vertices.push(averageVertex);
@@ -22,6 +24,7 @@ function Membrane(edges, parent){
     geometry.computeVertexNormals();
 
     this.object3D = new THREE.Mesh(geometry, membraneMaterial);
+    this.object3D._myMembrane = this;
     parent.add(this.object3D);
     this.parent = parent;
 
@@ -53,6 +56,7 @@ Membrane.prototype.destroy = function(clear){
     if (clear === undefined){
         this.parent.remove(this.object3D);
     }
+    this.object3D._myMembrane = null;
     this.parent = null;
     this.object3D = null;
     this.edges = null;

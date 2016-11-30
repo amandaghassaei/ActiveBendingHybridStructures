@@ -239,6 +239,14 @@ function initIntersector3D(globals, structure){
                 break;
             case "membraneEditing":
                 _highlightedObj = checkForIntersections(e, structure.getEdgesToIntersect());
+                if (_highlightedObj === null){
+                    _highlightedObj = checkForIntersections(e, structure.getMembranesToIntersect());
+                    if (_highlightedObj && _highlightedObj.type == "membrane"){
+                        globals.membraneEditingView.setHighlightedMembrane(globals.structure.membranes.indexOf(_highlightedObj))
+                    } else {
+                        globals.membraneEditingView.setHighlightedMembrane(-1);
+                    }
+                }
                 setHighlightedObj(_highlightedObj);
                 return;
                 break;
@@ -332,6 +340,9 @@ function initIntersector3D(globals, structure){
                     objectFound = true;
                 } else if (thing.object && thing.object._myForce && thing.object._myForce.type == "force") {
                     _highlightedObj = thing.object._myForce;
+                    objectFound = true;
+                } else if (thing.object && thing.object._myMembrane && thing.object._myMembrane.type == "membrane") {
+                    _highlightedObj = thing.object._myMembrane;
                     objectFound = true;
                 }
             });

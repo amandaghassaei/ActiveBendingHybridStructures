@@ -474,6 +474,9 @@ function initStructure(globals){
         getEdgesToIntersect: function(){
             return this.edgesContainer.children;
         },
+        getMembranesToIntersect: function(){
+            return this.membraneContainer.children;
+        },
         getSimNodesToIntersect: function(){
             return this.simNodesContainer.children;
         },
