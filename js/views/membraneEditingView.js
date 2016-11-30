@@ -7,7 +7,7 @@ function initMembraneEditingView(globals){
 
     var membranesMetaTemplate = _.template("<% _.each(membranes, function(membrane, index){ %>" +
             '<div class="membraneEntries">'+
-                'Membrane <%= index + 1 %> :  <%= membrane.numEdges %> edges <a href="#" data-index="<%=index%>" class="deleteLink deleteMembrane"><span class="fui-cross"></span></a>' +
+                'Membrane <%= index + 1 %> : &nbsp;&nbsp;<%= membrane.numEdges %> edges <a href="#" data-index="<%=index%>" class="floatRight deleteLink deleteMembrane"><span class="fui-cross"></span></a>' +
             '</div>' +
             "<% });%>");
     var defaultMessage = "Select edges that form a closed loop and hit Enter to create a membrane.";
@@ -60,7 +60,11 @@ function initMembraneEditingView(globals){
             this.model.highlightMembrane(index);
         },
 
-        unhighlightMembrane: function(){
+        unhighlightMembrane: function(e){
+            var $target = $(e.target);
+            if (!$target.hasClass("membraneEntries")) return;
+            $target = $(e.relatedTarget);
+            if ($target.parents(".membraneEntries").length > 0) return;
             this.model.unhighlightMembranes();
         },
 

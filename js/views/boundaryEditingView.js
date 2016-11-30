@@ -23,7 +23,8 @@ function initBoundaryEditingView(globals){
         events: {
             "click .deleteNode": "deleteFixed",
             "change .nodePositionInput": "moveNode",
-            "mouseenter .nodeEntries": "highlightNode"
+            "mouseenter .nodeEntries": "highlightNode",
+            "mouseout .nodeEntries": "unhighlightNode"
         },
 
         initialize: function(){
@@ -84,6 +85,14 @@ function initBoundaryEditingView(globals){
             if (index === undefined) return;
             globals.intersector3D.setHighlightedObj(this.getNodeForIndex(index));
          },
+
+        unhighlightNode: function(e){
+            var $target = $(e.target);
+            if (!$target.hasClass("nodeEntries")) return;
+            $target = $(e.relatedTarget);
+            if ($target.parents(".nodeEntries").length > 0) return;
+            this.model.unhighlightSimNodes();
+        },
 
         moveNode: function(e){
             var $target = $(e.target);

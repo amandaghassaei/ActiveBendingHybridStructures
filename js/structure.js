@@ -234,6 +234,18 @@ function initStructure(globals){
             globals.threeView.render();
             return node;
         },
+        unhighlightNodes: function(){
+            _.each(this.nodes, function(node){
+                node.unhighlight();
+            });
+            globals.threeView.render();
+        },
+        unhighlightSimNodes: function(){
+            _.each(this.simNodes, function(node){
+                node.unhighlight();
+            });
+            globals.threeView.render();
+        },
         removeNodeAtIndex: function(index, clear){
             this._removeNode(this.nodes[index], index, clear);
         },

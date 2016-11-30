@@ -7,7 +7,7 @@ function initBeamEditingView(globals){
 
     var beamsMetaTemplate = _.template("<% _.each(beams, function(beam, index){ %>" +
             '<div class="beamEntries">'+
-                'Beam <%= index + 1 %> :  <%= beam.numEdges %> edge<% if (beam.numEdges>1 || beam.numEdges==0){ %>s<% } %>, <%= beam.numNodes %> node<% if (beam.numNodes>1 || beam.numNodes==0){ %>s<% } %> ' +
+                'Beam <%= index + 1 %> : &nbsp;&nbsp;<%= beam.numEdges %> edge<% if (beam.numEdges>1 || beam.numEdges==0){ %>s<% } %>, <%= beam.numNodes %> node<% if (beam.numNodes>1 || beam.numNodes==0){ %>s<% } %> ' +
                 '<a href="#" data-index="<%=index%>" class="floatRight deleteLink deleteBeam"><span class="fui-cross"></span></a>' +
             '</div>' +
             "<% });%>");
@@ -34,6 +34,7 @@ function initBeamEditingView(globals){
             "click .clearAll": "clearAll",
             "change input[name=selectedBeam]": "selectBeam",
             "mouseenter .nodeEntries": "highlightNode",
+            "mouseout .nodeEntries": "unhighlightNode",
             "mouseenter .beamEntries": "highlightBeam",
             "mouseout .beamEntries": "unhighlightBeam",
             "change .nodePositionInput": "moveNode"
@@ -124,7 +125,11 @@ function initBeamEditingView(globals){
             this.model.highlightBeam(index);
         },
 
-        unhighlightBeam: function(){
+        unhighlightBeam: function(e){
+            var $target = $(e.target);
+            if (!$target.hasClass("beamEntries")) return;
+            $target = $(e.relatedTarget);
+            if ($target.parents(".beamEntries").length > 0) return;
             this.model.unhighlightBeams();
         },
 
@@ -148,6 +153,13 @@ function initBeamEditingView(globals){
             var index = $target.find("a").data("index");
             if (index === undefined) return;
             globals.intersector3D.setHighlightedObj(this.getNodeForIndex(index));
+        },
+        unhighlightNode: function(e){
+            var $target = $(e.target);
+            if (!$target.hasClass("nodeEntries")) return;
+            $target = $(e.relatedTarget);
+            if ($target.parents(".nodeEntries").length > 0) return;
+            this.model.unhighlightNodes();
         },
 
         updateNodesMeta: function(){
