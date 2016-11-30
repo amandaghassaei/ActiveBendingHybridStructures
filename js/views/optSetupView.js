@@ -7,11 +7,12 @@ function initOptSetupView(globals) {
 
     var edgeVariableTemplate = _.template("<% _.each(edgeVariables, function(variable, index){ %>" +
             '<a href="#" class="edgeEntry" data-index="<%= index%>">'+
+                '<% if (variable.indices.length>1){ %><span class="unlinkEdges fui-lock"></span><% } %>'+
                 'Edge<% if (variable.indices.length>1){ %>s<% } %> <% _.each(variable.indices, function(edgeNum, edgeNumIndex){ %>' +
                     '<% if (edgeNumIndex>0){ %>, <% } %>' +
                     '<%= edgeNum +1 %>' +
                 '<% }); %>' +
-                '<span class="floatRight"> Length (m): &nbsp;&nbsp;<input placeholder="Length" data-index="<%= index%>" class="form-control inlineInput edgeLengthInput" type="text" value="<%= variable.length.toFixed(2) %>">' +
+                '<span class="floatRight"> Length (m): <input placeholder="Length" data-index="<%= index%>" class="form-control inlineInput edgeLengthInput" type="text" value="<%= variable.length.toFixed(2) %>">' +
                     '<label class="checkbox" for="edgeEntryCheck<%= index%>">' +
                         '<input data-index="<%= index%>" id="edgeEntryCheck<%= index%>" <%if(!enabled){%> disabled="disabled"<% } %> <% if(variable.active){ %>checked="checked" <% } %>data-toggle="checkbox" class="edgeEntryCheck custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
                     '</label>' +
@@ -33,7 +34,8 @@ function initOptSetupView(globals) {
             "mouseenter .edgeEntry": "highlightEdge",
             "mouseout .edgeEntry": "unhighlightEdge",
             "click .edgeEntry": "selectEdgeVariable",
-            "click #restoreDefaults": "restoreDefaults"
+            "click #restoreDefaults": "restoreDefaults",
+            "click .unlinkEdges": "unlinkEdges"
         },
 
         initialize: function () {
@@ -72,6 +74,7 @@ function initOptSetupView(globals) {
         },
 
         edgeStatusChanged: function(e){
+            console.log("here");
             var $target = $(e.target);
             var index = $target.data("index");
             var state = $target.is(":checked");
@@ -130,6 +133,7 @@ function initOptSetupView(globals) {
         selectEdgeVariable: function(e){
             e.preventDefault();
             var $target = $(e.target);
+            if ($target.hasClass("unlinkEdges")) return;
             if ($target.hasClass("checkbox") || $target.parents(".checkbox").length>0) return;
             if ($target.is("input")) return;
             if (!$target.hasClass("edgeEntry")) $target = $target.parents(".edgeEntry");
@@ -149,6 +153,15 @@ function initOptSetupView(globals) {
             if (this.selected.length<2) return;
             globals.optimization.linkEdges(this.selected);
             this.selected = [];
+            this.setEdgeEntries();
+        },
+
+        unlinkEdges: function(e){
+            e.preventDefault();
+            var $target = $(e.target);
+            $target = $target.parents(".edgeEntry");
+            var index = $target.data("index");
+            globals.optimization.unlinkEdges(index);
             this.setEdgeEntries();
         },
 

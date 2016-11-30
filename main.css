@@ -404,7 +404,7 @@ span.modal-close{
     float: right;
     margin-top: 5px;
     margin-bottom: 0;
-    margin-left: 30px;
+    margin-left: 15px;
 }
 
 .selectedEntry{
@@ -462,4 +462,8 @@ span.modal-close{
 
 .checkbox[for="snapToVertex"]{
     width: 230px;
+}
+
+.unlinkEdges{
+    margin-right:5px;
 }

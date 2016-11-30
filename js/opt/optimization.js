@@ -112,7 +112,18 @@ function initOptimization(globals){
         edgeVariables.push(entry);
         setEdgeLengthAtIndex(edgeVariables.length-1, avgLength);
     }
-    function unlinkEdges(){
+    function unlinkEdges(index){
+        var length = edgeVariables[index].length;
+        var edges = edgeVariables[index].edges;
+        var active = edgeVariables[index].active;
+        edgeVariables.splice(index, 1);
+        for (var i=0;i<edges.length;i++){
+            edgeVariables.push({
+                edges: [edges[i]],
+                active: active,
+                length: length
+            });
+        }
     }
 
     function setEdgeLengthAtIndex(index, length){
