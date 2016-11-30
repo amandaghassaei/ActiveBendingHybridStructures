@@ -10,7 +10,7 @@ function initMembraneEditingView(globals){
                 'Membrane <%= index + 1 %> : &nbsp;&nbsp;<%= membrane.numEdges %> edges <a href="#" data-index="<%=index%>" class="floatRight deleteLink deleteMembrane"><span class="fui-cross"></span></a>' +
             '</div>' +
             "<% });%>");
-    var defaultMessage = "Select edges that form a closed loop and hit Enter to create a membrane.";
+    var defaultMessage = "Select edges that form a closed loop and hit Enter to create a membrane.<br/>Deselect edges by clicking on them a second time.";
 
     return new (Backbone.View.extend({
 
