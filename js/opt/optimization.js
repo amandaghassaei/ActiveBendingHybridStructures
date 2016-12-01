@@ -165,6 +165,34 @@ function initOptimization(globals){
         edgeVariables[index].active = state;
     }
 
+    function startOptimization(){
+        globals.set("optNeedsReset", true);
+        globals.set("optimizationRunning", true);
+        //establish baseline
+        globals.solver.staticSolve();
+        globals.fitness.calcFitness();
+        globals.threeView.startAnimation(function(){
+            //change params
+            globals.solver.staticSolve();
+            globals.fitness.calcFitness();
+        });
+
+
+    }
+
+    function pauseOptimization(){
+        globals.threeView.stopAnimation();
+        globals.set("optimizationRunning", false);
+    }
+
+    function resetOptimization(){
+        pauseOptimization();
+        globals.set("optNeedsReset", false);
+        globals.solver.reset();
+        globals.fitness.calcFitness();
+        globals.threeView.render();
+    }
+
     return {
         refreshEdges: refreshEdges,
         resetEdgeVariables: resetEdgeVariables,
@@ -174,6 +202,9 @@ function initOptimization(globals){
         setEdgeStateAtIndex: setEdgeStateAtIndex,
         restoreEdgeLengthDefaults: restoreEdgeLengthDefaults,
         linkEdges: linkEdges,
-        unlinkEdges: unlinkEdges
+        unlinkEdges: unlinkEdges,
+        startOptimization: startOptimization,
+        pauseOptimization: pauseOptimization,
+        resetOptimization: resetOptimization
     }
 }

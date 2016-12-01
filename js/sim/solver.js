@@ -643,6 +643,14 @@ function initSolver(globals){
         _calcMoment();
         _calcForcesViscous();
         _calcVelocity();
+
+        var kineticEnergy = 0;
+        for (var i=0;i<numNodes;i++) {
+            var rgbaIndex = i * 4;
+            kineticEnergy += velocity[rgbaIndex+3];
+        }
+        if (kineticEnergy < globals.get("kineticDampingTolerance")) solved = true;
+
         _calcPosition();
         _updateMembranes();
     }
@@ -650,6 +658,8 @@ function initSolver(globals){
     function _stepKE(){
 
         _calcMoment();
+        _calcForcesKE();
+        _calcVelocity();
 
         var kineticEnergy = 0;
         for (var i=0;i<numNodes;i++) {
@@ -670,16 +680,20 @@ function initSolver(globals){
         }
         lastKineticEnergy = kineticEnergy;
 
-        _calcForcesKE();
-        _calcVelocity();
         _calcPosition();
         _updateMembranes();
     }
 
     function staticSolve(){
         solved = false;
-        while (solved == false) {
-            _stepKE();
+        if (globals.get("dampingType") == "kinetic"){
+            while (solved == false) {
+                _stepKE();
+            }
+        } else {
+            while (solved == false) {
+                _stepViscous();
+            }
         }
         render();
     }
@@ -702,7 +716,6 @@ function initSolver(globals){
                 render();
             });
         }
-
     }
     function pause(){
         globals.threeView.stopAnimation();

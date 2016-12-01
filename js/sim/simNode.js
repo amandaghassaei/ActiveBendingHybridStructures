@@ -8,7 +8,7 @@ function SimNode(position, parent){
     // this.object3D.scale.set(0.7,0.7,0.7);
     var fitnessGeo = new THREE.Geometry();
     fitnessGeo.vertices = [new THREE.Vector3(), new THREE.Vector3()];
-    // fitnessGeo.dynamic = true;
+    fitnessGeo.dynamic = true;
     this.fitness = new THREE.Line(fitnessGeo, edgeMaterialPurple);
     this.fitness.visible = false;
     this.object3D.add(this.fitness);
@@ -57,6 +57,7 @@ SimNode.prototype.removeElements = function(){
 };
 
 SimNode.prototype.setBendingForce = function(vect, index){
+    if (this.fitness.visible) return;
     if (!this.bendingForce) {
         this.bendingForce = [];
     }
@@ -81,9 +82,13 @@ SimNode.prototype.hideMoments = function(){
     this.fitness.visible = true;
 };
 
+SimNode.prototype.hideFitness = function(){
+    this.fitness.visible = false;
+};
+
 SimNode.prototype.setNearestPos = function(position){
     this.fitness.geometry.vertices[1].set(position.x, position.y, position.z);
-    // this.fitness.geometry.verticesNeedUpdate = true;
+    this.fitness.geometry.verticesNeedUpdate = true;
 };
 
 SimNode.prototype.toJSON = function(){

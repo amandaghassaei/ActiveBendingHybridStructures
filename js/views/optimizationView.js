@@ -12,7 +12,7 @@ function initOptimizationView(globals){
         events: {
             "click .resetOpt": "reset",
             "click .startOpt": "start",
-            "click .pauseOpt": "pause",
+            "click .pauseOpt": "pause"
         },
 
         initialize: function(){
@@ -20,6 +20,12 @@ function initOptimizationView(globals){
             this.listenTo(globals, "change:optimizationRunning", this.setButtonVis);
             this.listenTo(globals, "change:optNeedsReset", this.setResetVis);
             this.listenTo(globals, "change:fitness", this.setFitness);
+
+            this.listenTo(globals, "change:mode", function(){
+                if (globals.previous("mode") === "optimization"){
+                    globals.optimization.resetOptimization();
+                }
+            });
 
             setInput("#fitnessTol", globals.get("fitnessTol"), function(val){
                 globals.set("fitnessTol", val);
@@ -61,23 +67,17 @@ function initOptimizationView(globals){
 
         reset: function(e){
             e.preventDefault();
-            globals.set("optNeedsReset", false);
-            globals.set("optimizationRunning", false);
-            globals.solver.pause();
-            globals.solver.reset();
+            globals.optimization.resetOptimization();
         },
 
         start: function(e){
             e.preventDefault();
-            globals.set("optNeedsReset", true);
-            globals.set("optimizationRunning", true);
-            globals.solver.start();
+            globals.optimization.startOptimization();
         },
 
         pause: function(e){
             e.preventDefault();
-            globals.set("optimizationRunning", false);
-            globals.solver.pause();
+            globals.optimization.pauseOptimization();
         }
 
 

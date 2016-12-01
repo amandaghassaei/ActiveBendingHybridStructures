@@ -21,6 +21,11 @@ function initFitness(globals){
             vertices = mesh.geometry.vertices;
 
             calcFitness();
+        } else {
+            nodes = globals.structure.getAllSimBeamNodes();
+            for (var i=0;i<nodes.length;i++){
+                nodes[i].hideFitness();
+            }
         }
     });
 
