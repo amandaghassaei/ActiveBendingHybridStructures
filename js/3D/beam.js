@@ -8,6 +8,7 @@ function Beam(node, parent, edgeParent){
     this.nodes.push(node);
 
     this.edges = [];
+    this.closedLoop = false;
 
     this.object3D = new THREE.Object3D();
     parent.add(this.object3D);
@@ -79,9 +80,16 @@ Beam.prototype.unhighlight = function(){
 
 
 Beam.prototype.toJSON = function(){
+    var isLoop = false;
+    var edges = this.getEdges();
+    if (edges.length>2){
+        isLoop = (edges[0].nodes[0] == edges[edges.length-1].nodes[1]);
+    }
     return {
         numNodes: _.uniq(this.getNodes()).length,
-        numEdges: this.getEdges().length
+        numEdges: edges.length,
+        isLoop: isLoop,
+        closedLoop: this.closedLoop
     }
 };
 

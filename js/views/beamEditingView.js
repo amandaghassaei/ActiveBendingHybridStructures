@@ -8,6 +8,11 @@ function initBeamEditingView(globals){
     var beamsMetaTemplate = _.template("<% _.each(beams, function(beam, index){ %>" +
             '<div class="beamEntries">'+
                 'Beam <%= index + 1 %> : &nbsp;&nbsp;<%= beam.numEdges %> edge<% if (beam.numEdges>1 || beam.numEdges==0){ %>s<% } %>, <%= beam.numNodes %> node<% if (beam.numNodes>1 || beam.numNodes==0){ %>s<% } %> ' +
+                '<% if (beam.isLoop){ %>' +
+                    '<label class="checkbox" for="closedLoop<%= index%>">' +
+                        '<input data-index="<%= index%>" id="closedLoop<%= index%>" <% if(beam.closedLoop){ %>checked="checked" <% } %>data-toggle="checkbox" class="edgeEntryCheck custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
+                    'Closed Loop</label>' +
+                '<% } %>' +
                 '<a href="#" data-index="<%=index%>" class="floatRight deleteLink deleteBeam"><span class="fui-cross"></span></a>' +
             '</div>' +
             "<% });%>");

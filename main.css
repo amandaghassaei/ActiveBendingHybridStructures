@@ -496,3 +496,9 @@ span.modal-close{
 {
     direction: ltr;
 }
+
+.beamEntries>.checkbox{
+    display: inline-block;
+    margin: 0;
+    margin-left: 12px;
+}
