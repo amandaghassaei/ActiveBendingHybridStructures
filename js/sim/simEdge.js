@@ -110,6 +110,12 @@ SimEdge.prototype.setSimBeamIndex = function(index){
     }
 };
 
+SimEdge.prototype.setSimEdgeIndex = function(index){
+    for (var i=0;i<this.elements.length;i++){
+        this.elements[i].setSimEdgeIndex(index);
+    }
+};
+
 
 SimEdge.prototype.destroy = function(){
     this.destroyElements();

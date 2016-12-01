@@ -13,12 +13,28 @@ function SimBeamEl(nodes, parent, parentEdge){
 }
 SimBeamEl.prototype = Object.create(Edge.prototype);
 
+SimBeamEl.prototype.setSimEdgeIndex = function(index){
+    this.simEdgeIndex = index;
+};
+SimBeamEl.prototype.getSimEdgeIndex = function(){
+    return this.simEdgeIndex;
+};
+
 SimBeamEl.prototype.setSimBeamIndex = function(index){
     this.simBeamIndex = index;
 };
 
-SimBeamEl.prototype.getBeamSimIndex = function(){
+SimBeamEl.prototype.getSimBeamIndex = function(){
     return this.simBeamIndex;
+};
+
+SimBeamEl.prototype.isConnected = function(element){
+    if (this.getSimBeamIndex() != element.getSimBeamIndex()) return false;
+    // console.log(this.getSimEdgeIndex());
+    // console.log(element.getSimEdgeIndex());
+    // console.log("");
+    if (Math.abs(this.getSimEdgeIndex() - element.getSimEdgeIndex()) <= 1) return true;
+    return false;
 };
 
 SimBeamEl.prototype.setSimIndex = function(index){

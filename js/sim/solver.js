@@ -151,12 +151,14 @@ function initSolver(globals){
                 }
             }
             _.sortBy(nodeEdgesOrdered, function (edge) {
-                return edge.getBeamSimIndex();
+                return edge.getSimBeamIndex();
             });
             _numEdgeMappingGroups += Math.ceil((nodeEdgesOrdered.length*2)/4);
 
+            //todo group by simEdgeIndex?
+
             for (var j=0;j<nodeEdgesOrdered.length/2;j++) {
-                if (nodeEdgesOrdered.length-2<2*j || (nodeEdgesOrdered[2*j].getBeamSimIndex() != nodeEdgesOrdered[2*j+1].getBeamSimIndex())) {
+                if (nodeEdgesOrdered.length-2<2*j || !(nodeEdgesOrdered[2*j].isConnected(nodeEdgesOrdered[2*j+1]))) {
                     if (nodeEdgesOrdered.length>2*j+1) nodeEdgesOrdered.splice(2 * j + 1, 0, null);
                     else nodeEdgesOrdered.push(null);
                 }
