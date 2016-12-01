@@ -42,7 +42,7 @@ function initOptimizationView(globals){
                 $("#currentFitness").html("null");
                 return;
             }
-            $("#currentFitness").html(fitness.toFixed(2));
+            $("#currentFitness").html(fitness.toFixed(2) + " m<sup>2</sup>");
         },
 
         setButtonVis: function(){

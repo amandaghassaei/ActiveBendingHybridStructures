@@ -9,8 +9,12 @@ function initOptSetupView(globals) {
             '<div  class="edgeEntry" data-index="<%= index%>"><a href="#" class="edgeEntryA">'+
                 '<% if (variable.indices.length>1){ %><span class="unlinkEdges fui-lock"></span><% } %>'+
                 '<span class="floatLeft">Edge<% if (variable.indices.length>1){ %>s<% } %> <% _.each(variable.indices, function(edgeNum, edgeNumIndex){ %>' +
-                    '<% if (edgeNumIndex>0){ %>, <% } %>' +
-                    '<%= edgeNum +1 %>' +
+                    '<% if (edgeNumIndex>0 && edgeNumIndex<4){ %>, <% } %>' +
+                    '<% if (edgeNumIndex<3){ %> ' +
+                        '<%= edgeNum +1 %>' +
+                    '<% } else if (edgeNumIndex == 3){ %>' +
+                        '...' +
+                    '<% } %>' +
                 '<% }); %></span>' +
                 'Length (m): <input placeholder="Length" data-index="<%= index%>" class="form-control inlineInput edgeLengthInput" type="text" value="<%= variable.length.toFixed(2) %>">' +
                 '</a>' +
@@ -76,7 +80,6 @@ function initOptSetupView(globals) {
         },
 
         edgeStatusChanged: function(e){
-            console.log("here");
             var $target = $(e.target);
             var index = $target.data("index");
             var state = $target.is(":checked");

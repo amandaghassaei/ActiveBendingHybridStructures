@@ -65,9 +65,15 @@ body{
     top:0;
     left:0;
     /*width: 420px;*/
-    padding: 20px 20px 20px 20px;
+    padding: 0;
     /*max-height: 100%;*/
-    overflow: hidden;
+    height: 100%;
+    overflow: auto;
+}
+#controlsLeft>div{
+    padding: 20px 20px 20px 20px;
+    width:100%;
+    height:100%;
 }
 
 .sliderInput{
@@ -353,12 +359,12 @@ span.modal-close{
     display: none;
 }
 
-#meshOptions{
-    position: absolute;
-    bottom:20px;
-    left:20px;
-    line-height: 42px;
-}
+/*#meshOptions{*/
+    /*position: absolute;*/
+    /*bottom:20px;*/
+    /*left:20px;*/
+    /*line-height: 42px;*/
+/*}*/
 
 .resetSim, .resetOpt{
     margin-right:20px;
@@ -481,4 +487,13 @@ span.modal-close{
 
 .unlinkEdges{
     margin-right:5px;
+}
+
+.flipped
+{
+    direction: rtl;
+}
+.flipped>div
+{
+    direction: ltr;
 }

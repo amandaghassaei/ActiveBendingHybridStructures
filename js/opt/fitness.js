@@ -32,6 +32,7 @@ function initFitness(globals){
     function calcFitness(){
         var fitness = 0;
         //naive form for now
+        //todo do this in shader
         for (var j=0;j<nodes.length;j++){
             var node = nodes[j];
             var nodePosition = node.getPosition();
