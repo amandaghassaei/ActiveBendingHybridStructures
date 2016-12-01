@@ -57,6 +57,7 @@ function initGlobals(){
             this.view = initView(this);
             this.solver = initSolver(this);
             this.optimization = initOptimization(this);
+            this.fitness = initFitness(this);
             initMeshEditingView(this);
             this.beamEditingView = initBeamEditingView(this);
             this.membraneEditingView = initMembraneEditingView(this);

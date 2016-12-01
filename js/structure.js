@@ -244,6 +244,14 @@ function initStructure(globals){
             }
             return simEdges;
         },
+        getAllSimBeamNodes: function(){
+            var edgeNodes = [];
+            edgeNodes = edgeNodes.concat(this.simNodes);
+            for (var i=0;i<this.simBeams.length;i++){
+                edgeNodes = edgeNodes.concat(this.simBeams[i].getInnerNodes());
+            }
+            return edgeNodes;
+        },
         highlightSimEdges: function(indices) {
             var simEdges = this.getAllSimEdges();
             for (var i=0;i<indices.length;i++){

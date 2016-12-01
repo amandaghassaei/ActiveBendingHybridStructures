@@ -5,7 +5,13 @@
 
 function SimNode(position, parent){
     Node.call(this, position, parent);
-    this.object3D.scale.set(0.7,0.7,0.7);
+    // this.object3D.scale.set(0.7,0.7,0.7);
+    var fitnessGeo = new THREE.Geometry();
+    fitnessGeo.vertices = [new THREE.Vector3(), new THREE.Vector3()];
+    // fitnessGeo.dynamic = true;
+    this.fitness = new THREE.Line(fitnessGeo, edgeMaterialPurple);
+    this.fitness.visible = false;
+    this.object3D.add(this.fitness);
     this.originalPosition = position.clone();
 }
 SimNode.prototype = Object.create(Node.prototype);
@@ -67,6 +73,19 @@ SimNode.prototype.setBendingForce = function(vect, index){
     this.bendingForce[index].visible = length > 0.5;
 };
 
+SimNode.prototype.hideMoments = function(){
+    if (!this.bendingForce) return;
+    for (var i=0;i<this.bendingForce;i++){
+        this.bendingForce[i].visible = false;
+    }
+    this.fitness.visible = true;
+};
+
+SimNode.prototype.setNearestPos = function(position){
+    this.fitness.geometry.vertices[1].set(position.x, position.y, position.z);
+    // this.fitness.geometry.verticesNeedUpdate = true;
+};
+
 SimNode.prototype.toJSON = function(){
     var position = this.originalPosition;
     return {
@@ -79,6 +98,7 @@ SimNode.prototype.destroy = function(){
     this.parent = null;
     if (this.bendingForce) this.bendingForce = null;
     this.object3D._myNode = null;
+    this.fitness = null;
     this.object3D = null;
     this.edges = null;
     this.externalForce = null;
