@@ -21,7 +21,7 @@ function initFitness(globals){
             vertices = mesh.geometry.vertices;
 
             calcFitness();
-        } else {
+        } else if (globals.previous("mode") == "optimization"){
             nodes = globals.structure.getAllSimBeamNodes();
             for (var i=0;i<nodes.length;i++){
                 nodes[i].hideFitness();
