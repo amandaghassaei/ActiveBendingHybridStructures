@@ -18,7 +18,7 @@ function initMesh(globals){
         defaults: {
             scale: new THREE.Vector3(0.6, 0.6, 1.8),
             showMesh: true,
-            meshOpacity: 0.5
+            meshOpacity: 0.2
         },
 
         initialize: function(){

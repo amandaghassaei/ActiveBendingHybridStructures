@@ -30,6 +30,11 @@ function initView(globals){
             });
             setCheckbox("#showMesh", mesh.get("showMesh"), function(state){
                 mesh.set("showMesh", state);
+                if (state){
+                    $("#meshOpacity").show();
+                } else {
+                    $("#meshOpacity").hide();
+                }
             });
 
             this.listenTo(this.model, "change:mode", this.updateUIForMode);
