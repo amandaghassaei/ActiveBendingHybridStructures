@@ -198,6 +198,7 @@ function initStructure(globals){
             this._removeBeam(beam, index, clear);
         },
         _removeBeam: function(beam, index, clear){
+            if (this.currentEditingBeam == beam) this.currentEditingBeam = null;
             if (clear === undefined) {
                 this.removeMembranesAttachedToEdges(beam.getEdges());
                 beam.destroy(clear);

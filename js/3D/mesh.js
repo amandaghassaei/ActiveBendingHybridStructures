@@ -16,14 +16,14 @@ function initMesh(globals){
     return new (Backbone.Model.extend({
 
         defaults: {
-            scale: new THREE.Vector3(1, 1, 1),
+            scale: new THREE.Vector3(0.6, 0.6, 1.8),
             showMesh: true,
             meshOpacity: 0.5
         },
 
         initialize: function(){
             //initialize with an stl
-            this.loadSTL("assets/sinewave.stl");
+            this.loadSTL("assets/dome_lowRes.stl");
             this.listenTo(this, "change:scale", this.scaleChanged);
             this.listenTo(globals, "change:mode", this.updateForMode);
 
