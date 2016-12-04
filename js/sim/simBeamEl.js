@@ -35,6 +35,7 @@ SimBeamEl.prototype.isConnected = function(element){
     // console.log("");
     if (Math.abs(this.getSimEdgeIndex() - element.getSimEdgeIndex()) <= 1) return true;
     return false;
+    return true;
 };
 
 SimBeamEl.prototype.setSimIndex = function(index){

@@ -20,9 +20,9 @@ function initMeshEditingView(globals){
             setCheckbox("#autoDeleteGeo", globals.get("autoDeleteGeo"), this.changeAutoDelete);
 
             var scale = this.model.get("scale");
-            setSliderInput("#meshScaleX", scale.x, 0.0001, 20, 0.001, this.meshScaleChanged);
-            setSliderInput("#meshScaleY", scale.y, 0.0001, 20, 0.001, this.meshScaleChanged);
-            setSliderInput("#meshScaleZ", scale.z, 0.0001, 20, 0.001, this.meshScaleChanged);
+            setLogSliderInput("#meshScaleX", scale.x, 0.01, 20, 0.001, this.meshScaleChanged);
+            setLogSliderInput("#meshScaleY", scale.y, 0.01, 20, 0.001, this.meshScaleChanged);
+            setLogSliderInput("#meshScaleZ", scale.z, 0.01, 20, 0.001, this.meshScaleChanged);
 
             this.listenTo(this.model, "change:scale change:stl", this.setMeshSize);
             this.setMeshSize();

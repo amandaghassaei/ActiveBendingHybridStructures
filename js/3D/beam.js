@@ -79,16 +79,17 @@ Beam.prototype.unhighlight = function(){
 };
 
 
-Beam.prototype.toJSON = function(){
-    var isLoop = false;
+Beam.prototype.isLoop = function(){
     var edges = this.getEdges();
-    if (edges.length>2){
-        isLoop = (edges[0].nodes[0] == edges[edges.length-1].nodes[1]);
-    }
+    if (edges.length<3) return false;
+    return (edges[0].nodes[0] == edges[edges.length-1].nodes[1]);
+};
+
+Beam.prototype.toJSON = function(){
     return {
         numNodes: _.uniq(this.getNodes()).length,
-        numEdges: edges.length,
-        isLoop: isLoop,
+        numEdges: this.getEdges().length,
+        isLoop: this.isLoop(),
         closedLoop: this.closedLoop
     }
 };

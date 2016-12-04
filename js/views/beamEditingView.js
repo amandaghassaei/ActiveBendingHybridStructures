@@ -10,7 +10,7 @@ function initBeamEditingView(globals){
                 'Beam <%= index + 1 %> : &nbsp;&nbsp;<%= beam.numEdges %> edge<% if (beam.numEdges>1 || beam.numEdges==0){ %>s<% } %>, <%= beam.numNodes %> node<% if (beam.numNodes>1 || beam.numNodes==0){ %>s<% } %> ' +
                 '<% if (beam.isLoop){ %>' +
                     '<label class="checkbox" for="closedLoop<%= index%>">' +
-                        '<input data-index="<%= index%>" id="closedLoop<%= index%>" <% if(beam.closedLoop){ %>checked="checked" <% } %>data-toggle="checkbox" class="edgeEntryCheck custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
+                        '<input data-index="<%= index%>" id="closedLoop<%= index%>" <% if(beam.closedLoop){ %>checked="checked" <% } %>data-toggle="checkbox" class="closedLoopCheck custom-checkbox" type="checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>' +
                     'Closed Loop</label>' +
                 '<% } %>' +
                 '<a href="#" data-index="<%=index%>" class="floatRight deleteLink deleteBeam"><span class="fui-cross"></span></a>' +
@@ -42,7 +42,8 @@ function initBeamEditingView(globals){
             "mouseout .nodeEntries": "unhighlightNode",
             "mouseenter .beamEntries": "highlightBeam",
             "mouseout .beamEntries": "unhighlightBeam",
-            "change .nodePositionInput": "moveNode"
+            "change .nodePositionInput": "moveNode",
+            "change .closedLoopCheck": "closedLoopChanged"
         },
 
         initialize: function(){
@@ -67,6 +68,12 @@ function initBeamEditingView(globals){
                     this.updateBeamsMeta();
                 }
             });
+        },
+
+        closedLoopChanged: function(e){
+            var $target = $(e.target);
+            var state = $target.is(':checked');
+            this.model.beams[$target.data("index")].closedLoop = state;
         },
 
         deleteBeam: function(e){

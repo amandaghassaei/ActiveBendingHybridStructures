@@ -155,6 +155,15 @@ function initSolver(globals){
             });
             _numEdgeMappingGroups += Math.ceil((nodeEdgesOrdered.length*2)/4);
 
+            // var _currentIndex = 0;
+            // var _nodeEdgesOrdered;
+            // for (var j=0;j<nodeEdgesOrdered;j++){
+            //     var _nextIndex = nodeEdgesOrdered[j].getSimBeamIndex();
+            //     var _currentBeam = structure.beams[_nextIndex];
+            //     if (_currentIndex != _nextIndex && _currentBeam.isLoop() && _currentBeam.closedLoop){
+            //         //put last edge num up front
+            //     }
+            // }
             //todo group by simEdgeIndex?
 
             for (var j=0;j<nodeEdgesOrdered.length/2;j++) {
