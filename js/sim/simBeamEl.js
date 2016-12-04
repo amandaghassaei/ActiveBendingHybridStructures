@@ -28,14 +28,12 @@ SimBeamEl.prototype.getSimBeamIndex = function(){
     return this.simBeamIndex;
 };
 
-SimBeamEl.prototype.isConnected = function(element){
+SimBeamEl.prototype.isConnected = function(element, closedLoop, numEdges){
     if (this.getSimBeamIndex() != element.getSimBeamIndex()) return false;
-    // console.log(this.getSimEdgeIndex());
-    // console.log(element.getSimEdgeIndex());
-    // console.log("");
-    if (Math.abs(this.getSimEdgeIndex() - element.getSimEdgeIndex()) <= 1) return true;
-    return false;
-    return true;
+    var simEdgeIndex = this.getSimEdgeIndex();
+    var otherSimEdgeIndex = element.getSimEdgeIndex();
+    if (Math.abs(simEdgeIndex - otherSimEdgeIndex) <= 1) return true;
+    return (closedLoop && (simEdgeIndex == 0 || otherSimEdgeIndex == 0) && (simEdgeIndex == numEdges || otherSimEdgeIndex == numEdges));
 };
 
 SimBeamEl.prototype.setSimIndex = function(index){

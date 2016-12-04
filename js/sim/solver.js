@@ -150,24 +150,37 @@ function initSolver(globals){
                     nodeEdgesOrdered.push(edge);
                 }
             }
-            _.sortBy(nodeEdgesOrdered, function (edge) {
-                return edge.getSimBeamIndex();
-            });
+
+            var nodeEdgesOrderedByBeam = {};
+            for (var j=0;j<nodeEdgesOrdered.length;j++){
+                var beamIndex = nodeEdgesOrdered[j].getSimBeamIndex();
+                if (nodeEdgesOrderedByBeam[beamIndex] === undefined) nodeEdgesOrderedByBeam[beamIndex] = [];
+                nodeEdgesOrderedByBeam[beamIndex].push(nodeEdgesOrdered[j]);
+            }
+            for (var j=0;j<_.keys(nodeEdgesOrderedByBeam).length;j++){
+                _.sortBy(nodeEdgesOrderedByBeam[j], function (edge) {
+                    return edge.getSimEdgeIndex();
+                });
+            }
+
+            nodeEdgesOrdered = [];
+            for (var j=0;j<structure.beams.length;j++){
+                if (nodeEdgesOrderedByBeam[j]){
+                    var edges = nodeEdgesOrderedByBeam[j];
+                    if (structure.beams[j].closedLoop){
+                        var lastEdge = edges[edges.length-1];
+                        edges.splice(edges.length-1, 1);
+                        edges.unshift(lastEdge);//add to front
+                    }
+                    nodeEdgesOrdered = nodeEdgesOrdered.concat(edges);
+                }
+            }
+
             _numEdgeMappingGroups += Math.ceil((nodeEdgesOrdered.length*2)/4);
 
-            // var _currentIndex = 0;
-            // var _nodeEdgesOrdered;
-            // for (var j=0;j<nodeEdgesOrdered;j++){
-            //     var _nextIndex = nodeEdgesOrdered[j].getSimBeamIndex();
-            //     var _currentBeam = structure.beams[_nextIndex];
-            //     if (_currentIndex != _nextIndex && _currentBeam.isLoop() && _currentBeam.closedLoop){
-            //         //put last edge num up front
-            //     }
-            // }
-            //todo group by simEdgeIndex?
-
             for (var j=0;j<nodeEdgesOrdered.length/2;j++) {
-                if (nodeEdgesOrdered.length-2<2*j || !(nodeEdgesOrdered[2*j].isConnected(nodeEdgesOrdered[2*j+1]))) {
+                var beam = structure.beams[nodeEdgesOrdered[2*j].getSimBeamIndex()];
+                if (nodeEdgesOrdered.length-2<2*j || !(nodeEdgesOrdered[2*j].isConnected(nodeEdgesOrdered[2*j+1], beam.closedLoop, beam.edges.length-1))) {
                     if (nodeEdgesOrdered.length>2*j+1) nodeEdgesOrdered.splice(2 * j + 1, 0, null);
                     else nodeEdgesOrdered.push(null);
                 }

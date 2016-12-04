@@ -74,6 +74,7 @@ function initBeamEditingView(globals){
             var $target = $(e.target);
             var state = $target.is(':checked');
             this.model.beams[$target.data("index")].closedLoop = state;
+            globals.set("simNeedsSetup", true);
         },
 
         deleteBeam: function(e){
