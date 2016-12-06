@@ -708,7 +708,8 @@ function initSolver(globals){
         _updateMembranes();
     }
 
-    function staticSolve(){
+    function staticSolve(noPause){
+        if (!noPause) pause();
         solved = false;
         if (globals.get("dampingType") == "kinetic"){
             while (solved == false) {

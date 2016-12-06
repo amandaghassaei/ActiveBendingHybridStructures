@@ -165,19 +165,26 @@ function initOptimization(globals){
         edgeVariables[index].active = state;
     }
 
+    function defineVariables(){
+        var variables = [];
+        for (var i=0;i<edgeVariables.length;i++){
+            if (!edgeVariables[i].active) continue;
+            variables.push({
+                objects: edgeVariables[i].edges,
+                stepSize: 1
+            });
+        }
+        return variables;
+    }
+
     function startOptimization(){
         globals.set("optNeedsReset", true);
         globals.set("optimizationRunning", true);
-        //establish baseline
-        globals.solver.staticSolve();
-        globals.fitness.calcFitness();
+        var solved = false;
         globals.threeView.startAnimation(function(){
-            //change params
-            globals.solver.staticSolve();
-            globals.fitness.calcFitness();
+            if (solved) pauseOptimization();
+            else solved = globals.gradient.gradientDescent(defineVariables());
         });
-
-
     }
 
     function pauseOptimization(){

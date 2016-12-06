@@ -51,6 +51,7 @@ function initFitness(globals){
         }
 
         globals.set("fitness", fitness);
+        return fitness;
     }
 
     function distance(from, to){
