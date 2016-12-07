@@ -40,8 +40,12 @@ function initFitness(globals){
             var nodePosition = node.getPosition();
             var diff = vertices[0].clone().sub(nodePosition);
             var dist = diff.lengthSq();
-            for (var i=1;i<vertices.length;i++){
-                var _diff = vertices[i].clone().sub(nodePosition);
+            for (var i=1;i<faces.length;i++){
+
+                var face  = faces[i];
+                var _point = distanceToTriangle(vertices[face.a], vertices[face.b], vertices[face.c], nodePosition);
+
+                var _diff = _point.sub(nodePosition);
                 var _dist = _diff.lengthSq();
                 if (_dist<dist) {
                     dist = _dist;
@@ -102,7 +106,7 @@ function initFitness(globals){
             else if ( t < 0)
             {
                 s = clamp( -d/a, 0, 1);
-                t = 0.f;
+                t = 0;
             }
             else
             {
