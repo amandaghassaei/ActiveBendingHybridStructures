@@ -21,7 +21,7 @@ function initGradient(globals){
             if (newFitness < _fitness){
                 _fitness = newFitness;
                 solved = false;
-                break;
+                continue;
             }
 
             for (var j=0;j<objects.length;j++){
@@ -33,7 +33,7 @@ function initGradient(globals){
             if (newFitness < _fitness){
                 _fitness = newFitness;
                 solved = false;
-                break;
+                continue;
             }
             for (var j=0;j<objects.length;j++){
                 globals.optimization.setEdgeLengthAtIndex(i, length);
