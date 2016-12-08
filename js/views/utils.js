@@ -2,6 +2,9 @@
  * Created by ghassaei on 11/3/16.
  */
 
+var sliderInputs = {};
+var checkboxCallbacks = {};
+
 function setRadio(key, val, callback){
     $("input[name=" + key + "]").on('change', function() {
         var state = $("input[name="+key+"]:checked").val();
@@ -48,6 +51,12 @@ function setLogSliderInput(id, val, min, max, incr, callback){
         $input.val(val.toFixed(4));
         callback(val, id);
     });
+
+    sliderInputs[id] = function(_val){
+        slider.slider('value', (Math.log(_val)-Math.log(min)) / scale + min);
+        $input.val(_val.toFixed(4));
+        callback(_val, id);
+    }
 }
 
 function setSliderInput(id, val, min, max, incr, callback){
@@ -85,6 +94,12 @@ function setSliderInput(id, val, min, max, incr, callback){
         $input.val(val);
         callback(val, id);
     });
+
+    sliderInputs[id] = function(_val){
+        slider.slider('value', _val);
+        $input.val(_val.toFixed(4));
+        callback(_val, id);
+    }
 }
 
 
@@ -95,6 +110,10 @@ function setCheckbox(id, state, callback){
         else callback(false);
     });
     $input.prop('checked', state);
+    checkboxCallbacks[id] = function(_state){
+        $input.prop('checked', _state);
+        callback(_state);
+    }
 }
 
 
@@ -114,7 +133,11 @@ function setSlider(id, val, min, max, incr, callback, callbackOnStop){
     slider.on("slidestop", function(){
         var val = slider.slider('value');
         if (callbackOnStop) callbackOnStop(val);
-    })
+    });
+    sliderInputs[id] = function(_val){
+        slider.slider('value', _val);
+        callback(_val);
+    }
 }
 
 function setInput(id, val, callback, min, max){

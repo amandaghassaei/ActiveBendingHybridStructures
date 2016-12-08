@@ -43,8 +43,17 @@ function initMeshEditingView(globals){
                 var extension = name[name.length-1].toLowerCase();
                 if (extension === "stl"){
                     reader.readAsDataURL(file);
+                } else {
+                    globals.view.showWarningModal("Please load files in STL format.")
                 }
             });
+        },
+
+        resetUI: function(){
+            var scale = globals.mesh.get("scale");
+            sliderInputs["#meshScaleX"](scale.x);
+            sliderInputs["#meshScaleY"](scale.y);
+            sliderInputs["#meshScaleZ"](scale.z);
         },
 
         changeAutoDelete: function(state){

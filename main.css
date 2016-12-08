@@ -360,7 +360,7 @@ span.modal-close{
 .fui-cross{
 }
 
-#fileInput{
+#fileInput, #jsonInput{
     display: none;
 }
 

@@ -351,6 +351,14 @@ function initStructure(globals){
             console.warn("no edge removed");
         },
 
+        getAllEdges: function(){
+            var edges = [];
+            for (var i=0;i<this.beams.length;i++){
+                edges = edges.concat(this.beams[i].getEdges());
+            }
+            return edges;
+        },
+
         getBeamIndexForEdge: function(edge){
             for (var i=0;i<this.beams.length;i++){
                 var index = this.beams[i].getEdges().indexOf(edge);
@@ -527,6 +535,20 @@ function initStructure(globals){
                 membranesJSON.push(membrane.toJSON());
             });
             return {membranes:membranesJSON};
+        },
+        getMembranesSaveJSON: function(){
+            var allEdges = globals.structure.getAllEdges();
+            var json = [];
+            for (var i=0;i<this.membranes.length;i++){
+                var membraneJSON = this.membranes[i].toJSON();
+                var edges = [];
+                for (var j=0;j<this.membranes[i].edges.length;j++){
+                    edges.push(allEdges.indexOf(this.membranes[i].edges[j]));
+                }
+                membraneJSON.edges = edges;
+                json.push(membraneJSON);
+            }
+            return json;
         },
         highlightMembrane: function(index){
             _.each(this.membranes, function(membrane){
@@ -750,27 +772,30 @@ function initStructure(globals){
         },
 
         reset: function(){
-            globals.set("needsRemesh", true);
+            globals.solver.pause();
             var self = this;
             this.nodesContainer.children = [];
             this.beamsContainer.children = [];
             this.edgesContainer.children = [];
             this.membraneContainer.children = [];
-            _.each(this.membranes, function(membrane, index){
-                self._removeMembrane(membrane, index, true);
-            });
-            _.each(this.beams, function(beam, index){
-                self._removeBeam(beam, index, true);
-            });
-            _.each(this.nodes, function(node, index){
-                self._removeNode(node, index, true);
-            });
+            for (var index=0;index<this.membranes.length;index++){
+                self._removeMembrane(this.membranes[index], index, true);
+            }
+            for (var index=0;index<this.beams.length;index++){
+                self._removeBeam(this.beams[index], index, true);
+            }
+            for (var index=0;index<this.nodes.length;index++){
+                self._removeNode(this.nodes[index], index, true);
+            }
+            this.set("fixed", 0);
             this.nodes = [];
-            this.trigger("change:nodes");
             this.beams = [];
-            this.trigger("change:beams");
             this.membranes = [];
+            this.syncSim();
+            this.trigger("change:nodes");
+            this.trigger("change:beams");
             this.trigger("change:membranes");
+            globals.set("needsRemesh", true);
         }
 
     }))();

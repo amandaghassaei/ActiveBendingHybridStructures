@@ -14,6 +14,7 @@ function initView(globals){
             "mouseleave #logo" : "hideLogo",
             "click #about" : "showAbout",
             "click #saveGeo": "saveGeo",
+            "click #loadGeo": "loadGeo"
         },
 
         initialize: function(){
@@ -38,19 +39,111 @@ function initView(globals){
                 }
             });
 
+            var reader = new FileReader();
+
+            reader.addEventListener("load", function(){
+                console.log("loaded");
+                if (!reader.result){
+                    console.warn("no reader result");
+                }
+                // try {
+                    var json = JSON.parse(reader.result);
+                    if (json.structure){
+                        globals.structure.reset();
+                    }
+                    if (json.globals){
+                        _.each(json.globals, function(val, key){
+                            globals.set(key, val);
+                        });
+                    }
+                    if (json.mesh){
+                        _.each(json.mesh, function(val, key){
+                            if (key == "scale"){
+                                var scale = new THREE.Vector3(val.x, val.y, val.z);
+                                globals.mesh.set(key, scale);
+                            } else{
+                                globals.mesh.set(key, val);
+                            }
+                        });
+                        globals.set("autoDeleteGeo", false);
+                        checkboxCallbacks["#autoDeleteGeo"](false);
+                        globals.mesh.loadSTL(globals.mesh.get("url"));
+                        globals.meshView.resetUI();
+                        // globals.mesh.set("showMesh", true);
+                        // global.mesh.set("opacity", globals.mesh.defaults.meshOpacity);
+                        // checkboxCallbacks["#showMesh"](globals.mesh.get("showMesh"));
+                        // sliderInputs["#meshOpacity"](globals.mesh.get("meshOpacity"));
+                    }
+                    if (json.structure){
+                        var nodesJSON = json.structure.nodes;
+                        for (var i=0;i<nodesJSON.length;i++){
+                            var position = nodesJSON[i].position;
+                            var node = globals.structure.newNode(new THREE.Vector3(position.x,position.y,position.z));
+                            node.setFixed(nodesJSON[i].fixed);
+                        }
+                        var beamsJSON = json.structure.beams;
+                        for (var i=0;i<beamsJSON.length;i++){
+                            var beamJSON = beamsJSON[i];
+                            globals.structure.currentEditingBeam = null;
+                            for (var j=0;j<beamJSON.nodes.length;j++){
+                                globals.structure.addNodeToBeam(globals.structure.nodes[beamJSON.nodes[j]]);
+                            }
+                            var beam = globals.structure.currentEditingBeam;
+                            beam.closedLoop = beamJSON.closedLoop;
+                            globals.structure.currentEditingBeam = null;
+                        }
+                        globals.structure.selectedEdges = [];
+                        var allEdges = globals.structure.getAllEdges();
+                        for (var i=0;i<json.structure.membranes.length;i++){
+                            var membraneJSON = json.structure.membranes[i];
+                            for (var j=0;j<membraneJSON.edges.length;j++){
+                                globals.structure.selectEdge(allEdges[membraneJSON.edges[j]]);
+                            }
+                            globals.structure.newMembrane();
+                        }
+                    }
+                    globals.set("mode", "beamEditing");
+                    $(".radio>input[name=mode][value=" + globals.get("mode") + "]").prop("checked", true);
+                    globals.beamEditingView.updateNodesMeta();
+                    globals.beamEditingView.updateBeamsMeta();
+                // } catch (e){
+                //     console.warn(e);
+                // }
+            }, false);
+
+            $("#jsonInput").change(function(e){
+                var files = $(e.target).get(0).files;
+                if (files === undefined) return;
+                if (files.length == 0) return;
+                var file = files[0];
+                var name = file.name.split(".");
+                if (name.length == 0) return;
+                var extension = name[name.length-1].toLowerCase();
+                if (extension === "json"){
+                    reader.readAsText(file);
+                } else {
+                    globals.view.showWarningModal("Please load files in JSON format.")
+                }
+            });
+
             this.listenTo(this.model, "change:mode", this.updateUIForMode);
             this.updateUIForMode();
+        },
+
+        loadGeo: function(e){
+            e.preventDefault();
+            $("#jsonInput").click();
         },
 
         saveGeo: function(e){
             e.preventDefault();
             var json = {
                 globals: globals.getSaveSettings(),
-                mesh: globals.mesh.toJSON(),
+                mesh: _.omit(globals.mesh.toJSON(), ["meshOpacity", "showMesh"]),
                 structure: {
                     nodes: globals.structure.getNodesJSON().nodes,
                     beams: globals.structure.getBeamsSaveJSON(),
-                    membranes: globals.structure.getMembranesJSON().membranes
+                    membranes: globals.structure.getMembranesSaveJSON()
                 }
             };
             var blob = new Blob([JSON.stringify(json, null, 2)], {type: "text/plain;charset=utf-8"});
