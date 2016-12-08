@@ -90,6 +90,9 @@ function initView(globals){
                             }
                             var beam = globals.structure.currentEditingBeam;
                             beam.closedLoop = beamJSON.closedLoop;
+                            for (var j=0;j<beamJSON.edges.length;j++){
+                                beam.edges[j].setSimLength(beamJSON.edges[j].simLength);
+                            }
                             globals.structure.currentEditingBeam = null;
                         }
                         globals.structure.selectedEdges = [];
