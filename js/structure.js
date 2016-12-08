@@ -221,6 +221,25 @@ function initStructure(globals){
             });
             return {beams:beamsJSON};
         },
+        getBeamsSaveJSON: function(){
+            var beamsJSON = [];
+            var self = this;
+            _.each(this.beams, function(beam){
+                var json = beam.toJSON();
+                var edges = [];
+                for (var j=0;j<beam.edges.length;j++){
+                    edges.push(beam.edges[j].toJSON());
+                }
+                json.edges = edges;
+                var nodes = [];
+                for (var j=0;j<beam.nodes.length;j++){
+                    nodes.push(self.nodes.indexOf(beam.nodes[j]));
+                }
+                json.nodes = nodes;
+                beamsJSON.push(json);
+            });
+            return beamsJSON;
+        },
         highlightBeam: function(index){
             this.unhighlightBeams();
             if (this.beams[index]) this.beams[index].highlight();
@@ -331,6 +350,7 @@ function initStructure(globals){
             }
             console.warn("no edge removed");
         },
+
         getBeamIndexForEdge: function(edge){
             for (var i=0;i<this.beams.length;i++){
                 var index = this.beams[i].getEdges().indexOf(edge);

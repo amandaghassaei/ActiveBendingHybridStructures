@@ -151,7 +151,8 @@ Node.prototype.setPosition = function(val, axis) {
 Node.prototype.toJSON = function(){
     var position = this.object3D.position;
     return {
-        position: {x:position.x, y:position.y, z:position.z}
+        position: {x:position.x, y:position.y, z:position.z},
+        fixed: this.fixed
     }
 };
 

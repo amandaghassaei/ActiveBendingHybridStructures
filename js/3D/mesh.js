@@ -18,12 +18,13 @@ function initMesh(globals){
         defaults: {
             scale: new THREE.Vector3(0.6, 0.6, 1.8),
             showMesh: true,
-            meshOpacity: 0.2
+            meshOpacity: 0.2,
+            url: "assets/dome_lowRes.stl"
         },
 
         initialize: function(){
             //initialize with an stl
-            this.loadSTL("assets/dome_lowRes.stl");
+            this.loadSTL(this.get("url"));
             this.listenTo(this, "change:scale", this.scaleChanged);
             this.listenTo(globals, "change:mode", this.updateForMode);
 
@@ -96,6 +97,7 @@ function initMesh(globals){
 
         loadSTL: function(url){
             var self = this;
+            this.set("url", url);
             loader.load(url, function (geometry){
                 //todo center geometry
                 geometry = new THREE.Geometry().fromBufferGeometry(geometry);

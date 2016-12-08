@@ -96,6 +96,17 @@ Edge.prototype.update = function(){
     this.object3D.geometry.computeBoundingSphere();
 };
 
+Edge.prototype.toJSON = function(){
+    var nodesIndices = [];
+    for (var i=0;i<this.nodes.length;i++){
+        nodesIndices.push(globals.structure.nodes.indexOf(this.nodes[i]));
+    }
+    return {
+        nodes: nodesIndices,
+        simLength: this.getSimLength()
+    }
+};
+
 
 
 //deallocate

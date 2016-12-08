@@ -19,7 +19,7 @@
     <script type="text/javascript" src="dependencies/underscore-min.js"></script>
     <script type="text/javascript" src="dependencies/backbone.js"></script>
     <script type="text/javascript" src="dependencies/numeric-1.2.6.min.js"></script>
-    <!--<script type="text/javascript" src="dependencies/FileSaver.min.js"></script>-->
+    <script type="text/javascript" src="dependencies/FileSaver.min.js"></script>
 
     <script type="text/javascript" src="js/3D/node.js"></script>
     <script type="text/javascript" src="js/3D/edge.js"></script>
@@ -247,6 +247,18 @@
             <img id="activeLogo" src="assets/logo-active.png"/>
         </a>
         <a href="#" id="about" class="btn btn-lg btn-default">About</a>
+        <div class="btn-group">
+            <button data-toggle="dropdown" class="btn btn-lg btn-default dropdown-toggle" type="button">File <span class="caret"></span></button>
+            <ul role="menu" class="dropdown-menu">
+                <li><a id="saveGeo" href="#">Save Geometry (.json)</a></li>
+                <li><a id="loadGeo" href="#">Load Geometry (.json)</a></li>
+                <li class="divider"></li>
+                <li><a class="demo" href="#">Demo</a></li>
+                <li><a class="demo" href="#">Demo</a></li>
+                <li><a class="demo" href="#">Demo</a></li>
+                <li><a class="demo" href="#">Demo</a></li>
+            </ul>
+        </div>
         <div id="viewModeSelection">
             Mode:
             <div class="indent">

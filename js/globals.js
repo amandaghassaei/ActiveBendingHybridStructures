@@ -22,7 +22,7 @@ function initGlobals(){
             optIncludeBeams: true,
             optIncludeMembranes: false,
             optIncludeForces: false,
-            optNeedsReset: false,
+            optNeedsReset: true,
             optimizationRunning: false,
             fitnessTol: 1,
             fitness: null,
@@ -31,7 +31,7 @@ function initGlobals(){
             segmentLength: 2,
             radialMembraneLayers: 1,
             numEdgeElements: 4,
-            needsRemesh: false,
+            needsRemesh: true,
             meshingChanged: true,
             numFixedChanged: true,
 
@@ -93,6 +93,12 @@ function initGlobals(){
                     }
                 }
             });
+        },
+
+        getSaveSettings: function(){
+            return _.omit(this.toJSON(), ["mode", "snapToVertex", "autoDeleteGeo", "deleteNodeMode", "deleteBeamMode",
+                "boundaryEditingMode", "optNeedsReset", "optimizationRunning", "fitness", "needsRemesh", "meshingChanged",
+                "numFixedChanged", "isAnimating", "simNeedsReset", "simNeedsSetup"]);
         }
 
     }))();

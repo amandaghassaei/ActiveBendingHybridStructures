@@ -12,7 +12,8 @@ function initView(globals){
         events: {
             "mouseenter #logo" : "showLogo",
             "mouseleave #logo" : "hideLogo",
-            "click #about" : "showAbout"
+            "click #about" : "showAbout",
+            "click #saveGeo": "saveGeo",
         },
 
         initialize: function(){
@@ -39,6 +40,21 @@ function initView(globals){
 
             this.listenTo(this.model, "change:mode", this.updateUIForMode);
             this.updateUIForMode();
+        },
+
+        saveGeo: function(e){
+            e.preventDefault();
+            var json = {
+                globals: globals.getSaveSettings(),
+                mesh: globals.mesh.toJSON(),
+                structure: {
+                    nodes: globals.structure.getNodesJSON().nodes,
+                    beams: globals.structure.getBeamsSaveJSON(),
+                    membranes: globals.structure.getMembranesJSON().membranes
+                }
+            };
+            var blob = new Blob([JSON.stringify(json, null, 2)], {type: "text/plain;charset=utf-8"});
+            saveAs(blob, "HybridGeo.json");
         },
 
         showWarningModal: function(text){
