@@ -5,13 +5,21 @@
 
 function initGradient(globals){
 
+    var path = [];
+
+    function reset(){
+        path = [];
+    }
+
     function gradientDescent(variables){
         globals.solver.staticSolve(true);
         var _fitness = globals.fitness.calcFitness();
         var solved = true;
+        var _lengths = [];
         for (var i=0;i<variables.length;i++){
             var objects = variables[i].objects;
             var length = objects[0].getSimLength();
+            _lengths.push(length);
 
             globals.optimization.setEdgeLengthAtIndex(i, length + variables[i].stepSize);
             globals.solver.staticSolve(true);
@@ -34,10 +42,17 @@ function initGradient(globals){
 
             globals.optimization.setEdgeLengthAtIndex(i, length);
         }
+        path.push(_lengths);
         return solved;
     }
 
+    function getPath(){
+        return path;
+    }
+
     return {
-        gradientDescent: gradientDescent
+        gradientDescent: gradientDescent,
+        reset: reset,
+        getPath: getPath
     }
 }

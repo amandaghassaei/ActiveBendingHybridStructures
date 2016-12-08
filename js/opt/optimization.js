@@ -182,9 +182,11 @@ function initOptimization(globals){
         globals.set("optimizationRunning", true);
         var solved = false;
         var variables = defineVariables();
+        globals.gradient.reset();
         globals.threeView.startAnimation(function(){
             if (solved) {
                 pauseOptimization();
+            //     console.log(globals.gradient.getPath());
             }
             else {
                 solved = globals.gradient.gradientDescent(variables);
