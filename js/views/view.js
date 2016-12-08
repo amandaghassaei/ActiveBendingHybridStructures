@@ -110,11 +110,14 @@ function initView(globals){
                         var variables = json.variables;
                         for (var i = 0; i < variables.length; i++) {
                             globals.optimization.linkEdgeByEdgeIndices(variables[i].edges, true);
+                        }
+                        for (var i = 0; i < variables.length; i++) {
                             globals.optimization.setEdgeStateAtIndex(i, variables[i].active);
                         }
                     }
 
-                    globals.set("mode", "beamEditing");
+                    globals.set("mode", "beamEditing", {silent: true});
+                    globals.trigger("change:mode");
                     $(".radio>input[name=mode][value=" + globals.get("mode") + "]").prop("checked", true);
                     globals.beamEditingView.updateNodesMeta();
                     globals.beamEditingView.updateBeamsMeta();
