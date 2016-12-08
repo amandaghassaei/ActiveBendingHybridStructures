@@ -511,8 +511,7 @@ function initSolver(globals){
             var velDiff = node1Velocity.sub(node2Velocity);
             var dist = posDiff.length();
 
-            //todo is this right?
-            var edgeForce = posDiff.normalize().multiplyScalar(EA/dist*(dist-_edgeMeta2[0])/_edgeMeta2[0]);
+            var edgeForce = posDiff.normalize().multiplyScalar(EA/_edgeMeta2[0]*(dist-_edgeMeta2[0]));
             edgeForce.add(node2Moment.clone().sub(node1Moment).multiplyScalar(1/dist));
             edgeForce.add(velDiff.multiplyScalar(_edgeMeta2[1]));
 
@@ -543,7 +542,6 @@ function initSolver(globals){
             var posDiff = node1Position.sub(node2Position);
             var dist = posDiff.length();
 
-            //todo is this right?
             var edgeForce = posDiff.normalize().multiplyScalar(EA/dist*(dist-_edgeMeta2[0])/_edgeMeta2[0]);
             edgeForce.add(node2Moment.clone().sub(node1Moment).multiplyScalar(1/dist));
 
@@ -655,7 +653,7 @@ function initSolver(globals){
             for (var j=0;j<forcesLookup[1];j++){
                 var membNodeIndex = 4*membraneMapping[forcesLookup[0]*4 + j];
                 var membNodePosition = new THREE.Vector3(membranePositions[membNodeIndex], membranePositions[membNodeIndex+1], membranePositions[membNodeIndex+2]);
-                force.add(membNodePosition.sub(nodePosition).multiplyScalar(forceDensity));
+                force.add((membNodePosition.sub(nodePosition)).multiplyScalar(forceDensity));
             }
             membraneForces[rgbaIndex] = force.x;
             membraneForces[rgbaIndex+1] = force.y;
