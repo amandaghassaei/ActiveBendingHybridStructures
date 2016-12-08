@@ -5,10 +5,9 @@
 
 function initGradient(globals){
 
-    function gradientDescent(variables, _fitness){
-        if (_fitness === undefined) {
-            _fitness = globals.fitness.calcFitness();
-        }
+    function gradientDescent(variables){
+        globals.solver.staticSolve(true);
+        var _fitness = globals.fitness.calcFitness();
         var solved = true;
         for (var i=0;i<variables.length;i++){
             var objects = variables[i].objects;
@@ -16,25 +15,24 @@ function initGradient(globals){
 
             globals.optimization.setEdgeLengthAtIndex(i, length + variables[i].stepSize);
             globals.solver.staticSolve(true);
-
-            var newFitness = globals.fitness.calcFitness();
-            if (newFitness < _fitness){
-                _fitness = newFitness;
-                solved = false;
-                continue;
-            }
+            var posFitness = globals.fitness.calcFitness();
 
             globals.optimization.setEdgeLengthAtIndex(i, length - variables[i].stepSize);
             globals.solver.staticSolve(true);
+            var negFitness = globals.fitness.calcFitness();
 
-            newFitness = globals.fitness.calcFitness();
-            if (newFitness < _fitness){
-                _fitness = newFitness;
+            if (negFitness<posFitness && negFitness<_fitness) {
+                _fitness = negFitness;
+                solved = false;
+                continue;
+            } else if (posFitness<_fitness){
+                globals.optimization.setEdgeLengthAtIndex(i, length + variables[i].stepSize);
+                _fitness = posFitness;
                 solved = false;
                 continue;
             }
+
             globals.optimization.setEdgeLengthAtIndex(i, length);
-            globals.solver.staticSolve(true);
         }
         return solved;
     }
