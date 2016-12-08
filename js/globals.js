@@ -66,7 +66,7 @@ function initGlobals(){
             this.boundaryEditingView = initBoundaryEditingView(this);
             initSimulationView(this);
             this.optSetup = initOptSetupView(this);
-            initOptimizationView(this);
+            this.optimizationView = initOptimizationView(this);
 
             var self = this;
             $(window).bind('keyup', function(e) {

@@ -183,7 +183,10 @@ function initOptimization(globals){
         var solved = false;
         globals.threeView.startAnimation(function(){
             if (solved) pauseOptimization();
-            else solved = globals.gradient.gradientDescent(defineVariables());
+            else {
+                solved = globals.gradient.gradientDescent(defineVariables());
+                globals.optimizationView.setEdgeEntries();
+            }
         });
     }
 
