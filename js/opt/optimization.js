@@ -181,10 +181,13 @@ function initOptimization(globals){
         globals.set("optNeedsReset", true);
         globals.set("optimizationRunning", true);
         var solved = false;
+        var variables = defineVariables();
         globals.threeView.startAnimation(function(){
-            if (solved) pauseOptimization();
+            if (solved) {
+                pauseOptimization();
+            }
             else {
-                solved = globals.gradient.gradientDescent(defineVariables());
+                solved = globals.gradient.gradientDescent(variables);
                 globals.optimizationView.setEdgeEntries();
             }
         });
@@ -193,6 +196,8 @@ function initOptimization(globals){
     function pauseOptimization(){
         globals.threeView.stopAnimation();
         globals.set("optimizationRunning", false);
+        globals.solver.staticSolve(true);
+        globals.fitness.calcFitness();
     }
 
     function resetOptimization(){
