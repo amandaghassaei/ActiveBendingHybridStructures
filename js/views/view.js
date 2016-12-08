@@ -105,6 +105,15 @@ function initView(globals){
                             globals.structure.newMembrane();
                         }
                     }
+                    if (json.variables) {
+                        globals.optimization.resetEdgeVariables();
+                        var variables = json.variables;
+                        for (var i = 0; i < variables.length; i++) {
+                            globals.optimization.linkEdgeByEdgeIndices(variables[i].edges, true);
+                            globals.optimization.setEdgeStateAtIndex(i, variables[i].active);
+                        }
+                    }
+
                     globals.set("mode", "beamEditing");
                     $(".radio>input[name=mode][value=" + globals.get("mode") + "]").prop("checked", true);
                     globals.beamEditingView.updateNodesMeta();
@@ -147,7 +156,8 @@ function initView(globals){
                     nodes: globals.structure.getNodesJSON().nodes,
                     beams: globals.structure.getBeamsSaveJSON(),
                     membranes: globals.structure.getMembranesSaveJSON()
-                }
+                },
+                variables: globals.optimization.toJSON()
             };
             var blob = new Blob([JSON.stringify(json, null, 2)], {type: "text/plain;charset=utf-8"});
             saveAs(blob, "HybridGeo.json");

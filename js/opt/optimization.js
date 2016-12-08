@@ -5,9 +5,9 @@
 
 function initOptimization(globals){
 
-    var allEdges;
-    var allSimEdges;
-    var edgeVariables;
+    var allEdges = [];
+    var allSimEdges = [];
+    var edgeVariables = [];
     resetEdgeVariables();
 
     function refreshEdges(){
@@ -91,7 +91,21 @@ function initOptimization(globals){
         return edgeVariables;
     }
 
-    function linkEdges(indices){
+    function linkEdgeByEdgeIndices(indices){
+        var edgeVarIndices = [];
+        for (var i=0;i<indices.length;i++){
+            var edge = allEdges[indices[i]];
+            for (var j=0;j<edgeVariables.length;j++){
+                if (edgeVariables[j].edges.indexOf(edge)>=0) {
+                    edgeVarIndices.push(j);
+                    continue;
+                }
+            }
+        }
+        linkEdges(edgeVarIndices, true);
+    }
+
+    function linkEdges(indices, loading){
         //set length to avg
         var avgLength = 0;
         for (var i=0;i<indices.length;i++){
@@ -110,6 +124,7 @@ function initOptimization(globals){
         entry.edges = edges;
         entry.active = true;
         edgeVariables.push(entry);
+        if (loading) return;
         setEdgeLengthAtIndex(edgeVariables.length-1, avgLength);
     }
     function unlinkEdges(index){
@@ -210,6 +225,22 @@ function initOptimization(globals){
         globals.threeView.render();
     }
 
+    function toJSON(){
+        var json = [];
+        var _allEdges = globals.structure.getAllEdges();
+        for (var i=0;i<edgeVariables.length;i++){
+            var edgeIndices = [];
+            for (var j=0;j<edgeVariables[i].edges.length;j++){
+                edgeIndices.push(_allEdges.indexOf(edgeVariables[i].edges[j]));
+            }
+            json.push({
+                edges: edgeIndices,
+                active: edgeVariables[i].active
+            });
+        }
+        return json;
+    }
+
     return {
         refreshEdges: refreshEdges,
         resetEdgeVariables: resetEdgeVariables,
@@ -219,9 +250,11 @@ function initOptimization(globals){
         setEdgeStateAtIndex: setEdgeStateAtIndex,
         restoreEdgeLengthDefaults: restoreEdgeLengthDefaults,
         linkEdges: linkEdges,
+        linkEdgeByEdgeIndices: linkEdgeByEdgeIndices,
         unlinkEdges: unlinkEdges,
         startOptimization: startOptimization,
         pauseOptimization: pauseOptimization,
-        resetOptimization: resetOptimization
+        resetOptimization: resetOptimization,
+        toJSON: toJSON
     }
 }
