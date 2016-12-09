@@ -1,0 +1,153 @@
+﻿{
+  "globals": {
+    "meshingMode": "radialMeshing",
+    "constantNumElements": true,
+    "optIncludeBeams": true,
+    "optIncludeMembranes": false,
+    "optIncludeForces": false,
+    "fitnessTol": 1,
+    "segmentLength": 2,
+    "radialMembraneLayers": 1,
+    "numEdgeElements": 5,
+    "dampingType": "kinetic",
+    "kineticDampingTolerance": 0.00001,
+    "numStepsPerFrame": 200,
+    "simE": 10000,
+    "simA": 0.1,
+    "simI": 0.05,
+    "simDt": 0.005626976975981913,
+    "simMembraneFD": 0.4601506637783698
+  },
+  "mesh": {
+    "scale": {
+      "x": 0.6,
+      "y": 0.6,
+      "z": 1.8
+    },
+    "url": "assets/dome.stl"
+  },
+  "structure": {
+    "nodes": [
+      {
+        "position": {
+          "x": 10,
+          "y": 0,
+          "z": 10
+        },
+        "fixed": true
+      },
+      {
+        "position": {
+          "x": 10,
+          "y": 0,
+          "z": -10
+        },
+        "fixed": false
+      },
+      {
+        "position": {
+          "x": -10,
+          "y": 0,
+          "z": 10
+        },
+        "fixed": false
+      },
+      {
+        "position": {
+          "x": -10,
+          "y": 0,
+          "z": -10
+        },
+        "fixed": false
+      }
+    ],
+    "beams": [
+      {
+        "numNodes": 4,
+        "numEdges": 4,
+        "isLoop": true,
+        "closedLoop": false,
+        "edges": [
+          {
+            "nodes": [
+              0,
+              1
+            ],
+            "simLength": 20
+          },
+          {
+            "nodes": [
+              1,
+              3
+            ],
+            "simLength": 20
+          },
+          {
+            "nodes": [
+              3,
+              2
+            ],
+            "simLength": 20
+          },
+          {
+            "nodes": [
+              2,
+              0
+            ],
+            "simLength": 20
+          }
+        ],
+        "nodes": [
+          0,
+          1,
+          3,
+          2,
+          0
+        ]
+      }
+    ],
+    "membranes": [
+      {
+        "numEdges": 4,
+        "edges": [
+          2,
+          1,
+          0,
+          3
+        ]
+      }
+    ]
+  },
+  "variables": [
+    {
+      "edges": [
+        -1
+      ],
+      "active": true
+    },
+    {
+      "edges": [
+        -1
+      ],
+      "active": true
+    },
+    {
+      "edges": [
+        -1
+      ],
+      "active": true
+    },
+    {
+      "edges": [
+        -1
+      ],
+      "active": true
+    },
+    {
+      "edges": [
+        -1
+      ],
+      "active": true
+    }
+  ]
+}

@@ -22,7 +22,7 @@ function initGlobals(){
             optIncludeBeams: true,
             optIncludeMembranes: false,
             optIncludeForces: false,
-            optNeedsReset: true,
+            optNeedsReset: false,
             optimizationRunning: false,
             fitnessTol: 1,
             fitness: null,

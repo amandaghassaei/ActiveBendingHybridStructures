@@ -8,9 +8,11 @@ function initOptimization(globals){
     var allEdges = [];
     var allSimEdges = [];
     var edgeVariables = [];
+    var startingLengths = [];
     resetEdgeVariables();
 
     function refreshEdges(){
+        startingLengths = [];
         var _allEdges = [];
         for (var i=0;i<globals.structure.beams.length;i++){
             _allEdges = _allEdges.concat(globals.structure.beams[i].getEdges());
@@ -47,6 +49,7 @@ function initOptimization(globals){
     }
 
     function resetEdgeVariables(){
+        startingLengths = [];
         var _allEdges = [];
         for (var i=0;i<globals.structure.beams.length;i++){
             _allEdges = _allEdges.concat(globals.structure.beams[i].getEdges());
@@ -193,13 +196,17 @@ function initOptimization(globals){
     }
 
     function startOptimization(){
-        if (globals.get("optNeedsReset")){
-            //todo save orig values
+        var variables = defineVariables();
+        if (!globals.get("optNeedsReset")){
+            startingLengths = [];
+            for (var i=0;i<variables.length;i++){
+                startingLengths.push(variables[i].objects[0].getSimLength());
+            }
         }
         globals.set("optNeedsReset", true);
         globals.set("optimizationRunning", true);
         var solved = false;
-        var variables = defineVariables();
+
         globals.gradient.reset();
         globals.threeView.startAnimation(function(){
             if (solved) {
@@ -223,6 +230,11 @@ function initOptimization(globals){
     function resetOptimization(){
         pauseOptimization();
         globals.set("optNeedsReset", false);
+        if (startingLengths.length > 0 && startingLengths.length == edgeVariables.length){
+            for (var i=0;i<startingLengths.length;i++){
+                setEdgeLengthAtIndex(i, startingLengths[i]);
+            }
+        }
         globals.solver.reset();
         globals.fitness.calcFitness();
         globals.threeView.render();
