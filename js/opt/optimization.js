@@ -186,13 +186,16 @@ function initOptimization(globals){
             if (!edgeVariables[i].active) continue;
             variables.push({
                 objects: edgeVariables[i].edges,
-                stepSize: 1
+                stepSize: 0.1
             });
         }
         return variables;
     }
 
     function startOptimization(){
+        if (globals.get("optNeedsReset")){
+            //todo save orig values
+        }
         globals.set("optNeedsReset", true);
         globals.set("optimizationRunning", true);
         var solved = false;

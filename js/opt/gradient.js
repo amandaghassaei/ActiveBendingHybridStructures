@@ -6,17 +6,20 @@
 function initGradient(globals){
 
     var path = [];
+    var i = 0;
+    var solved = true;
 
-    function reset(){
+    function reset() {
         path = [];
+        i = 0;
+        solved = true;
     }
 
     function gradientDescent(variables){
         globals.solver.staticSolve(true);
         var _fitness = globals.fitness.calcFitness();
-        var solved = true;
         var _lengths = [];
-        for (var i=0;i<variables.length;i++){
+        // for (var i=0;i<variables.length;i++){
             var objects = variables[i].objects;
             var length = objects[0].getSimLength();
             _lengths.push(length);
@@ -30,20 +33,27 @@ function initGradient(globals){
             var negFitness = globals.fitness.calcFitness();
 
             if (negFitness<posFitness && negFitness<_fitness) {
-                _fitness = negFitness;
+                // _fitness = negFitness;
                 solved = false;
-                continue;
             } else if (posFitness<_fitness){
                 globals.optimization.setEdgeLengthAtIndex(i, length + variables[i].stepSize);
-                _fitness = posFitness;
+                // _fitness = posFitness;
                 solved = false;
-                continue;
+            } else {
+                globals.optimization.setEdgeLengthAtIndex(i, length);
             }
 
-            globals.optimization.setEdgeLengthAtIndex(i, length);
-        }
+
+        // }
         path.push(_lengths);
-        return solved;
+        i++;
+        if (i>=variables.length){
+            var _solved = solved;
+            solved = true;
+            i = 0;
+            return _solved;
+        }
+        return false;
     }
 
     function getPath(){
