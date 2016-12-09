@@ -405,6 +405,7 @@ function initSolver(globals){
     function reset(noRender){
 
         globals.set("simNeedsReset", false);
+        $("#kineticEnergy").html("0");
 
         position = new Float32Array(numNodes*4);
         velocity = new Float32Array(numNodes*4);
@@ -671,6 +672,7 @@ function initSolver(globals){
             var rgbaIndex = i * 4;
             kineticEnergy += velocity[rgbaIndex+3];
         }
+        $("#kineticEnergy").html(kineticEnergy.toFixed(12));
         if (kineticEnergy < globals.get("kineticDampingTolerance")) solved = true;
 
         _calcPosition();
@@ -688,6 +690,7 @@ function initSolver(globals){
             var rgbaIndex = i * 4;
             kineticEnergy += velocity[rgbaIndex+3];
         }
+        $("#kineticEnergy").html(kineticEnergy.toFixed(12));
         if (kineticEnergy<lastKineticEnergy){
             if (kineticEnergy < globals.get("kineticDampingTolerance")) solved = true;
             //reset velocity
@@ -709,16 +712,52 @@ function initSolver(globals){
     function staticSolve(noPause){
         if (!noPause) pause();
         solved = false;
+        var numIter = 0;
         if (globals.get("dampingType") == "kinetic"){
             while (solved == false) {
                 _stepKE();
+                if (numIter++>100000) {
+                    console.warn("num iter");
+                    solved = true;
+                }
             }
         } else {
             while (solved == false) {
                 _stepViscous();
+                if (numIter++>100000) {
+                    console.warn("num iter");
+                    solved = true;
+                }
             }
         }
         render();
+        // printDataOut();
+    }
+
+    function printDataOut(){
+        var points = [];
+        var startingNode = globals.structure.simNodes[0];
+        var position = startingNode.getPosition();
+        points.push([position.x, position.y, position.z]);
+        var lastNode = startingNode;
+        var lastEdge = startingNode.edges[1];
+        var finished = false;
+        while(!finished){
+            var edge = lastNode.edges[0];
+            if (edge == lastEdge) edge = lastNode.edges[1];
+            var node = edge.getOtherNode(lastNode);
+            var position = node.getPosition();
+            points.push([position.x, position.y, position.z]);
+            if (node == startingNode) finished = true;
+            lastNode = node;
+            lastEdge = edge;
+        }
+        var rearrange = [[], []];
+        for (var i=0;i<points.length;i++){
+            rearrange[0].push(points[i][0]);
+            rearrange[1].push(points[i][2]);
+        }
+        console.log(JSON.stringify(rearrange));
     }
 
     function start(){

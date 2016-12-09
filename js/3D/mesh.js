@@ -19,7 +19,7 @@ function initMesh(globals){
             scale: new THREE.Vector3(0.6, 0.6, 1.8),
             showMesh: true,
             meshOpacity: 0.2,
-            url: "assets/dome_lowRes.stl"
+            url: "assets/dome.stl"
         },
 
         initialize: function(){
