@@ -1,22 +1,5 @@
 ﻿{
   "globals": {
-    "meshingMode": "radialMeshing",
-    "constantNumElements": true,
-    "optIncludeBeams": true,
-    "optIncludeMembranes": false,
-    "optIncludeForces": false,
-    "fitnessTol": 1,
-    "segmentLength": 2,
-    "radialMembraneLayers": 1,
-    "numEdgeElements": 5,
-    "dampingType": "kinetic",
-    "kineticDampingTolerance": 0.00001,
-    "numStepsPerFrame": 200,
-    "simE": 10000,
-    "simA": 0.1,
-    "simI": 0.05,
-    "simDt": 0.003558812717085885,
-    "simMembraneFD": 0.04593964215308124
   },
   "mesh": {
     "scale": {

@@ -40,11 +40,13 @@ function initGlobals(){
             simNeedsReset: true,
             simNeedsSetup: true,
             dampingType: "kinetic",
-            kineticDampingTolerance: 0.00001,
+            kineticDampingTolerance: 0.1,
             numStepsPerFrame: 200,
-            simE: 10000,//3000000000,
-            simA: 0.1,//0.00016,
-            simI: 0.05,//0.000000006,
+            simA: 0.00031415926,
+            simI: 0.000000007854,
+            simE: 16000000000, //10000
+            // simA: 0.00000197932, //0.1
+            // simI: 0.000000000000311763, //0.05
             simDt: 0.01,
             simMembraneFD: 0.05
         },

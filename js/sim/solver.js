@@ -22,16 +22,19 @@ function initSolver(globals){
         var E = globals.get("simE");
         EI = E*I;
         EA = E*A;
+        updateBeamDamping();
         calcDT();
     });
     listener.listenTo(globals, "change:simI", function(){
         var I = globals.get("simI");
         EI = E*I;
+        updateBeamDamping();
         calcDT();
     });
     listener.listenTo(globals, "change:simA", function(){
         var A = globals.get("simA");
         EA = E*A;
+        updateBeamDamping();
         calcDT();
     });
     listener.listenTo(globals, "change:simDt", function(){
@@ -208,8 +211,9 @@ function initSolver(globals){
             edgeMeta[rgbaIndex+2] = -1;
             edgeMeta[rgbaIndex+3] = -1;
             // edgeMeta2[rgbaIndex] = edge.getSimLength();//updateBeamLengths
-            edgeMeta2[rgbaIndex+1] = edge.getDampingConstant(EA, EI);
+            // edgeMeta2[rgbaIndex+1] = edge.getDampingConstant(EA, EI);
         }
+        updateBeamDamping();
         updateBeamLengths();
 
         //numConnections/2 * 4
@@ -395,6 +399,14 @@ function initSolver(globals){
         }
     }
 
+    function updateBeamDamping(){
+        if (!allEdges) return;
+        for (var i=0;i<allEdges.length;i++){
+            var rgbaIndex = i*4;
+            edgeMeta2[rgbaIndex+1] = allEdges[i].getDampingConstant(EA, EI);
+        }
+    }
+
     function updateBeamLengths(){
         for (var i=0;i<allEdges.length;i++){
             var rgbaIndex = i*4;
@@ -543,7 +555,7 @@ function initSolver(globals){
             var posDiff = node1Position.sub(node2Position);
             var dist = posDiff.length();
 
-            var edgeForce = posDiff.normalize().multiplyScalar(EA/dist*(dist-_edgeMeta2[0])/_edgeMeta2[0]);
+            var edgeForce = posDiff.normalize().multiplyScalar(EA/_edgeMeta2[0]*(dist-_edgeMeta2[0]));
             edgeForce.add(node2Moment.clone().sub(node1Moment).multiplyScalar(1/dist));
 
             edgeForces[rgbaIndex] = edgeForce.x;
@@ -731,7 +743,7 @@ function initSolver(globals){
             }
         }
         render();
-        // printDataOut();
+        printDataOut();
     }
 
     function printDataOut(){
