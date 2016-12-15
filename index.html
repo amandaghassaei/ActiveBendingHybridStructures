@@ -52,6 +52,7 @@
     <script type="text/javascript" src="js/views/simulationView.js"></script>
     <script type="text/javascript" src="js/views/optSetupView.js"></script>
     <script type="text/javascript" src="js/views/optimizationView.js"></script>
+    <script type="text/javascript" src="js/views/fabricationView.js"></script>
     <script type="text/javascript" src="js/views/view.js"></script>
     <script type="text/javascript" src="js/structure.js"></script>
     <script type="text/javascript" src="js/3D/intersector3D.js"></script>
@@ -241,6 +242,15 @@
         <div class="indent" id="optimizationBeams"></div><br/>
     </div>
 </div>
+<div class="controls" id="fabricationControls">
+    <div>
+
+        <a href="#" class="startSim floatRight btn btn-lg btn-success">Start Simulation</a>
+        <a href="#" class="pauseSim floatRight btn btn-lg btn-warning">Pause Simulation</a>
+        <a href="#" class="resetSim floatRight btn btn-lg btn-default">Reset</a><br/><br/>
+
+    </div>
+</div>
 <div id="controlsLeft" class="flipped">
     <div>
         <a id="logo" target="_blank" href="http://cba.mit.edu/">
@@ -294,6 +304,10 @@
                 <label class="radio">
                     <input name="mode" value="optimization" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
                     Optimization
+                </label><br/>
+                <label class="radio">
+                    <input name="mode" value="fabrication" data-toggle="radio" class="custom-radio" type="radio"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                    Fabrication
                 </label><br/>
             </div>
         </div>

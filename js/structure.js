@@ -156,8 +156,15 @@ function initStructure(globals){
                     membrane.setEdgeMaterial(edgeMaterialLightGray);
                     membrane.hideNodes();
                 });
+            } else if (mode === "fabrication"){
+                if (globals.get("needsRemesh")) this.syncSim();
+                _.each(this.simMembranes, function(membrane){
+                    membrane.setEdgeMaterial(edgeMaterialLightGray);
+                    membrane.hideNodes();
+                });
             }
-            this.simNodesContainer.visible = mode === "meshing" || mode === "boundaryEditing" || mode === "simulation" || mode === "optSetup" || mode === "optimization";
+            this.simNodesContainer.visible = mode === "meshing" || mode === "boundaryEditing" || mode === "simulation"
+                || mode === "optSetup" || mode === "optimization" || mode ==  "fabrication";
             this.simEdgesContainer.visible = this.simNodesContainer.visible;
             this.simMembraneContainer.visible = this.simNodesContainer.visible;
             this.nodesContainer.visible = mode === "beamEditing" || mode === "membraneEditing";
