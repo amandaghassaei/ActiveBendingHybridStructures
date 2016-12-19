@@ -26,6 +26,7 @@ function initGlobals(){
             optimizationRunning: false,
             fitnessTol: 1,
             fitness: null,
+            stepSize: 0.1,
 
             //meshing  params
             segmentLength: 2,

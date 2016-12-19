@@ -55,6 +55,10 @@ function initOptimizationView(globals){
                 globals.set("fitnessTol", val);
             }, 0);
 
+            setInput("#stepSize", globals.get("stepSize"), function(val){
+                globals.set("stepSize", val);
+            }, 0);
+
             this.setButtonVis();
             this.setResetVis();
             this.setFitness();

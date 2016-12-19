@@ -76,7 +76,7 @@ SimBeamEl.prototype.getCylinderGeo = function(){
     var angle = Math.acos(new THREE.Vector3(0,1,0).dot(vector.normalize()));
     var quaternion = (new THREE.Quaternion()).setFromAxisAngle(axis, angle);
     geo.applyMatrix(new THREE.Matrix4().makeRotationFromQuaternion(quaternion));
-    
+
     geo.applyMatrix(new THREE.Matrix4().makeTranslation(position.x, position.y, position.z));
     return geo;
 };

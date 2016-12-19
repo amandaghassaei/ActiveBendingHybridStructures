@@ -189,7 +189,7 @@ function initOptimization(globals){
             if (!edgeVariables[i].active) continue;
             variables.push({
                 objects: edgeVariables[i].edges,
-                stepSize: 1
+                stepSize: globals.get("stepSize")
             });
         }
         return variables;
