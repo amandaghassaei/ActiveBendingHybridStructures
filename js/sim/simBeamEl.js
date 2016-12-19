@@ -63,6 +63,24 @@ SimBeamEl.prototype.getDampingConstant = function(EA, EI){
     return 2*Math.sqrt(EI/this.getSimLength());
 };
 
+SimBeamEl.prototype.getCylinderGeo = function(){
+    var geo = new THREE.CylinderGeometry(1, 1, 1);
+    var position1 = this.nodes[0].getPosition();
+    var position2 = this.nodes[1].getPosition();
+    var position = position1.clone().add(position2).multiplyScalar(0.5);
+    var vector = position1.clone().sub(position2);
+    var rad = globals.get("stockRadius");
+    geo.scale(rad, vector.length()/2, rad);
+
+    var axis = (new THREE.Vector3(0,1,0)).cross(vector).normalize();
+    var angle = Math.acos(new THREE.Vector3(0,1,0).dot(vector.normalize()));
+    var quaternion = (new THREE.Quaternion()).setFromAxisAngle(axis, angle);
+    geo.applyMatrix(new THREE.Matrix4().makeRotationFromQuaternion(quaternion));
+    
+    geo.applyMatrix(new THREE.Matrix4().makeTranslation(position.x, position.y, position.z));
+    return geo;
+};
+
 SimBeamEl.prototype.destroy = function(){
     this.parent = null;
     this.parentEdge = null;

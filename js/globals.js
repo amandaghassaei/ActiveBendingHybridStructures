@@ -35,6 +35,12 @@ function initGlobals(){
             meshingChanged: true,
             numFixedChanged: true,
 
+            //fab params
+            baseThickness: 1,
+            edgeThickness: 0.5,
+            mountDepth: 0.4,
+            stockRadius: 0.0625,
+
             //simulation params
             isAnimating: false,
             simNeedsReset: true,
@@ -62,6 +68,7 @@ function initGlobals(){
             this.optimization = initOptimization(this);
             this.fitness = initFitness(this);
             this.gradient = initGradient(this);
+            this.fab = initFab(this);
             this.meshView = initMeshEditingView(this);
             this.beamEditingView = initBeamEditingView(this);
             this.membraneEditingView = initMembraneEditingView(this);

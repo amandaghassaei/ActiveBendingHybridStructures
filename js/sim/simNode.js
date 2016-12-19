@@ -91,6 +91,14 @@ SimNode.prototype.setNearestPos = function(position){
     this.fitness.geometry.verticesNeedUpdate = true;
 };
 
+SimNode.prototype.getBeamElements = function(){
+    var elements = [];
+    for (var i=0;i<this.edges.length;i++){
+        if (this.edges[i].type == "beamElement") elements.push(this.edges[i]);
+    }
+    return elements;
+};
+
 SimNode.prototype.toJSON = function(){
     var position = this.originalPosition;
     return {

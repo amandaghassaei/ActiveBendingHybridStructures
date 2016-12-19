@@ -40,6 +40,10 @@
     <script type="text/javascript" src="js/opt/fitness.js"></script>
     <script type="text/javascript" src="js/opt/gradient.js"></script>
 
+    <script type="text/javascript" src="js/fab/fab.js"></script>
+    <script type="text/javascript" src="dependencies/csg.js"></script>
+    <script type="text/javascript" src="dependencies/ThreeCSG.js"></script>
+
     <script type="text/javascript" src="js/views/utils.js"></script>
     <script type="text/javascript" src="js/3D/mesh.js"></script>
     <script type="text/javascript" src="js/globals.js"></script>
@@ -246,11 +250,28 @@
 </div>
 <div class="controls" id="fabricationControls">
     <div>
-
         <a href="#" class="startSim floatRight btn btn-lg btn-success">Start Simulation</a>
         <a href="#" class="pauseSim floatRight btn btn-lg btn-warning">Pause Simulation</a>
         <a href="#" class="resetSim floatRight btn btn-lg btn-default">Reset</a><br/><br/>
 
+        <div class="sliderInput" id="baseThickness">
+            <span class="label-slider">Base Thickness (in): </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
+            <input value="" placeholder="" class="form-control" type="text">
+        </div><br/>
+        <div class="sliderInput" id="edgeThickness">
+            <span class="label-slider">Edge Thickness (in): </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
+            <input value="" placeholder="" class="form-control" type="text">
+        </div><br/>
+        <div class="sliderInput" id="mountDepth">
+            <span class="label-slider">Mounting Depth (in): </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
+            <input value="" placeholder="" class="form-control" type="text">
+        </div><br/>
+        <div class="sliderInput" id="stockRadius">
+            <span class="label-slider">Beam Stock Radius (in): </span><div class="flat-slider ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"></div>
+            <input value="" placeholder="" class="form-control" type="text">
+        </div><br/>
+
+        <a href="#" id="saveSTL" class="floatRight btn btn-lg btn-default">Save STL</a><br/><br/>
     </div>
 </div>
 <div id="controlsLeft" class="flipped">

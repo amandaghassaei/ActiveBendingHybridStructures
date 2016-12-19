@@ -15,13 +15,27 @@ function initFabricationView(globals){
             "click .resetSim": "reset",
             "click .startSim": "start",
             "click .pauseSim": "pause",
-            "click #staticSolve": "staticSolve"
+            "click #staticSolve": "staticSolve",
+            "click #saveSTL": "saveSTL"
         },
 
         initialize: function(){
 
             this.listenTo(globals, "change:isAnimating", this.setButtonVis);
             this.listenTo(globals, "change:simNeedsReset", this.setResetVis);
+
+            setSliderInput("#baseThickness", globals.get("baseThickness"), 0.1, 100, 0.01, function(val){
+                globals.set("baseThickness", val);
+            });
+            setSliderInput("#edgeThickness", globals.get("edgeThickness"), 0.1, 10, 0.01, function(val){
+                globals.set("edgeThickness", val);
+            });
+            setSliderInput("#mountDepth", globals.get("mountDepth"), 0.1, 1, 0.01, function(val){
+                globals.set("mountDepth", val);
+            });
+            setSliderInput("#stockRadius", globals.get("stockRadius"), 0.0001, 1, 0.0001, function(val){
+                globals.set("stockRadius", val);
+            });
 
             this.setButtonVis();
             this.setResetVis();
@@ -62,6 +76,11 @@ function initFabricationView(globals){
         pause: function(e){
             e.preventDefault();
             globals.solver.pause();
+        },
+
+        saveSTL: function(e){
+            e.preventDefault();
+            globals.fab.saveSTL();
         }
 
     }))({model:globals.structure});
