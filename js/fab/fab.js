@@ -85,27 +85,13 @@ function initFab(globals){
 
         var scale = 1;
 
-        // var data = [];
-        // _.each(object3D.children, function(child){
-        //     var geo = child.geometry.clone();
-        //     geo.applyMatrix(new THREE.Matrix4().makeScale(child.scale.x*scale, child.scale.y*scale, child.scale.z*scale));
-        //     geo.applyMatrix(new THREE.Matrix4().makeRotationFromQuaternion(child.quaternion));
-        //     geo.applyMatrix(new THREE.Matrix4().makeTranslation(child.position.x*scale, child.position.y*scale, child.position.z*scale));
-        //     data.push({geo: geo, offset:new THREE.Vector3(0,0,0), orientation:new THREE.Quaternion(0,0,0,1)});
-        // });
-        //
-        // if (globals.addBase){
-        //     var geo = base.geometry.clone();
-        //     geo.applyMatrix(new THREE.Matrix4().makeScale(base.scale.x*scale, base.scale.y*scale, base.scale.z*scale));
-        //     geo.applyMatrix(new THREE.Matrix4().makeRotationFromQuaternion(base.quaternion));
-        //     geo.applyMatrix(new THREE.Matrix4().makeTranslation(base.position.x*scale, base.position.y*scale, base.position.z*scale));
-        //     data.push({geo: geo, offset:new THREE.Vector3(0,0,0), orientation:new THREE.Quaternion(0,0,0,1)});
-        // }
-        //
-        // var stlBin = geometryToSTLBin(data);
-        // if (!stlBin) return;
-        // var blob = new Blob([stlBin], {type: 'application/octet-binary'});
-        // saveAs(blob, "shell.stl");
+        var data = [];
+        data.push({geo: csgResult.geometry, offset:new THREE.Vector3(0,0,0), orientation:new THREE.Quaternion(0,0,0,1)});
+
+        var stlBin = geometryToSTLBin(data);
+        if (!stlBin) return;
+        var blob = new Blob([stlBin], {type: 'application/octet-binary'});
+        saveAs(blob, "base mount.stl");
     }
 
     return {
