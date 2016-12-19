@@ -6,11 +6,13 @@
 function initGradient(globals){
 
     var path = [];
+    var fitnesses = [];
     var i = 0;
     var solved = true;
 
     function reset() {
         path = [];
+        fitnesses = [];
         i = 0;
         solved = true;
     }
@@ -18,6 +20,7 @@ function initGradient(globals){
     function gradientDescent(variables){
         globals.solver.staticSolve(true);
         var _fitness = globals.fitness.calcFitness();
+        fitnesses.push(_fitness);
         var _lengths = [];
         // for (var i=0;i<variables.length;i++){
             var objects = variables[i].objects;
@@ -56,13 +59,14 @@ function initGradient(globals){
         return false;
     }
 
-    function getPath(){
-        return path;
+    function printData(){
+        console.log(JSON.stringify(path));
+        console.log(JSON.stringify(fitnesses));
     }
 
     return {
         gradientDescent: gradientDescent,
         reset: reset,
-        getPath: getPath
+        printData: printData
     }
 }

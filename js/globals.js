@@ -42,11 +42,12 @@ function initGlobals(){
             dampingType: "kinetic",
             kineticDampingTolerance: 0.1,
             numStepsPerFrame: 200,
-            simA: 0.00031415926,
-            simI: 0.000007854,//0.000000007854,
-            simE: 16000000000, //10000
-            // simA: 0.00000197932, //0.1
-            // simI: 0.000000000000311763, //0.05
+            // simA: 0.00031415926,
+            // simI: 0.000007854//0.000000007854,
+            // simE: 16000000000,
+            simE: 10000,
+            simA: 0.1,
+            simI: 0.05,
             simDt: 0.01,
             simMembraneFD: 0.05
         },

@@ -31,7 +31,9 @@ function initOptimizationView(globals){
         events: {
             "click .resetOpt": "reset",
             "click .startOpt": "start",
-            "click .pauseOpt": "pause"
+            "click .pauseOpt": "pause",
+            "click .staticSolve": "staticSolve",
+            "click #sample": "startSampling"
         },
 
         initialize: function(){
@@ -107,6 +109,20 @@ function initOptimizationView(globals){
         pause: function(e){
             e.preventDefault();
             globals.optimization.pauseOptimization();
+        },
+
+        staticSolve: function(e){
+            e.preventDefault();
+            globals.set("simNeedsReset", true);
+            globals.solver.pause();
+            globals.solver.staticSolve();
+            globals.fitness.calcFitness();
+            globals.threeView.render();
+        },
+
+        startSampling: function(e){
+            e.preventDefault();
+            globals.optimization.sampleSpace();
         }
 
 

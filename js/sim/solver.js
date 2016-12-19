@@ -743,7 +743,7 @@ function initSolver(globals){
             }
         }
         render();
-        printDataOut();
+        // printDataOut();
     }
 
     function printDataOut(){

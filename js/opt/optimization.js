@@ -189,10 +189,86 @@ function initOptimization(globals){
             if (!edgeVariables[i].active) continue;
             variables.push({
                 objects: edgeVariables[i].edges,
-                stepSize: 0.1
+                stepSize: 1
             });
         }
         return variables;
+    }
+
+    function sampleSpace(){
+        sampleSpace2D();
+    }
+
+    function sampleSpace1D(){
+        var min = 6.1;
+        var max = 16.5;
+        var val = min;
+        var fitnesses = [];
+        var lengths = [];
+        globals.threeView.startAnimation(function(){
+            if (val > max) {
+                pauseOptimization();
+                console.log(JSON.stringify(fitnesses));
+                console.log(JSON.stringify(lengths));
+            }
+            else {
+                fitnesses.push(sampleFitness(0, val));
+                lengths.push(val);
+                globals.optimizationView.setEdgeEntries();
+                val+=0.01;
+            }
+        });
+    }
+
+    function sampleSpace2D(){
+        var min = 6.4;
+        var min2 = 16.9;
+        var max = 16.5;
+        var max2 = 25.0;
+        var val = min;
+        var val2 = min2;
+        var fitnesses = [];
+        fitnesses.push([]);
+        var lengths = [];
+        lengths.push([]);
+        var index = 0;
+        console.log(edgeVariables);
+        setEdgeLengthAtIndex(1, val);
+        var direction = 1;
+        globals.threeView.startAnimation(function(){
+            if (val > max && val2 > max2) {
+                pauseOptimization();
+                console.log(JSON.stringify(fitnesses));
+                console.log(JSON.stringify(lengths));
+            }
+            if (val2>max2){
+                fitnesses.push([]);
+                lengths.push([]);
+                val += 0.1;
+                setEdgeLengthAtIndex(1, val);
+                index++;
+                // direction *= -1;
+                //gently bring down to min
+                for (var i=val2;i>min2;i--){
+                    setEdgeLengthAtIndex(0, i);
+                    globals.solver.staticSolve(true);
+                }
+                val2 = min2;
+            }
+            else {
+                // console.log(val + " " + val2);
+                fitnesses[index].push(sampleFitness(0, val2));
+                lengths[index].push([val, val2]);
+                globals.optimizationView.setEdgeEntries();
+                val2 += direction*0.1;
+            }
+        });
+    }
+
+    function sampleFitness(i, length){
+        setEdgeLengthAtIndex(i, length);
+        globals.solver.staticSolve(true);
+        return globals.fitness.calcFitness();
     }
 
     function startOptimization(){
@@ -211,7 +287,7 @@ function initOptimization(globals){
         globals.threeView.startAnimation(function(){
             if (solved) {
                 pauseOptimization();
-            //     console.log(globals.gradient.getPath());
+                globals.gradient.printData();
             }
             else {
                 solved = globals.gradient.gradientDescent(variables);
@@ -270,6 +346,7 @@ function initOptimization(globals){
         startOptimization: startOptimization,
         pauseOptimization: pauseOptimization,
         resetOptimization: resetOptimization,
-        toJSON: toJSON
+        toJSON: toJSON,
+        sampleSpace: sampleSpace
     }
 }
